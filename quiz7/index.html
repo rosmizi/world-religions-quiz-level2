@@ -1,0 +1,1540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Minds of Faith: Interactive Quiz Quest</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts for Kids Edu Theme -->
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght=500;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Quicksand', sans-serif;
+    }
+    .font-kids {
+      font-family: 'Fredoka One', cursive;
+    }
+    /* Animated Gradient Background */
+    .bg-animated {
+      background: linear-gradient(-45deg, #FF6B6B, #4ECDC4, #FFE66D, #6C5CE7);
+      background-size: 400% 400%;
+      animation: gradient 15s ease infinite;
+    }
+    @keyframes gradient {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    /* Bounce Animation for Interactive elements */
+    .bounce-hover:hover {
+      transform: translateY(-4px) scale(1.02);
+      transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    /* Sparkles & Fireworks Canvas positioning */
+    #canvas-fireworks {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 50;
+    }
+  </style>
+</head>
+<body class="bg-animated min-h-screen text-slate-800 flex flex-col justify-between overflow-x-hidden relative">
+
+  <!-- Canvas for Celebratory Fireworks -->
+  <canvas id="canvas-fireworks"></canvas>
+
+  <!-- Top Navigation Header -->
+  <header class="w-full bg-white/90 backdrop-blur-sm border-b-4 border-yellow-400 p-4 sticky top-0 z-40 shadow-md">
+    <div class="max-w-6xl mx-auto flex justify-between items-center">
+      <div class="flex items-center gap-3">
+        <div class="bg-yellow-400 p-2.5 rounded-full shadow-md animate-bounce">
+          <span class="text-2xl">✨</span>
+        </div>
+        <div>
+          <h1 class="text-xl md:text-2xl font-kids text-purple-700 tracking-wide">MINDS OF FAITH</h1>
+          <p class="text-xs md:text-sm font-bold text-teal-600">Interactive Quiz Quest • Kuiz Interaktif</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <!-- Audio Control -->
+        <button id="btn-audio" onclick="toggleAudio()" class="bg-purple-600 hover:bg-purple-700 text-white font-bold p-2.5 rounded-xl shadow-md flex items-center gap-2 transition-transform active:scale-95">
+          <span id="audio-icon">🔊</span>
+          <span class="hidden md:inline text-sm">Music On</span>
+        </button>
+        <!-- Back to Main Menu Button (Always Available) -->
+        <button id="btn-menu-back" onclick="showMainMenu()" class="bg-red-500 hover:bg-red-600 text-white font-bold px-4 py-2.5 rounded-xl shadow-md border-b-4 border-red-700 flex items-center gap-1 transition-transform active:scale-95 hidden">
+          <span>🏠</span>
+          <span class="text-sm">Main Menu / Menu Utama</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Wrapper -->
+  <main class="flex-grow w-full max-w-5xl mx-auto p-4 flex flex-col justify-center items-center relative z-10">
+
+    <!-- MAIN MENU VIEW -->
+    <section id="view-menu" class="w-full bg-white/95 rounded-3xl p-6 md:p-10 shadow-2xl border-4 border-purple-500 text-center max-w-2xl transform transition-all duration-300">
+      <h2 class="text-3xl md:text-5xl font-kids text-purple-600 mb-2 drop-shadow">CHOOSE YOUR QUEST!</h2>
+      <h3 class="text-lg md:text-xl font-bold text-slate-500 mb-8 italic">Sila Pilih Set Kuiz Anda!</h3>
+
+      <div class="grid grid-cols-1 gap-6 mb-2 text-left">
+        <!-- Book 1 Card -->
+        <button onclick="startQuizSet(1)" class="w-full bg-gradient-to-r from-teal-400 to-emerald-500 hover:from-teal-500 hover:to-emerald-600 text-white p-5 rounded-2xl shadow-lg border-b-8 border-emerald-700 text-left transition-all duration-200 transform hover:-translate-y-1 active:translate-y-0 flex items-center gap-4">
+          <div class="bg-white/20 p-4 rounded-xl text-3xl">📚</div>
+          <div>
+            <h4 class="text-lg md:text-xl font-kids uppercase">DEFINITION OF RELIGION: AN INTRODUCTION</h4>
+            <p class="text-xs md:text-sm font-semibold opacity-90">Definisi Agama: Satu Pengenalan (Populists, Objectivists, dll.)</p>
+          </div>
+        </button>
+
+        <!-- Book 2 Card -->
+        <button onclick="startQuizSet(2)" class="w-full bg-gradient-to-r from-sky-400 to-blue-500 hover:from-sky-500 hover:to-blue-600 text-white p-5 rounded-2xl shadow-lg border-b-8 border-blue-700 text-left transition-all duration-200 transform hover:-translate-y-1 active:translate-y-0 flex items-center gap-4">
+          <div class="bg-white/20 p-4 rounded-xl text-3xl">✈️</div>
+          <div>
+            <h4 class="text-lg md:text-xl font-kids uppercase">THE JOURNEY AROUND THE WORLD OF RELIGIONS</h4>
+            <p class="text-xs md:text-sm font-semibold opacity-90">Pengembaraan Mengelilingi Dunia Agama-Agama (Ms. Amina, Ali & Rakan-rakan)</p>
+          </div>
+        </button>
+
+        <!-- Book 3 Card -->
+        <button onclick="startQuizSet(3)" class="w-full bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-white p-5 rounded-2xl shadow-lg border-b-8 border-orange-700 text-left transition-all duration-200 transform hover:-translate-y-1 active:translate-y-0 flex items-center gap-4">
+          <div class="bg-white/20 p-4 rounded-xl text-3xl">🌟</div>
+          <div>
+            <h4 class="text-lg md:text-xl font-kids uppercase">GENERAL CHARACTERISTICS OF WORLD RELIGIONS</h4>
+            <p class="text-xs md:text-sm font-semibold opacity-90">Ciri-Ciri Umum Agama Dunia (Tuhan, Kitab Suci, Undang-undang, dll.)</p>
+          </div>
+        </button>
+      </div>
+
+      <!-- INTERACTIVE LEADERBOARD TRIGGER CARD (TEKAN DI SINI) -->
+      <div class="border-t-4 border-dashed border-purple-200 pt-6 mt-6">
+        <button onclick="openLeaderboard()" class="w-full text-left bg-gradient-to-br from-purple-50 to-indigo-50 hover:from-purple-100 hover:to-indigo-100 border-4 border-dashed border-purple-400 hover:border-purple-600 p-5 rounded-3xl transition-all duration-200 transform hover:-translate-y-1 active:translate-y-0 shadow-md flex items-center justify-between group">
+          <div class="flex items-center gap-4">
+            <span class="text-4xl bg-white p-2.5 rounded-2xl shadow-md border-2 border-purple-200 group-hover:scale-110 transition-transform">🏆</span>
+            <div>
+              <h4 class="text-lg md:text-xl font-kids text-purple-700">VIEW FULL LEADERBOARD</h4>
+              <p class="text-xs md:text-sm font-bold text-indigo-500 italic mt-0.5">Lihat Papan Pendahulu Interaktif & Rekod Skor ➔</p>
+            </div>
+          </div>
+          <span class="bg-purple-600 text-white font-kids px-4 py-2 rounded-2xl text-xs md:text-sm border-b-4 border-purple-800 tracking-wider">TAP TO VIEW</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- FULL LEADERBOARD MODAL SCREEN -->
+    <section id="modal-leaderboard" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+      <div class="bg-white rounded-3xl w-full max-w-2xl border-4 border-purple-500 shadow-2xl overflow-hidden transform transition-all duration-300 flex flex-col">
+        <!-- Modal Header -->
+        <div class="bg-gradient-to-r from-purple-600 to-indigo-600 p-6 text-white flex justify-between items-center border-b-4 border-yellow-400">
+          <div class="flex items-center gap-3">
+            <span class="text-4xl">🏆</span>
+            <div>
+              <h3 class="text-2xl font-kids">CHAMPIONS GALLERY</h3>
+              <p class="text-xs font-bold text-yellow-300 italic">Galeri Juara Minds of Faith</p>
+            </div>
+          </div>
+          <button onclick="closeLeaderboard()" class="bg-red-500 hover:bg-red-600 text-white font-kids w-10 h-10 rounded-full border-b-4 border-red-700 flex items-center justify-center shadow transition-all active:scale-95">✕</button>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div class="bg-slate-50 p-4 border-b border-slate-200 flex flex-wrap gap-2 justify-center">
+          <button onclick="filterLeaderboard('all')" id="tab-leaderboard-all" class="px-4 py-2 rounded-xl text-xs md:text-sm font-kids transition-all border-2 border-purple-500 bg-purple-600 text-white">
+            All Quests / Semua
+          </button>
+          <button onclick="filterLeaderboard(1)" id="tab-leaderboard-1" class="px-4 py-2 rounded-xl text-xs md:text-sm font-kids transition-all border-2 border-slate-200 bg-white text-slate-600 hover:border-purple-300">
+            Book 1
+          </button>
+          <button onclick="filterLeaderboard(2)" id="tab-leaderboard-2" class="px-4 py-2 rounded-xl text-xs md:text-sm font-kids transition-all border-2 border-slate-200 bg-white text-slate-600 hover:border-purple-300">
+            Book 2
+          </button>
+          <button onclick="filterLeaderboard(3)" id="tab-leaderboard-3" class="px-4 py-2 rounded-xl text-xs md:text-sm font-kids transition-all border-2 border-slate-200 bg-white text-slate-600 hover:border-purple-300">
+            Book 3
+          </button>
+        </div>
+
+        <!-- Scores List -->
+        <div id="full-leaderboard-list" class="p-6 overflow-y-auto max-h-[350px] space-y-3">
+          <!-- Dynamic Leaderboard rows go here -->
+        </div>
+
+        <!-- Modal Footer Actions -->
+        <div class="bg-slate-100 p-4 border-t border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-3">
+          <button onclick="promptResetLeaderboard()" class="w-full sm:w-auto bg-slate-500 hover:bg-red-600 text-white font-bold px-4 py-2.5 rounded-xl text-xs transition-all border-b-4 border-slate-700 hover:border-red-800">
+            🗑️ Clear All Scores / Padam Semua Rekod
+          </button>
+          <button onclick="closeLeaderboard()" class="w-full sm:w-auto bg-purple-600 hover:bg-purple-700 text-white font-kids px-6 py-2.5 rounded-xl border-b-4 border-purple-800 transition-all text-sm">
+            Close / Tutup
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- CUSTOM CONFIRMATION RESET MODAL -->
+    <section id="modal-confirm-reset" class="fixed inset-0 bg-slate-950/90 z-[60] flex items-center justify-center p-4 hidden">
+      <div class="bg-white rounded-3xl p-6 max-w-sm text-center border-4 border-red-500 shadow-2xl transform transition-all duration-300">
+        <span class="text-5xl block mb-4">⚠️</span>
+        <h4 class="text-xl font-kids text-red-600">ARE YOU ABSOLUTELY SURE?</h4>
+        <p class="text-xs font-bold text-slate-400 italic mb-4">Adakah anda benar-benar pasti?</p>
+        <p class="text-sm text-slate-600 mb-6 font-bold">This action will delete all saved records permanently! / Tindakan ini akan memadam semua rekod secara kekal!</p>
+        <div class="flex gap-3 justify-center">
+          <button onclick="cancelResetLeaderboard()" class="bg-slate-300 hover:bg-slate-400 text-slate-700 font-bold px-5 py-2.5 rounded-xl text-sm transition-all border-b-4 border-slate-500">
+            Cancel / Batal
+          </button>
+          <button onclick="confirmResetLeaderboard()" class="bg-red-600 hover:bg-red-700 text-white font-bold px-5 py-2.5 rounded-xl text-sm transition-all border-b-4 border-red-800">
+            Yes, Delete / Ya, Padam
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- GAMEPLAY AREA VIEW -->
+    <section id="view-game" class="w-full bg-white rounded-3xl p-4 md:p-8 shadow-2xl border-4 border-yellow-400 max-w-3xl transform transition-all duration-300 hidden flex flex-col gap-4">
+      
+      <!-- Gameplay Header -->
+      <div class="flex justify-between items-center border-b-4 border-slate-100 pb-3">
+        <div>
+          <span id="badge-book-info" class="bg-purple-100 text-purple-700 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Book Quest</span>
+          <h3 id="game-progress" class="text-sm font-bold text-slate-500 mt-1">Question 1 of 10 / Soalan 1 dari 10</h3>
+        </div>
+        <div class="flex items-center gap-4">
+          <div class="flex items-center gap-1 bg-yellow-100 text-yellow-700 px-3 py-1.5 rounded-full font-bold text-sm">
+            <span>⭐</span>
+            <span id="game-score">0 pts</span>
+          </div>
+          <div id="star-bar" class="flex gap-0.5 text-lg text-yellow-400">
+            ⭐⭐⭐
+          </div>
+        </div>
+      </div>
+
+      <!-- Question Card Panel -->
+      <div class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl p-4 md:p-6 border-2 border-indigo-100 shadow-sm relative">
+        <h2 id="q-text-en" class="text-xl md:text-2xl font-kids text-indigo-900 leading-snug">Main English Question goes here?</h2>
+        <p id="q-text-ms" class="text-sm md:text-base font-bold text-teal-600 italic mt-2">Terjemahan soalan Bahasa Melayu di sini?</p>
+      </div>
+
+      <!-- Interactive Answer Workspace -->
+      <div id="answer-workspace" class="min-h-[220px] flex flex-col justify-center">
+        <!-- Interactive components injected dynamically (MCQ, Matching, Fill Blanks, Drag Drop) -->
+      </div>
+
+      <!-- Bottom Panel for Explanations and Transition -->
+      <div id="explanation-panel" class="hidden bg-emerald-50 rounded-2xl p-4 border-2 border-emerald-200 mt-2 flex flex-col gap-2">
+        <div class="flex items-center gap-2 text-emerald-700 font-bold">
+          <span>🎉</span>
+          <span>CORRECT ANSWER! / JAWAPAN BETUL!</span>
+        </div>
+        <p id="exp-text-en" class="text-slate-700 text-sm font-bold">English brief explanation explaining the correct response clearly.</p>
+        <p id="exp-text-ms" class="text-xs md:text-sm text-teal-700 font-medium italic">Penerangan ringkas dalam Bahasa Melayu menerangkan pilihan jawapan.</p>
+      </div>
+
+    </section>
+
+    <!-- COMPLETION VIEW -->
+    <section id="view-completion" class="w-full bg-white rounded-3xl p-6 md:p-10 shadow-2xl border-4 border-emerald-400 text-center max-w-md transform transition-all duration-300 hidden">
+      <div class="w-24 h-24 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-6 border-4 border-yellow-400 shadow-inner">
+        <span class="text-5xl animate-bounce">🏆</span>
+      </div>
+
+      <h2 class="text-3xl md:text-4xl font-kids text-emerald-600 mb-1">CONGRATULATIONS!</h2>
+      <h3 class="text-lg font-bold text-slate-500 mb-6 italic">Tahniah! Anda Berjaya!</h3>
+
+      <!-- Ribbon Details -->
+      <div class="bg-gradient-to-r from-yellow-400 via-orange-400 to-yellow-500 text-white font-kids text-xl py-3 px-6 rounded-2xl shadow-lg inline-block mb-6 tracking-wider border-b-4 border-orange-600">
+        ✨ SCORE: <span id="final-score">0</span> PTS ✨
+      </div>
+
+      <div class="mb-6">
+        <p class="text-slate-600 text-sm font-bold">Enter your name to save your score:</p>
+        <p class="text-teal-600 text-xs italic mb-2">Masukkan nama anda untuk menyimpan rekod:</p>
+        <div class="flex gap-2">
+          <input type="text" id="player-name" placeholder="Name / Nama" class="flex-grow px-4 py-2 border-2 border-slate-200 rounded-xl focus:border-purple-500 outline-none text-center font-bold">
+          <button onclick="saveScore()" class="bg-purple-600 hover:bg-purple-700 text-white font-bold px-4 py-2 rounded-xl transition-all font-kids">Submit</button>
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-3">
+        <button onclick="showMainMenu()" class="w-full bg-teal-500 hover:bg-teal-600 text-white font-bold py-3 rounded-2xl shadow-md border-b-4 border-teal-700 transition-transform active:scale-95">
+          Play Another Quest / Pilih Quest Lain
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Global Footer -->
+  <footer class="w-full bg-slate-900 text-slate-400 text-center py-4 text-xs font-bold border-t-4 border-purple-800">
+    <div class="max-w-6xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-2">
+      <p>Copyright © 2026 DR. MRAR. All rights reserved. • Educational Kid Games Style</p>
+      <p class="text-purple-400 italic">"Understanding each other leads to peace and harmony"</p>
+    </div>
+  </footer>
+
+  <!-- Notification Toast Popups (Try Again / Hint) -->
+  <div id="toast-message" class="fixed bottom-20 left-1/2 -translate-x-1/2 bg-red-500 text-white px-6 py-3 rounded-2xl shadow-2xl border-4 border-white font-bold z-50 text-center hidden transform transition-transform animate-bounce">
+    <span class="text-lg block">❌ Try Again! / Cuba Lagi!</span>
+    <span id="toast-hint" class="text-xs font-medium block italic mt-1 text-yellow-200">Hint: This is a clue to guide you.</span>
+  </div>
+
+  <!-- Audio Synthesis & Quiz Database Logic -->
+  <script>
+    // --- AUDIO SYSTEM (Web Audio API Synthesizer) ---
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    let audioCtx = null;
+    let musicInterval = null;
+    let isMusicPlaying = false;
+    let musicMuted = false;
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new AudioCtx();
+      }
+    }
+
+    // Synthesize a retro note
+    function playNote(freq, type, duration, startTime, volume = 0.1) {
+      if (!audioCtx || musicMuted) return;
+      try {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, startTime);
+        
+        gain.gain.setValueAtTime(volume, startTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
+        
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(startTime);
+        osc.stop(startTime + duration);
+      } catch (e) {
+        console.error("Audio synth error", e);
+      }
+    }
+
+    // Interactive Sound FX
+    function playSoundCorrect() {
+      initAudio();
+      const now = audioCtx.currentTime;
+      playNote(261.63, 'triangle', 0.15, now);     // C4
+      playNote(329.63, 'triangle', 0.15, now + 0.1); // E4
+      playNote(392.00, 'triangle', 0.15, now + 0.2); // G4
+      playNote(523.25, 'triangle', 0.4, now + 0.3);  // C5
+    }
+
+    function playSoundWrong() {
+      initAudio();
+      const now = audioCtx.currentTime;
+      playNote(180, 'sawtooth', 0.2, now, 0.15);
+      playNote(120, 'sawtooth', 0.3, now + 0.15, 0.15);
+    }
+
+    function playSoundSuccess() {
+      initAudio();
+      const now = audioCtx.currentTime;
+      const notes = [261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88, 523.25];
+      notes.forEach((freq, idx) => {
+        playNote(freq, 'triangle', 0.2, now + (idx * 0.15), 0.12);
+      });
+    }
+
+    // Upbeat Backgound Music Loop
+    const melody = [
+      329.63, 392.00, 523.25, 493.88, 392.00, 440.00, 392.00, 0,
+      329.63, 392.00, 440.00, 392.00, 329.63, 293.66, 261.63, 0
+    ];
+    let noteIndex = 0;
+    
+    function startMusic() {
+      initAudio();
+      if (musicInterval) clearInterval(musicInterval);
+      isMusicPlaying = true;
+      document.getElementById('audio-icon').innerText = "🔊";
+      
+      musicInterval = setInterval(() => {
+        if (musicMuted) return;
+        const now = audioCtx.currentTime;
+        const freq = melody[noteIndex % melody.length];
+        if (freq > 0) {
+          playNote(freq, 'sine', 0.3, now, 0.05); // Melodic arpeggio
+          // Bass backup line
+          playNote(freq / 2, 'triangle', 0.3, now, 0.03);
+        }
+        noteIndex++;
+      }, 300);
+    }
+
+    function toggleAudio() {
+      initAudio();
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      musicMuted = !musicMuted;
+      const btn = document.getElementById('btn-audio');
+      const icon = document.getElementById('audio-icon');
+      if (musicMuted) {
+        icon.innerText = "🔇";
+        btn.querySelector('span:not(#audio-icon)').innerText = "Music Off";
+        btn.classList.replace('bg-purple-600', 'bg-slate-500');
+      } else {
+        icon.innerText = "🔊";
+        btn.querySelector('span:not(#audio-icon)').innerText = "Music On";
+        btn.classList.replace('bg-slate-500', 'bg-purple-600');
+        if (!isMusicPlaying) startMusic();
+      }
+    }
+
+
+    // --- QUIZ DATABASE ---
+    // All 3 sets with 10 questions each, fully matching PDF data with proper titles.
+    const quizData = {
+      1: [ // Book 1: Definition of Religion: An Introduction
+        {
+          type: "mcq",
+          qEn: "What is the primary belief of 'The Populists' regarding religion?",
+          qMs: "Apakah kepercayaan utama 'The Populists' tentang agama?",
+          options: [
+            { textEn: "If many people accept it as a religion, then it is!", textMs: "Jika ramai orang menerimanya sebagai agama, maka ia adalah agama!" },
+            { textEn: "Only their personal beliefs and standards matter", textMs: "Hanya kepercayaan dan standard peribadi mereka yang dikira" },
+            { textEn: "Religion is based entirely on private feelings", textMs: "Agama diasaskan sepenuhnya pada perasaan peribadi" },
+            { textEn: "For religion to be real, it must be based on factual evidence", textMs: "Sesuatu agama itu benar jika ia berdasarkan bukti fakta" }
+          ],
+          correctIdx: 0,
+          hintEn: "Think of majority acceptance!",
+          hintMs: "Fikirkan tentang penerimaan majoriti!",
+          expEn: "The Populists believe that if the majority of people accept a practice as a religion (such as offerings to sea spirits), then it is valid.",
+          expMs: "Kumpulan Populists mempercayai bahawa sekiranya majoriti komuniti menerima sesuatu amalan itu sebagai agama, maka ia dianggap sah."
+        },
+        {
+          type: "fill_blank",
+          qEn: "According to 'Definition of Religion: An Introduction', '___ is when someone doubts or rejects what other people believe.'",
+          qMs: "Menurut 'Definition of Religion: An Introduction', '___ ialah apabila seseorang meragui atau menolak apa yang dipercayai oleh orang lain.'",
+          words: ["Negativism", "Populism", "Subjectivism", "Objectivism"],
+          correctWord: "Negativism",
+          hintEn: "It starts with N and is very skeptical.",
+          hintMs: "Ia bermula dengan huruf N dan bersikap sangat ragu-ragu.",
+          expEn: "Negativism means a person doubts or rejects what others believe, trusting only their own ideas.",
+          expMs: "Negativisme bermaksud seseorang yang meragui atau menolak kepercayaan orang lain dan hanya mempercayai pendapat sendiri."
+        },
+        {
+          type: "matching",
+          qEn: "Match the 'Friend Category' with their central belief approach:",
+          qMs: "Padankan 'Kategori Rakan' dengan pendekatan kepercayaan utama mereka:",
+          left: ["The Populists", "The Subjectivists", "The Objectivists"],
+          right: ["Rely on factual evidence for proof", "Rely on private feelings and experience", "Accept based on majority belief"],
+          correctPairs: {
+            "The Populists": "Accept based on majority belief",
+            "The Subjectivists": "Rely on private feelings and experience",
+            "The Objectivists": "Rely on factual evidence for proof"
+          },
+          hintEn: "Objectivists want facts, Subjectivists want feelings, Populists want majority rule.",
+          hintMs: "Objektif mahukan bukti, Subjektif mahukan perasaan, Populist mahukan majoriti.",
+          expEn: "Populists look at the majority, Subjectivists value private feelings, and Objectivists demand factual evidence.",
+          expMs: "Populist mengikut majoriti, Subjektif mementingkan perasaan peribadi, manakala Objektif memerlukan bukti nyata."
+        },
+        {
+          type: "mcq",
+          qEn: "Why is the Subjectivist approach to religion considered problematic?",
+          qMs: "Mengapa pendekatan Subjektivis terhadap agama dianggap bermasalah?",
+          options: [
+            { textEn: "The word 'religion' starts to lose its actual meaning", textMs: "Perkataan 'agama' akan mula hilang makna asalnya" },
+            { textEn: "It uses too many scientific experiments", textMs: "Ia menggunakan terlalu banyak eksperimen saintifik" },
+            { textEn: "It depends too much on strict laws", textMs: "Ia terlalu bergantung kepada undang-undang yang ketat" },
+            { textEn: "It only accepts traditional scriptures", textMs: "Ia hanya menerima kitab suci tradisional" }
+          ],
+          correctIdx: 0,
+          hintEn: "If everything is true for everyone, definitions get blurry.",
+          hintMs: "Sekiranya semua perkara betul bagi setiap orang, definisi menjadi kabur.",
+          expEn: "Because subjectivism relies strictly on private experience, the word religion loses a standard definition.",
+          expMs: "Kerana subjektivisme hanya bergantung kepada perasaan peribadi, takrifan agama menjadi kabur dan hilang makna standard."
+        },
+        {
+          type: "drag_drop",
+          qEn: "Match the scientific mindset metaphor with its definition approach:",
+          qMs: "Padankan metafora minda saintis dengan pendekatan definisinya:",
+          draggables: [
+            { text: "Objectivism", id: "obj" },
+            { text: "Subjectivism", id: "subj" }
+          ],
+          targets: [
+            { text: "Flat/Round Earth physical proof (Scientist)", matches: "obj" },
+            { text: "Blurry individual 'truth' based on emotion", matches: "subj" }
+          ],
+          hintEn: "Scientists look at objective phenomena, like proving the earth is round.",
+          hintMs: "Saintis melihat kepada bukti fizikal untuk membuktikan bumi ini bulat.",
+          expEn: "Objectivists act like scientists who rely on clear standards and visible evidence.",
+          expMs: "Objektivis bertindak seperti saintis yang bergantung kepada piawaian yang jelas dan bukti fizikal yang boleh dilihat."
+        },
+        {
+          type: "mcq",
+          qEn: "Which group of people is described as trusting *only* their own ideas and rarely accepting others' definitions?",
+          qMs: "Kumpulan manakah yang digambarkan hanya mempercayai idea mereka sendiri dan jarang menerima takrifan orang lain?",
+          options: [
+            { textEn: "The Negativists", textMs: "The Negativists" },
+            { textEn: "The Populists", textMs: "The Populists" },
+            { textEn: "The Objectivists", textMs: "The Objectivists" },
+            { textEn: "The Subjectivists", textMs: "The Subjectivists" }
+          ],
+          correctIdx: 0,
+          hintEn: "They say 'Only my own beliefs count!'",
+          hintMs: "Mereka berkata 'Hanya kepercayaan saya sahaja yang dikira!'",
+          expEn: "The Negativists doubt or reject outside definitions and rely entirely on personal skepticism.",
+          expMs: "Kumpulan Negativis meragui atau menolak definisi luar dan bergantung sepenuhnya pada keraguan peribadi."
+        },
+        {
+          type: "fill_blank",
+          qEn: "According to 'Definition of Religion: An Introduction', Objectivism is the 'Show Me the ___' approach.",
+          qMs: "Menurut 'Definition of Religion: An Introduction', Objektivisme ialah pendekatan 'Tunjukkan Saya ___'.",
+          words: ["Proof", "Feeling", "Idea", "Ritual"],
+          correctWord: "Proof",
+          hintEn: "Think of factual evidence.",
+          hintMs: "Fikirkan tentang bukti yang nyata.",
+          expEn: "Objectivism requires factual, visible proof that everyone can examine.",
+          expMs: "Objektivisme memerlukan bukti berasaskan fakta yang boleh dilihat oleh semua orang."
+        },
+        {
+          type: "mcq",
+          qEn: "Making offerings to sea spirits (semah pantai) is associated with which approach?",
+          qMs: "Amalan membuang semah pantai dikaitkan dengan pendekatan yang mana?",
+          options: [
+            { textEn: "Populism", textMs: "Populisme" },
+            { textEn: "Objectivism", textMs: "Objektivisme" },
+            { textEn: "Subjectivism", textMs: "Subjektivisme" },
+            { textEn: "Negativism", textMs: "Negativisme" }
+          ],
+          correctIdx: 0,
+          hintEn: "The example is about what a community widely accepts.",
+          hintMs: "Contoh ini merujuk kepada perkara yang diterima secara meluas oleh komuniti.",
+          expEn: "Semah pantai is a local ritual accepted as religion by some because the majority believes so.",
+          expMs: "Semah pantai diterima sebagai sebahagian daripada agama oleh sebahagian masyarakat atas dasar penerimaan majoriti."
+        },
+        {
+          type: "matching",
+          qEn: "Match the statement to the perspective group:",
+          qMs: "Padankan pernyataan berikut dengan kumpulan perspektif:",
+          left: ["'Only my beliefs count'", "'What most people accept is valid'", "'Based on my inner feelings'"],
+          right: ["The Negativists", "The Populists", "The Subjectivists"],
+          correctPairs: {
+            "'Only my beliefs count'": "The Negativists",
+            "'What most people accept is valid'": "The Populists",
+            "'Based on my inner feelings'": "The Subjectivists"
+          },
+          hintEn: "Doubters are Negativists; crowd-followers are Populists; emotional feelers are Subjectivists.",
+          hintMs: "Peragu ialah Negativis; pengikut ramai ialah Populist; pengikut emosi ialah Subjektivis.",
+          expEn: "This summarizes the primary social perspectives of understanding religion defined in 'Definition of Religion: An Introduction'.",
+          expMs: "Ini meringkaskan perspektif sosial utama dalam memahami konsep agama mengikut 'Definition of Religion: An Introduction'."
+        },
+        {
+          type: "mcq",
+          qEn: "What does the author suggest is the *best* way to understand religion objectively?",
+          qMs: "Apakah cara terbaik yang dicadangkan oleh penulis untuk memahami agama secara objektif?",
+          options: [
+            { textEn: "Look at facts and visible evidence that everyone can see", textMs: "Melihat kepada fakta dan bukti fizikal yang boleh dilihat semua" },
+            { textEn: "Follow whatever feelings you have inside", textMs: "Mengikut sahaja apa sahaja emosi dalam diri anda" },
+            { textEn: "Reject everyone's ideas except your own", textMs: "Menolak semua pendapat orang lain kecuali pendapat sendiri" },
+            { textEn: "Accept anything as long as 10 people agree on it", textMs: "Menerima apa sahaja asalkan ada 10 orang yang bersetuju" }
+          ],
+          correctIdx: 0,
+          hintEn: "Objectivism matches science.",
+          hintMs: "Objektivisme menyamai kaedah sains.",
+          expEn: "Objectivism relies on visible evidence and factual indicators to identify true religion.",
+          expMs: "Objektivisme bergantung kepada bukti fizikal dan petunjuk fakta untuk mengenal pasti agama yang benar."
+        }
+      ],
+      2: [ // Book 2: The Journey Around the World of Religions
+        {
+          type: "mcq",
+          qEn: "Who is the teacher leading the virtual journey through world religions?",
+          qMs: "Siapakah guru yang mengetuai pengembaraan dunia agama ini?",
+          options: [
+            { textEn: "Ms. Amina", textMs: "Cikgu Amina" },
+            { textEn: "Dr. Mrar", textMs: "Dr. Mrar" },
+            { textEn: "Mei", textMs: "Mei" },
+            { textEn: "Ali", textMs: "Ali" }
+          ],
+          correctIdx: 0,
+          hintEn: "She smiles and tells stories to her students.",
+          hintMs: "Beliau tersenyum dan menceritakan kisah kepada pelajarnya.",
+          expEn: "Ms. Amina is the compassionate teacher who organizes this educational story-based journey.",
+          expMs: "Cikgu Amina ialah guru yang penyayang yang merancang perjalanan berasaskan cerita ini."
+        },
+        {
+          type: "mcq",
+          qEn: "What question did the curious student Ali ask during the lesson?",
+          qMs: "Apakah soalan yang ditanya oleh pelajar bernama Ali yang penuh ingin tahu?",
+          options: [
+            { textEn: "'Are all religions exactly the same?'", textMs: "'Adakah semua agama sama sahaja?'" },
+            { textEn: "'How many pages is our textbook?'", textMs: "'Berapakah halaman buku teks kita?'" },
+            { textEn: "'Is life after death real?'", textMs: "'Adakah kehidupan selepas mati itu benar?'" },
+            { textEn: "'Can we travel by plane?'", textMs: "'Bolehkah kita pergi menaiki kapal terbang?'" }
+          ],
+          correctIdx: 0,
+          hintEn: "It is about comparison between different beliefs.",
+          hintMs: "Ia adalah mengenai perbandingan antara kepercayaan yang berbeza.",
+          expEn: "Ali asked if all religions are exactly the same, prompting Ms. Amina to explain their similarities and differences.",
+          expMs: "Ali bertanya jika semua agama adalah sama, memulakan penerangan Cikgu Amina tentang persamaan dan perbezaan."
+        },
+        {
+          type: "matching",
+          qEn: "Match the student or character with their statement or role:",
+          qMs: "Padankan watak dengan kenyataan atau peranan mereka:",
+          left: ["Ali", "Mei", "Ms. Amina"],
+          right: ["Asked if religions are exactly the same", "Asked if religions differ in their concepts of God", "Guided the storytelling journey"],
+          correctPairs: {
+            "Ali": "Asked if religions are exactly the same",
+            "Mei": "Asked if religions differ in their concepts of God",
+            "Ms. Amina": "Guided the storytelling journey"
+          },
+          hintEn: "Mei asked about differences regarding God; Ali asked about overall similarity.",
+          hintMs: "Mei bertanya tentang konsep Tuhan; Ali bertanya tentang persamaan keseluruhan.",
+          expEn: "The story features dialogue between students Ali, Mei, and their teacher Ms. Amina.",
+          expMs: "Cerita ini membentangkan dialog antara pelajar Ali, Mei, dan guru mereka Cikgu Amina."
+        },
+        {
+          type: "fill_blank",
+          qEn: "Ms. Amina compared how religion shapes our worldview to wearing '___ glasses'.",
+          qMs: "Cikgu Amina membandingkan cara agama membentuk pandangan dunia seperti memakai 'cermin mata ___'.",
+          words: ["Belief", "Magic", "Science", "Sun"],
+          correctWord: "Belief",
+          hintEn: "These glasses help you view life's big questions.",
+          hintMs: "Cermin mata ini membantu anda melihat jawapan kepada persoalan kehidupan.",
+          expEn: "The 'belief glasses' metaphor represents how religion guides an individual's outlook on purpose, life, and ethics.",
+          expMs: "Metafora 'cermin mata kepercayaan' mewakili cara agama membimbing pandangan individu terhadap tujuan hidup dan etika."
+        },
+        {
+          type: "mcq",
+          qEn: "According to Ms. Amina, what is a core focus of Buddhism instead of worshipping a creator God?",
+          qMs: "Menurut Cikgu Amina, apakah fokus utama agama Buddha selain daripada menyembah Tuhan pencipta?",
+          options: [
+            { textEn: "Understanding life and overcoming suffering", textMs: "Memahami kehidupan dan mengatasi penderitaan" },
+            { textEn: "Practicing complex legal trials", textMs: "Mengamalkan perbicaraan undang-undang" },
+            { textEn: "Building tall towers", textMs: "Membina menara tinggi" },
+            { textEn: "Memorizing Sanskrit poems exclusively", textMs: "Menghafal puisi Sanskrit sahaja" }
+          ],
+          correctIdx: 0,
+          hintEn: "It relates to overcoming life's hardships.",
+          hintMs: "Ia berkait rapat dengan cara mengatasi kepayahan hidup.",
+          expEn: "Buddhism focuses more on understanding the nature of life, karma, and finding freedom from suffering.",
+          expMs: "Agama Buddha lebih memfokuskan kepada memahami makna kehidupan, karma, dan membebaskan diri daripada penderitaan."
+        },
+        {
+          type: "drag_drop",
+          qEn: "Categorize the festival with its corresponding religion:",
+          qMs: "Kategorikan perayaan dengan agama yang sepadan:",
+          draggables: [
+            { text: "Eid al-Fitr", id: "eid" },
+            { text: "Deepavali", id: "deep" }
+          ],
+          targets: [
+            { text: "Islam", matches: "eid" },
+            { text: "Hinduism", matches: "deep" }
+          ],
+          hintEn: "Eid is celebrated by Muslims; Deepavali is celebrated by Hindus.",
+          hintMs: "Hari Raya disambut umat Islam; Deepavali disambut penganut Hindu.",
+          expEn: "Religious celebrations like Eid, Christmas, and Deepavali bring joy, gratitude, and communal unity.",
+          expMs: "Perayaan keagamaan seperti Raya, Krismas, dan Deepavali membawa kegembiraan dan mengeratkan perpaduan."
+        },
+        {
+          type: "mcq",
+          qEn: "What standard behavior is expected when visiting sacred places like temples, churches, or mosques?",
+          qMs: "Apakah tingkah laku standard yang diharapkan apabila melawat tempat suci seperti kuil, gereja, atau masjid?",
+          options: [
+            { textEn: "Dressing modestly and showing respect", textMs: "Berpakaian sopan dan menunjukkan rasa hormat" },
+            { textEn: "Taking photos with flash continuously", textMs: "Mengambil gambar menggunakan denyar secara berterusan" },
+            { textEn: "Chanting loud slogans", textMs: "Melaungkan slogan dengan kuat" },
+            { textEn: "Running around to find the exit", textMs: "Berlari ke sana sini mencari jalan keluar" }
+          ],
+          correctIdx: 0,
+          hintEn: "It honors the sacredness of the location.",
+          hintMs: "Ia menghormati kesucian tempat tersebut.",
+          expEn: "Sacred places have basic rules like modest attire to honor their sanctity.",
+          expMs: "Tempat ibadat suci mempunyai peraturan asas seperti berpakaian sopan bagi memelihara kesucian tempat tersebut."
+        },
+        {
+          type: "fill_blank",
+          qEn: "Ms. Amina emphasized that regardless of differences, all world religions teach ___, respect, and responsibility.",
+          qMs: "Cikgu Amina menegaskan bahawa tanpa mengira perbezaan, semua agama dunia mengajar ___, hormat, dan tanggungjawab.",
+          words: ["Kindness", "Anger", "Speed", "Wealth"],
+          correctWord: "Kindness",
+          hintEn: "It is the act of being friendly and generous.",
+          hintMs: "Ia bermaksud bersikap mesra, baik hati, dan pemurah.",
+          expEn: "Ethical teachings across religions strongly emphasize universal values like kindness.",
+          expMs: "Ajaran etika merentasi semua agama sangat menekankan nilai universal seperti kebaikan."
+        },
+        {
+          type: "mcq",
+          qEn: "Why do beliefs in life after death or reincarnation matter according to Ms. Amina?",
+          qMs: "Mengapakah kepercayaan terhadap hidup selepas mati atau kelahiran semula itu penting menurut Cikgu Amina?",
+          options: [
+            { textEn: "They encourage people to do good and live meaningful lives", textMs: "Ia menggalakkan manusia berbuat baik dan hidup bermakna" },
+            { textEn: "They help people find buried treasures", textMs: "Ia membantu orang mencari harta karun tersembunyi" },
+            { textEn: "They dictate mathematical formulas", textMs: "Ia menetapkan formula matematik" },
+            { textEn: "They stop people from reading books", textMs: "Ia melarang manusia daripada membaca buku" }
+          ],
+          correctIdx: 0,
+          hintEn: "It affects human moral actions on earth.",
+          hintMs: "Ia mempengaruhi tindakan moral manusia di bumi.",
+          expEn: "Belief in an afterlife or rebirth encourages accountability, driving believers to perform virtuous deeds.",
+          expMs: "Kepercayaan kepada hari akhirat atau kelahiran semula melahirkan rasa kebertanggungjawaban untuk berbuat baik."
+        },
+        {
+          type: "matching",
+          qEn: "Match the scripture to its religion as seen in the magic library:",
+          qMs: "Padankan kitab suci dengan agama seperti yang dilihat di perpustakaan sihir:",
+          left: ["Qur'an", "Vedas", "Bible"],
+          right: ["Islam", "Hinduism", "Christianity"],
+          correctPairs: {
+            "Qur'an": "Islam",
+            "Vedas": "Hinduism",
+            "Bible": "Christianity"
+          },
+          hintEn: "The Bible is for Christianity; the Vedas are for Hinduism.",
+          hintMs: "Al-Quran untuk Islam; Vedas untuk agama Hindu.",
+          expEn: "The magical library highlights key scriptures representing historical spiritual guides.",
+          expMs: "Perpustakaan sihir mempamerkan kitab suci utama yang menjadi panduan rohani sejarah manusia."
+        }
+      ],
+      3: [ // Book 3: General Characteristics of World Religions
+        {
+          type: "mcq",
+          qEn: "How many general characteristics of world religions are explicitly highlighted in 'General Characteristics of World Religions'?",
+          qMs: "Berapakah ciri umum agama dunia yang diterangkan secara khusus dalam 'General Characteristics of World Religions'?",
+          options: [
+            { textEn: "10 Characteristics", textMs: "10 Ciri-ciri" },
+            { textEn: "5 Characteristics", textMs: "5 Ciri-ciri" },
+            { textEn: "12 Characteristics", textMs: "12 Ciri-ciri" },
+            { textEn: "8 Characteristics", textMs: "8 Ciri-ciri" }
+          ],
+          correctIdx: 0,
+          hintEn: "It is a double digit number, the base of our decimal system.",
+          hintMs: "Ia merupakan nombor dua digit, asas sistem perpuluhan.",
+          expEn: "'General Characteristics of World Religions' lists exactly ten structural attributes common to major world religions.",
+          expMs: "'General Characteristics of World Religions' menyenaraikan tepat sepuluh ciri struktur yang dimiliki oleh kebanyakan agama utama dunia."
+        },
+        {
+          type: "mcq",
+          qEn: "Which religion is described as referring to God as Yahweh, emphasizing a unique covenant with its people?",
+          qMs: "Agama manakah yang diterangkan merujuk kepada Tuhan sebagai Yahweh, menekankan perjanjian unik?",
+          options: [
+            { textEn: "Judaism", textMs: "Yahudi (Judaism)" },
+            { textEn: "Islam", textMs: "Islam" },
+            { textEn: "Christianity", textMs: "Kristian (Christianity)" },
+            { textEn: "Zoroastrianism", textMs: "Zoroastrianisme" }
+          ],
+          correctIdx: 0,
+          hintEn: "Their sacred text is the Tanakh.",
+          hintMs: "Kitab suci mereka ialah Tanakh.",
+          expEn: "Judaism worships Yahweh, highlighting the covenant relationship established in historical scriptures.",
+          expMs: "Agama Yahudi merujuk Tuhan sebagai Yahweh, menekankan perjanjian suci dengan umatnya."
+        },
+        {
+          type: "matching",
+          qEn: "Match the Ultimate Reality concept to its corresponding religion:",
+          qMs: "Padankan konsep Realiti Mutlak dengan agama yang sepadan:",
+          left: ["Brahman", "Ahura Mazda", "Allah"],
+          right: ["Hinduism", "Zoroastrianism", "Islam"],
+          correctPairs: {
+            "Brahman": "Hinduism",
+            "Ahura Mazda": "Zoroastrianism",
+            "Allah": "Islam"
+          },
+          hintEn: "Ahura Mazda is worshipped in Zoroastrianism; Brahman is the ultimate reality in Hinduism.",
+          hintMs: "Ahura Mazda disembah dalam Zoroastrianisme; Brahman adalah realiti mutlak dalam Hinduisme.",
+          expEn: "Different world religions have specific names and descriptions for their supreme entities.",
+          expMs: "Agama dunia yang berbeza mempunyai nama dan huraian tersendiri bagi konsep ketuhanan mereka."
+        },
+        {
+          type: "fill_blank",
+          qEn: "Every religion has a 'community of ___' that distinguishes it from a purely individual belief.",
+          qMs: "Setiap agama mempunyai 'komuniti ___' yang membezakannya daripada kepercayaan peribadi semata-mata.",
+          words: ["Followers", "Scientists", "Leaders", "Athletes"],
+          correctWord: "Followers",
+          hintEn: "These are people who study and practice the religion's teachings.",
+          hintMs: "Mereka merupakan individu yang mempelajari dan mengamalkan ajaran agama tersebut.",
+          expEn: "The presence of a community of followers highlights that religion is social and cooperative.",
+          expMs: "Kehadiran komuniti pengikut membuktikan bahawa agama bersifat sosial dan saling bekerjasama."
+        },
+        {
+          type: "mcq",
+          qEn: "In Islam, which combined sources cover all aspects of daily life, including social, economic, and legal matters?",
+          qMs: "Dalam Islam, sumber gabungan manakah yang meliputi seluruh aspek kehidupan harian termasuk sosial, ekonomi, dan perundangan?",
+          options: [
+            { textEn: "The Qur'an and the Sunnah", textMs: "Al-Quran dan Al-Sunnah" },
+            { textEn: "The Vedas and Sanskrit poems", textMs: "Kitab Vedas dan puisi Sanskrit" },
+            { textEn: "The Ten Commandments", textMs: "Sepuluh Rukun (Ten Commandments)" },
+            { textEn: "The Dharma rules", textMs: "Aturan Dharma" }
+          ],
+          correctIdx: 0,
+          hintEn: "It is the holy book combined with Prophet's traditions.",
+          hintMs: "Ia merupakan kitab suci yang digabungkan dengan tradisi kenabian.",
+          expEn: "Islam provides a complete lifestyle guidance through the Qur'an and Sunnah.",
+          expMs: "Islam menyediakan panduan hidup yang lengkap menerusi Al-Quran dan As-Sunnah."
+        },
+        {
+          type: "drag_drop",
+          qEn: "Match the legal/moral system with its source religion:",
+          qMs: "Padankan sistem undang-undang/moral dengan agama asalnya:",
+          draggables: [
+            { text: "Shariah Law", id: "shariah" },
+            { text: "Dharma", id: "dharma" }
+          ],
+          targets: [
+            { text: "Islam", matches: "shariah" },
+            { text: "Hinduism", matches: "dharma" }
+          ],
+          hintEn: "Shariah is Islamic; Dharma is Hindu.",
+          hintMs: "Syariah adalah Islam; Dharma adalah Hindu.",
+          expEn: "Religions establish structured moral and legal guidelines to distinguish right from wrong actions.",
+          expMs: "Agama menetapkan garis panduan moral dan undang-undang yang teratur untuk membezakan tindakan betul dan salah."
+        },
+        {
+          type: "mcq",
+          qEn: "Which of the following describes the general characteristic 'Religion as a System of Belief, Philosophy, and Worldview'?",
+          qMs: "Kenyataan manakah yang menerangkan ciri umum 'Agama sebagai Sistem Kepercayaan, Falsafah, dan Pandangan Dunia'?",
+          options: [
+            { textEn: "It answers big questions like: Where do we come from? What is our purpose?", textMs: "Ia menjawab persoalan besar seperti: Dari mana kita datang? Apakah tujuan kita?" },
+            { textEn: "It focuses only on physical fitness programs", textMs: "Ia hanya memfokuskan kepada program kecergasan fizikal" },
+            { textEn: "It requires learning multiple foreign trade languages", textMs: "Ia memerlukan pembelajaran pelbagai bahasa perdagangan luar" },
+            { textEn: "It is strictly about memorizing the dates of festivals", textMs: "Ia hanyalah mengenai menghafal tarikh perayaan" }
+          ],
+          correctIdx: 0,
+          hintEn: "It shapes how people think about the origin and end of life.",
+          hintMs: "Ia membentuk cara manusia berfikir tentang permulaan dan pengakhiran hidup.",
+          expEn: "Religion provides comprehensive answers to cosmic questions, guiding how individuals perceive reality.",
+          expMs: "Agama membekalkan jawapan menyeluruh kepada persoalan kosmik, membentuk cara individu melihat reality."
+        },
+        {
+          type: "fill_blank",
+          qEn: "Many religions use a sacred language in rituals, such as ___ for Hinduism.",
+          qMs: "Banyak agama menggunakan bahasa suci dalam ritual, seperti ___ untuk agama Hindu.",
+          words: ["Sanskrit", "Arabic", "Hebrew", "Latin"],
+          correctWord: "Sanskrit",
+          hintEn: "It is an ancient Indo-Aryan language.",
+          hintMs: "Ia merupakan bahasa kuno Indo-Aryan.",
+          expEn: "Sanskrit is considered a sacred language highly crucial to Hindu scriptures and hymns.",
+          expMs: "Bahasa Sanskrit dianggap sebagai bahasa suci yang amat penting dalam kitab dan pujian Hindu."
+        },
+        {
+          type: "mcq",
+          qEn: "What are designated locations for worship and learning (e.g. mosques, churches, synagogues, temples) called?",
+          qMs: "Apakah nama yang diberikan kepada tempat khusus untuk beribadat dan belajar (contoh: masjid, gereja, sinagog, kuil)?",
+          options: [
+            { textEn: "Sacred places", textMs: "Tempat suci (Sacred places)" },
+            { textEn: "Civic centers", textMs: "Pusat komuniti awam" },
+            { textEn: "Marketplaces", textMs: "Pasar awam" },
+            { textEn: "Philosophical parks", textMs: "Taman falsafah" }
+          ],
+          correctIdx: 0,
+          hintEn: "These places are treated with extreme respect and modesty.",
+          hintMs: "Tempat-tempat ini dilayan dengan penuh penghormatan dan kesopanan.",
+          expEn: "Sacred places act as designated centers where the community of followers gather for prayer and studies.",
+          expMs: "Tempat suci bertindak sebagai pusat khusus untuk komuniti pengikut berkumpul bagi berdoa dan belajar."
+        },
+        {
+          type: "matching",
+          qEn: "Match the holy scripture with its designated religion:",
+          qMs: "Padankan kitab suci dengan agama yang ditetapkan:",
+          left: ["The Tanakh", "The Vedas", "The Qur'an"],
+          right: ["Judaism", "Hinduism", "Islam"],
+          correctPairs: {
+            "The Tanakh": "Judaism",
+            "The Vedas": "Hinduism",
+            "The Qur'an": "Islam"
+          },
+          hintEn: "The Tanakh contains Judaism's holy scriptures.",
+          hintMs: "Tanakh mengandungi kitab suci bagi penganut Yahudi.",
+          expEn: "Sacred texts serve as primary sources of divine guidance for their respective followers.",
+          expMs: "Kitab suci berfungsi sebagai sumber rujukan utama panduan ketuhanan bagi pengikut masing-masing."
+        }
+      ]
+    };
+
+    // --- GAME STATE VARIABLES ---
+    let currentBook = 1;
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let attemptsOnCurrentQuestion = 0;
+    let selectedLeftItem = null;
+    let matchedPairs = {}; // Stores temporarily matched pairs
+    let tapSelectedDraggable = null; // Mobile-friendly drag and drop state
+    let activeColorClasses = ["border-rose-500", "border-cyan-500", "border-amber-500", "border-lime-500"];
+    let activeLeaderboardFilter = 'all';
+
+    // On Load
+    window.onload = function() {
+      // Setup canvas animation
+      initCanvas();
+    };
+
+    // Show Main Menu View
+    function showMainMenu() {
+      document.getElementById('view-menu').classList.remove('hidden');
+      document.getElementById('view-game').classList.add('hidden');
+      document.getElementById('view-completion').classList.add('hidden');
+      document.getElementById('btn-menu-back').classList.add('hidden');
+      // stop celebrations
+      stopFireworks();
+    }
+
+    // Start a specific Quiz Set (1, 2, or 3)
+    function startQuizSet(bookId) {
+      currentBook = bookId;
+      currentQuestionIndex = 0;
+      score = 0;
+      
+      // Update header badge with real book titles
+      const badges = {
+        1: "Definition of Religion: An Introduction",
+        2: "The Journey Around the World of Religions",
+        3: "General Characteristics of World Religions"
+      };
+      document.getElementById('badge-book-info').innerText = badges[bookId];
+      
+      document.getElementById('view-menu').classList.add('hidden');
+      document.getElementById('view-game').classList.remove('hidden');
+      document.getElementById('btn-menu-back').classList.remove('hidden');
+      
+      initAudio();
+      if (!isMusicPlaying) {
+        startMusic();
+      }
+
+      loadQuestion();
+    }
+
+    // Load Question based on Current State
+    function loadQuestion() {
+      attemptsOnCurrentQuestion = 0;
+      selectedLeftItem = null;
+      matchedPairs = {};
+      tapSelectedDraggable = null;
+      
+      // Hide Toast
+      hideToast();
+      // Hide explanation panel
+      document.getElementById('explanation-panel').classList.add('hidden');
+
+      const questions = quizData[currentBook];
+      if (currentQuestionIndex >= questions.length) {
+        // Quest Complete!
+        completeQuest();
+        return;
+      }
+
+      // Update progress bar
+      document.getElementById('game-progress').innerHTML = `
+        <span>Question ${currentQuestionIndex + 1} of ${questions.length}</span>
+        <span class="block text-xs text-teal-600 font-bold italic mt-0.5">Soalan ${currentQuestionIndex + 1} dari ${questions.length}</span>
+      `;
+      document.getElementById('game-score').innerText = `${score} pts`;
+      updateStars();
+
+      const q = questions[currentQuestionIndex];
+      document.getElementById('q-text-en').innerText = q.qEn;
+      document.getElementById('q-text-ms').innerText = q.qMs;
+
+      // Render workspace according to type
+      const workspace = document.getElementById('answer-workspace');
+      workspace.innerHTML = "";
+
+      if (q.type === 'mcq') {
+        renderMCQ(q, workspace);
+      } else if (q.type === 'fill_blank') {
+        renderFillBlank(q, workspace);
+      } else if (q.type === 'matching') {
+        renderMatching(q, workspace);
+      } else if (q.type === 'drag_drop') {
+        renderDragDrop(q, workspace);
+      }
+    }
+
+    // Helper: Shuffle Array (Fisher-Yates)
+    function shuffleArray(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    // --- RENDER MCQ ---
+    function renderMCQ(q, container) {
+      // Create shuffled index map so correctness remains mapped
+      const indexedOptions = q.options.map((opt, idx) => ({ ...opt, originalIndex: idx }));
+      const shuffled = shuffleArray(indexedOptions);
+
+      const grid = document.createElement('div');
+      grid.className = "grid grid-cols-1 md:grid-cols-2 gap-4 w-full";
+
+      shuffled.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = "p-4 text-left bg-white border-4 border-slate-200 hover:border-purple-400 rounded-2xl shadow-sm hover:shadow-md transition-all bounce-hover flex flex-col justify-between";
+        btn.innerHTML = `
+          <span class="text-base md:text-lg font-bold text-slate-800">${opt.textEn}</span>
+          <span class="text-xs md:text-sm text-slate-500 font-medium italic mt-1">${opt.textMs}</span>
+        `;
+        btn.onclick = () => checkMCQ(opt.originalIndex, q.correctIdx);
+        grid.appendChild(btn);
+      });
+
+      container.appendChild(grid);
+    }
+
+    function checkMCQ(selectedIndex, correctIndex) {
+      if (selectedIndex === correctIndex) {
+        handleCorrectAnswer();
+      } else {
+        handleIncorrectAnswer();
+      }
+    }
+
+    // --- RENDER FILL IN BLANK ---
+    function renderFillBlank(q, container) {
+      const sentenceEn = q.qEn.replace("___", `<span id="blank-slot-en" class="inline-block border-b-4 border-dashed border-indigo-500 px-4 py-1 mx-1 font-bold text-indigo-600 bg-indigo-50/50 min-w-[100px] text-center">_____</span>`);
+      const sentenceMs = q.qMs.replace("___", `<span id="blank-slot-ms" class="inline-block border-b-4 border-dashed border-teal-500 px-4 py-1 mx-1 font-bold text-teal-600 bg-teal-50/50 min-w-[100px] text-center">_____</span>`);
+
+      const wrapper = document.createElement('div');
+      wrapper.className = "flex flex-col gap-6 w-full items-center";
+
+      const textBlock = document.createElement('div');
+      textBlock.className = "text-center w-full bg-slate-50 p-4 rounded-xl border border-slate-200";
+      textBlock.innerHTML = `
+        <p class="text-lg text-slate-700 font-medium">${sentenceEn}</p>
+        <p class="text-sm text-teal-600 font-semibold italic mt-2">${sentenceMs}</p>
+      `;
+      wrapper.appendChild(textBlock);
+
+      // Render floating word buttons
+      const wordContainer = document.createElement('div');
+      wordContainer.className = "flex flex-wrap gap-3 justify-center mt-2";
+      
+      const shuffledWords = shuffleArray(q.words);
+      shuffledWords.forEach(w => {
+        const wordBtn = document.createElement('button');
+        wordBtn.className = "px-5 py-2.5 bg-yellow-100 hover:bg-yellow-200 text-yellow-800 font-kids text-base rounded-2xl shadow-sm border-2 border-yellow-300 bounce-hover transition-all";
+        wordBtn.innerText = w;
+        wordBtn.onclick = () => {
+          // Fill virtual slots
+          document.getElementById('blank-slot-en').innerText = w;
+          document.getElementById('blank-slot-ms').innerText = w;
+          
+          // Verify
+          if (w === q.correctWord) {
+            handleCorrectAnswer();
+          } else {
+            handleIncorrectAnswer();
+            // Reset visual slots
+            setTimeout(() => {
+              document.getElementById('blank-slot-en').innerText = "_____";
+              document.getElementById('blank-slot-ms').innerText = "_____";
+            }, 1500);
+          }
+        };
+        wordContainer.appendChild(wordBtn);
+      });
+
+      wrapper.appendChild(wordContainer);
+      container.appendChild(wrapper);
+    }
+
+    // --- RENDER MATCHING COLUMNS ---
+    function renderMatching(q, container) {
+      const leftColItems = [...q.left];
+      const rightColItems = shuffleArray(q.right);
+
+      const wrapper = document.createElement('div');
+      wrapper.className = "grid grid-cols-2 gap-8 w-full relative";
+
+      const leftCol = document.createElement('div');
+      leftCol.className = "flex flex-col gap-3";
+      const rightCol = document.createElement('div');
+      rightCol.className = "flex flex-col gap-3";
+
+      leftColItems.forEach((leftItem, idx) => {
+        const itemBtn = document.createElement('button');
+        itemBtn.id = `match-left-${idx}`;
+        itemBtn.className = "p-3 bg-slate-50 border-4 border-slate-200 rounded-2xl shadow-sm text-left font-bold text-sm md:text-base text-slate-700 transition-all flex items-center justify-between";
+        itemBtn.innerHTML = `<span>${leftItem}</span><span class="match-indicator text-xs hidden">✓</span>`;
+        itemBtn.onclick = () => selectLeftMatchingItem(leftItem, `match-left-${idx}`);
+        leftCol.appendChild(itemBtn);
+      });
+
+      rightColItems.forEach((rightItem, idx) => {
+        const itemBtn = document.createElement('button');
+        itemBtn.id = `match-right-${idx}`;
+        itemBtn.className = "p-3 bg-slate-50 border-4 border-slate-200 rounded-2xl shadow-sm text-left font-bold text-sm md:text-base text-slate-700 transition-all flex items-center justify-between";
+        itemBtn.innerHTML = `<span>${rightItem}</span><span class="match-indicator text-xs hidden">✓</span>`;
+        itemBtn.onclick = () => selectRightMatchingItem(rightItem, `match-right-${idx}`, q);
+        rightCol.appendChild(itemBtn);
+      });
+
+      wrapper.appendChild(leftCol);
+      wrapper.appendChild(rightCol);
+      container.appendChild(wrapper);
+    }
+
+    function selectLeftMatchingItem(value, elemId) {
+      if (matchedPairs[value]) return;
+
+      if (selectedLeftItem) {
+        document.getElementById(selectedLeftItem.elemId).className = "p-3 bg-slate-50 border-4 border-slate-200 rounded-2xl shadow-sm text-left font-bold text-sm md:text-base text-slate-700 transition-all flex items-center justify-between";
+      }
+
+      selectedLeftItem = { value, elemId };
+      document.getElementById(elemId).className = "p-3 bg-purple-50 border-4 border-purple-500 rounded-2xl shadow-sm text-left font-bold text-sm md:text-base text-purple-700 transition-all flex items-center justify-between animate-pulse";
+    }
+
+    function selectRightMatchingItem(value, elemId, q) {
+      if (!selectedLeftItem) {
+        showTemporaryToast("Select an item on the LEFT column first! / Sila pilih item di lajur KIRI terlebih dahulu!", "Fikirkan padanan yang sesuai.");
+        return;
+      }
+
+      const activeColor = activeColorClasses[Object.keys(matchedPairs).length % activeColorClasses.length];
+
+      if (q.correctPairs[selectedLeftItem.value] === value) {
+        matchedPairs[selectedLeftItem.value] = value;
+        
+        const lElem = document.getElementById(selectedLeftItem.elemId);
+        const rElem = document.getElementById(elemId);
+
+        lElem.className = `p-3 bg-emerald-50 border-4 ${activeColor} rounded-2xl shadow-sm text-left font-bold text-sm md:text-base text-slate-700 transition-all flex items-center justify-between`;
+        lElem.querySelector('.match-indicator').classList.remove('hidden');
+
+        rElem.className = `p-3 bg-emerald-50 border-4 ${activeColor} rounded-2xl shadow-sm text-left font-bold text-sm md:text-base text-slate-700 transition-all flex items-center justify-between`;
+        rElem.querySelector('.match-indicator').classList.remove('hidden');
+
+        selectedLeftItem = null;
+        playNote(440, 'sine', 0.1, audioCtx.currentTime);
+
+        if (Object.keys(matchedPairs).length === q.left.length) {
+          handleCorrectAnswer();
+        }
+      } else {
+        handleIncorrectAnswer();
+        const lElem = document.getElementById(selectedLeftItem.elemId);
+        lElem.className = "p-3 bg-slate-50 border-4 border-slate-200 rounded-2xl shadow-sm text-left font-bold text-sm md:text-base text-slate-700 transition-all flex items-center justify-between";
+        selectedLeftItem = null;
+      }
+    }
+
+    // --- RENDER DRAG & DROP ---
+    function renderDragDrop(q, container) {
+      const wrapper = document.createElement('div');
+      wrapper.className = "flex flex-col gap-6 w-full";
+
+      const guide = document.createElement('p');
+      guide.className = "text-xs font-bold text-center text-slate-400";
+      guide.innerText = "👆 Desktop: Drag & Drop | Mobile: Tap Draggable card, then tap Target slot / Ketik kad, kemudian ketik slot Sasaran!";
+      wrapper.appendChild(guide);
+
+      const dragContainer = document.createElement('div');
+      dragContainer.className = "flex flex-wrap gap-4 justify-center";
+
+      const shuffledDrags = shuffleArray(q.draggables);
+      shuffledDrags.forEach(drag => {
+        const dCard = document.createElement('div');
+        dCard.id = `drag-${drag.id}`;
+        dCard.className = "px-5 py-3 bg-white border-4 border-slate-300 hover:border-indigo-400 rounded-2xl shadow-md font-kids cursor-pointer text-slate-700 transition-all select-none text-center min-w-[110px]";
+        dCard.innerText = drag.text;
+        dCard.draggable = true;
+
+        dCard.ondragstart = (e) => {
+          e.dataTransfer.setData("text/plain", drag.id);
+        };
+
+        dCard.onclick = () => {
+          if (tapSelectedDraggable) {
+            document.getElementById(`drag-${tapSelectedDraggable.id}`).classList.remove('border-indigo-500', 'bg-indigo-50', 'animate-pulse');
+          }
+          tapSelectedDraggable = drag;
+          dCard.classList.add('border-indigo-500', 'bg-indigo-50', 'animate-pulse');
+        };
+
+        dragContainer.appendChild(dCard);
+      });
+      wrapper.appendChild(dragContainer);
+
+      const targetContainer = document.createElement('div');
+      targetContainer.className = "grid grid-cols-1 md:grid-cols-2 gap-4 w-full";
+
+      q.targets.forEach((target, idx) => {
+        const tCard = document.createElement('div');
+        tCard.id = `target-${idx}`;
+        tCard.className = "p-4 bg-slate-50 border-4 border-dashed border-slate-300 rounded-2xl flex flex-col items-center justify-center min-h-[100px] text-center gap-2";
+        tCard.innerHTML = `
+          <p class="text-sm md:text-base font-bold text-slate-600">${target.text}</p>
+          <div class="drop-zone w-full py-2 bg-white/50 border-2 border-slate-200 rounded-xl min-h-[40px] flex items-center justify-center font-kids text-indigo-600 italic text-sm">
+            Drop / Tap here!
+          </div>
+        `;
+
+        tCard.ondragover = (e) => e.preventDefault();
+        tCard.ondrop = (e) => {
+          e.preventDefault();
+          const dragId = e.dataTransfer.getData("text/plain");
+          evaluateDrop(dragId, target.matches, tCard, dragId);
+        };
+
+        tCard.onclick = () => {
+          if (!tapSelectedDraggable) {
+            showTemporaryToast("Select a draggable word first! / Pilih kad perkataan terlebih dahulu!", "Ketuk kad di atas.");
+            return;
+          }
+          evaluateDrop(tapSelectedDraggable.id, target.matches, tCard, tapSelectedDraggable.id);
+        };
+
+        targetContainer.appendChild(tCard);
+      });
+
+      wrapper.appendChild(targetContainer);
+      container.appendChild(wrapper);
+    }
+
+    function evaluateDrop(draggedId, expectedId, targetCardElement, matchedId) {
+      if (draggedId === expectedId) {
+        const sourceCard = document.getElementById(`drag-${draggedId}`);
+        if (sourceCard) sourceCard.classList.add('hidden');
+        
+        const dropZone = targetCardElement.querySelector('.drop-zone');
+        dropZone.className = "drop-zone w-full py-2 bg-emerald-100 border-2 border-emerald-400 rounded-xl min-h-[40px] flex items-center justify-center font-kids text-emerald-800 text-sm";
+        
+        const q = quizData[currentBook][currentQuestionIndex];
+        const dragObj = q.draggables.find(d => d.id === draggedId);
+        dropZone.innerText = `✓ ${dragObj.text}`;
+
+        tapSelectedDraggable = null;
+        playNote(493.88, 'sine', 0.1, audioCtx.currentTime);
+
+        let allPlaced = true;
+        q.targets.forEach((target, index) => {
+          const zone = document.getElementById(`target-${index}`).querySelector('.drop-zone');
+          if (!zone.innerText.startsWith('✓')) {
+            allPlaced = false;
+          }
+        });
+
+        if (allPlaced) {
+          handleCorrectAnswer();
+        }
+      } else {
+        handleIncorrectAnswer();
+        if (tapSelectedDraggable) {
+          document.getElementById(`drag-${tapSelectedDraggable.id}`).classList.remove('border-indigo-500', 'bg-indigo-50', 'animate-pulse');
+          tapSelectedDraggable = null;
+        }
+      }
+    }
+
+
+    // --- QUIZ GAME LOGIC FLOW ---
+
+    function handleCorrectAnswer() {
+      const pts = attemptsOnCurrentQuestion === 0 ? 100 : (attemptsOnCurrentQuestion === 1 ? 50 : 20);
+      score += pts;
+      document.getElementById('game-score').innerText = `${score} pts`;
+
+      playSoundCorrect();
+      triggerSingleFirework();
+
+      const q = quizData[currentBook][currentQuestionIndex];
+      document.getElementById('exp-text-en').innerText = q.expEn;
+      document.getElementById('exp-text-ms').innerText = q.expMs;
+      
+      const expPanel = document.getElementById('explanation-panel');
+      expPanel.classList.remove('hidden');
+      expPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+      const workspace = document.getElementById('answer-workspace');
+      workspace.style.pointerEvents = 'none';
+
+      setTimeout(() => {
+        workspace.style.pointerEvents = 'auto';
+        currentQuestionIndex++;
+        loadQuestion();
+      }, 4000);
+    }
+
+    function handleIncorrectAnswer() {
+      attemptsOnCurrentQuestion++;
+      playSoundWrong();
+      updateStars();
+
+      const q = quizData[currentBook][currentQuestionIndex];
+      showTemporaryToast(q.hintEn, q.hintMs);
+    }
+
+    function updateStars() {
+      const starBar = document.getElementById('star-bar');
+      if (attemptsOnCurrentQuestion === 0) {
+        starBar.innerText = "⭐⭐⭐";
+      } else if (attemptsOnCurrentQuestion === 1) {
+        starBar.innerText = "⭐⭐";
+      } else {
+        starBar.innerText = "⭐";
+      }
+    }
+
+    function showTemporaryToast(enMessage, msMessage) {
+      const toast = document.getElementById('toast-message');
+      const hint = document.getElementById('toast-hint');
+      
+      hint.innerHTML = `
+        <span class="block">Hint: ${enMessage}</span>
+        <span class="block text-[11px] text-teal-100 font-bold italic mt-0.5">Petunjuk: ${msMessage}</span>
+      `;
+      
+      toast.classList.remove('hidden');
+      setTimeout(() => {
+        toast.classList.add('hidden');
+      }, 3500);
+    }
+
+    function hideToast() {
+      document.getElementById('toast-message').classList.add('hidden');
+    }
+
+
+    // --- QUEST COMPLETION LOGIC ---
+    function completeQuest() {
+      document.getElementById('view-game').classList.add('hidden');
+      document.getElementById('view-completion').classList.remove('hidden');
+
+      document.getElementById('final-score').innerText = score;
+      playSoundSuccess();
+      startContinuousFireworks();
+    }
+
+    function saveScore() {
+      const nameInput = document.getElementById('player-name');
+      const name = nameInput.value.trim() || "Anonymous Hero";
+      
+      const records = JSON.parse(localStorage.getItem('minds_of_faith_leaderboard') || '[]');
+      records.push({ name, score, book: currentBook, timestamp: new Date().toLocaleDateString() });
+      records.sort((a, b) => b.score - a.score);
+      
+      // Store top 30 historically so they can be filtered properly
+      localStorage.setItem('minds_of_faith_leaderboard', JSON.stringify(records.slice(0, 30)));
+
+      nameInput.value = "";
+      showMainMenu();
+    }
+
+
+    // --- INTERACTIVE LEADERBOARD CONTROLS ---
+
+    function openLeaderboard() {
+      initAudio();
+      document.getElementById('modal-leaderboard').classList.remove('hidden');
+      // Default filter to 'all'
+      filterLeaderboard('all');
+    }
+
+    function closeLeaderboard() {
+      document.getElementById('modal-leaderboard').classList.add('hidden');
+    }
+
+    function filterLeaderboard(filterType) {
+      activeLeaderboardFilter = filterType;
+      
+      // Update Tab Styles
+      const tabs = ['all', 1, 2, 3];
+      tabs.forEach(t => {
+        const btn = document.getElementById(`tab-leaderboard-${t}`);
+        if (t === filterType) {
+          btn.className = "px-4 py-2 rounded-xl text-xs md:text-sm font-kids transition-all border-2 border-purple-500 bg-purple-600 text-white shadow-md scale-105";
+        } else {
+          btn.className = "px-4 py-2 rounded-xl text-xs md:text-sm font-kids transition-all border-2 border-slate-200 bg-white text-slate-600 hover:border-purple-300";
+        }
+      });
+
+      // Render items
+      displayLeaderboard();
+    }
+
+    function displayLeaderboard() {
+      const listContainer = document.getElementById('full-leaderboard-list');
+      const records = JSON.parse(localStorage.getItem('minds_of_faith_leaderboard') || '[]');
+
+      const bookShortTitles = {
+        1: "Def. of Religion",
+        2: "Journey of Religions",
+        3: "Gen. Characteristics"
+      };
+
+      // Filter records
+      let filteredRecords = records;
+      if (activeLeaderboardFilter !== 'all') {
+        filteredRecords = records.filter(r => r.book == activeLeaderboardFilter);
+      }
+
+      if (filteredRecords.length === 0) {
+        listContainer.innerHTML = `
+          <div class="text-center py-8 text-slate-400">
+            <span class="text-4xl block mb-2">⭐</span>
+            <p class="font-kids text-slate-500">No records found for this category!</p>
+            <p class="text-xs italic">Belum ada rekod untuk kategori ini!</p>
+          </div>
+        `;
+        return;
+      }
+
+      listContainer.innerHTML = "";
+      filteredRecords.forEach((record, idx) => {
+        const div = document.createElement('div');
+        div.className = "flex justify-between items-center bg-gradient-to-r from-purple-50 to-indigo-50 p-3.5 rounded-2xl border-2 border-purple-100 hover:border-purple-300 transition-all duration-150 transform hover:scale-[1.01] shadow-sm";
+        
+        // Dynamic rank medal icons for top 3
+        let rankBadge = `<span class="font-kids text-purple-700 text-base">#${idx + 1}</span>`;
+        if (idx === 0) rankBadge = `<span class="text-xl" title="Gold Medal">🥇</span>`;
+        else if (idx === 1) rankBadge = `<span class="text-xl" title="Silver Medal">🥈</span>`;
+        else if (idx === 2) rankBadge = `<span class="text-xl" title="Bronze Medal">🥉</span>`;
+
+        const shortTitle = bookShortTitles[record.book] || `Quest ${record.book}`;
+        
+        div.innerHTML = `
+          <div class="flex items-center gap-3">
+            <div class="w-8 flex justify-center">${rankBadge}</div>
+            <div>
+              <span class="font-kids text-slate-800 text-base md:text-lg block">${record.name}</span>
+              <div class="flex gap-2 items-center mt-0.5">
+                <span class="text-[10px] bg-purple-100 text-purple-700 px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider">${shortTitle}</span>
+                <span class="text-[10px] text-slate-400 font-bold">${record.timestamp}</span>
+              </div>
+            </div>
+          </div>
+          <div class="text-right">
+            <span class="font-kids text-teal-600 text-base md:text-lg block">${record.score} <span class="text-[10px] font-kids text-teal-500">PTS</span></span>
+          </div>
+        `;
+        listContainer.appendChild(div);
+      });
+    }
+
+    // Custom Reset Confirmation Modal Actions
+    function promptResetLeaderboard() {
+      document.getElementById('modal-confirm-reset').classList.remove('hidden');
+    }
+
+    function cancelResetLeaderboard() {
+      document.getElementById('modal-confirm-reset').classList.add('hidden');
+    }
+
+    function confirmResetLeaderboard() {
+      localStorage.removeItem('minds_of_faith_leaderboard');
+      document.getElementById('modal-confirm-reset').classList.add('hidden');
+      displayLeaderboard();
+      playSoundWrong(); // plays retro low reset chime
+    }
+
+
+    // --- CANVAS CELEBRATORY FIREWORKS ---
+    let canvas, ctx;
+    let fireworks = [];
+    let animationId = null;
+
+    function initCanvas() {
+      canvas = document.getElementById('canvas-fireworks');
+      ctx = canvas.getContext('2d');
+      resizeCanvas();
+      window.addEventListener('resize', resizeCanvas);
+    }
+
+    function resizeCanvas() {
+      if (canvas) {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+    }
+
+    class FireworkParticle {
+      constructor(x, y, color) {
+        this.x = x;
+        this.y = y;
+        this.color = color;
+        this.angle = Math.random() * Math.PI * 2;
+        this.speed = Math.random() * 5 + 2;
+        this.friction = 0.95;
+        this.gravity = 0.15;
+        this.alpha = 1;
+        this.decay = Math.random() * 0.015 + 0.015;
+      }
+
+      update() {
+        this.speed *= this.friction;
+        this.x += Math.cos(this.angle) * this.speed;
+        this.y += Math.sin(this.angle) * this.speed + this.gravity;
+        this.alpha -= this.decay;
+      }
+
+      draw() {
+        ctx.save();
+        ctx.globalAlpha = this.alpha;
+        ctx.fillStyle = this.color;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, 3, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    function triggerSingleFirework() {
+      const colors = ['#FF6B6B', '#4ECDC4', '#FFE66D', '#6C5CE7', '#FF8E53', '#2AF598'];
+      const x = Math.random() * canvas.width;
+      const y = Math.random() * (canvas.height * 0.5);
+      const color = colors[Math.floor(Math.random() * colors.length)];
+
+      for (let i = 0; i < 40; i++) {
+        fireworks.push(new FireworkParticle(x, y, color));
+      }
+
+      if (!animationId) {
+        animateFireworks();
+      }
+    }
+
+    let continuousInterval = null;
+    function startContinuousFireworks() {
+      if (continuousInterval) clearInterval(continuousInterval);
+      continuousInterval = setInterval(() => {
+        triggerSingleFirework();
+      }, 800);
+    }
+
+    function stopFireworks() {
+      if (continuousInterval) clearInterval(continuousInterval);
+      fireworks = [];
+      if (animationId) {
+        cancelAnimationFrame(animationId);
+        animationId = null;
+      }
+      if (ctx) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+    }
+
+    function animateFireworks() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      fireworks = fireworks.filter(p => p.alpha > 0);
+      fireworks.forEach(p => {
+        p.update();
+        p.draw();
+      });
+
+      if (fireworks.length > 0) {
+        animationId = requestAnimationFrame(animateFireworks);
+      } else {
+        animationId = null;
+      }
+    }
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,1483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive Islamic Quiz - Dr. MRAR (2026)</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons for Beautiful UI -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=Noto+Naskh+Arabic:wght@400;700&display=swap" rel="stylesheet">
+  
+  <style>
+    body {
+      font-family: 'Fredoka', sans-serif;
+      background: radial-gradient(circle at center, #115e59 0%, #0f172a 100%);
+    }
+    .arabic-font {
+      font-family: 'Noto Naskh Arabic', serif;
+    }
+    /* Elegant Neumorphic & Glassmorphism effects for educational kids games */
+    .glass-card {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 2px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+    }
+    .glow-btn {
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .glow-btn:hover {
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: 0 10px 20px rgba(20, 184, 166, 0.4);
+    }
+    .glow-btn:active {
+      transform: translateY(1px);
+    }
+    .star-animation {
+      animation: pulseStar 1.5s infinite ease-in-out;
+    }
+    @keyframes pulseStar {
+      0%, 100% { transform: scale(1) rotate(0deg); opacity: 1; }
+      50% { transform: scale(1.2) rotate(15deg); opacity: 0.8; }
+    }
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #14b8a6;
+      border-radius: 9999px;
+    }
+  </style>
+</head>
+<body class="min-h-screen text-white overflow-x-hidden flex flex-col justify-between relative">
+
+  <!-- Confetti/Fireworks Canvas overlay for celebration -->
+  <canvas id="celebrationCanvas" class="pointer-events-none absolute inset-0 z-50 w-full h-full"></canvas>
+
+  <!-- BACKGROUND ISLAMIC DECORATIVE SHAPES -->
+  <div class="absolute inset-0 overflow-hidden pointer-events-none opacity-10">
+    <svg class="absolute -top-12 -left-12 w-96 h-96 text-teal-400" fill="currentColor" viewBox="0 0 100 100">
+      <path d="M50 0 L61 39 L100 50 L61 61 L50 100 L39 61 L0 50 L39 39 Z" />
+    </svg>
+    <svg class="absolute -bottom-12 -right-12 w-96 h-96 text-emerald-400" fill="currentColor" viewBox="0 0 100 100">
+      <path d="M50 0 L61 39 L100 50 L61 61 L50 100 L39 61 L0 50 L39 39 Z" />
+    </svg>
+    <div class="absolute top-1/3 right-10 w-48 h-48 border-4 border-dashed border-teal-500 rounded-full"></div>
+    <div class="absolute bottom-1/3 left-10 w-32 h-32 border-4 border-double border-emerald-500 rounded-full"></div>
+  </div>
+
+  <!-- HEADER BAR WITH CONTROLS -->
+  <header class="w-full px-6 py-4 flex flex-wrap items-center justify-between gap-4 z-40 bg-teal-950/60 border-b border-teal-800/50 backdrop-blur-md">
+    <div class="flex items-center gap-3">
+      <div class="bg-teal-500 p-2 rounded-xl shadow-lg shadow-teal-500/20">
+        <i class="fa-solid fa-mosque text-2xl text-teal-950"></i>
+      </div>
+      <div>
+        <h1 class="text-xl md:text-2xl font-bold tracking-wide text-teal-300">ISLAMIC KNOWLEDGE ADVENTURE</h1>
+        <p class="text-xs text-teal-400 font-medium italic">Kembara Ilmu Islam Interaktif &bull; Dr. MRAR Series</p>
+      </div>
+    </div>
+    
+    <div class="flex items-center gap-4">
+      <!-- Music controls -->
+      <div class="bg-teal-900/50 px-4 py-2 rounded-full border border-teal-700/40 flex items-center gap-3">
+        <button id="toggleAudioBtn" onclick="toggleMusic()" class="text-teal-300 hover:text-white transition-colors duration-200">
+          <i id="musicIcon" class="fa-solid fa-volume-xmark text-lg"></i>
+        </button>
+        <input id="volumeSlider" type="range" min="0" max="1" step="0.05" value="0.4" oninput="changeVolume(this.value)" class="w-20 h-1.5 bg-teal-950 rounded-lg appearance-none cursor-pointer accent-teal-400">
+        <span class="text-xs font-semibold text-teal-400">BGM</span>
+      </div>
+      
+      <!-- Back to Main Menu Button (Always Available) -->
+      <button id="backToMenuBtn" onclick="showMainMenu()" class="hidden bg-rose-600/90 hover:bg-rose-500 text-white px-4 py-2 rounded-xl text-sm font-bold shadow-lg transition-all duration-200 flex items-center gap-2">
+        <i class="fa-solid fa-house"></i>
+        <span>Menu Utama <span class="block text-[10px] font-normal italic">Main Menu</span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER FOR SCREENS -->
+  <main class="flex-grow flex items-center justify-center p-4 md:p-8 z-30 w-full max-w-6xl mx-auto">
+    
+    <!-- SCREEN 1: MAIN MENU -->
+    <div id="mainMenuScreen" class="w-full max-w-3xl glass-card rounded-3xl p-6 md:p-10 text-center relative overflow-hidden animate-fade-in">
+      <div class="absolute top-0 right-0 w-32 h-32 bg-teal-500/10 rounded-full blur-2xl"></div>
+      
+      <div class="mb-6 relative inline-block">
+        <i class="fa-solid fa-star text-teal-400 text-3xl star-animation absolute -top-4 -left-4"></i>
+        <i class="fa-solid fa-star text-teal-400 text-3xl star-animation absolute -bottom-4 -right-4"></i>
+        <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2314b8a6'><path d='M12 2L14.85 8.76L22 9.24L16.5 13.97L18.18 21L12 17.27L5.82 21L7.5 13.97L2 9.24L9.15 8.76L12 2Z'/></svg>" class="w-20 h-20 mx-auto drop-shadow-[0_0_15px_rgba(20,184,166,0.5)]" alt="Star Logo">
+      </div>
+
+      <h2 class="text-3xl md:text-5xl font-black tracking-tight text-white uppercase drop-shadow">
+        Interactive Quiz Game
+      </h2>
+      <p class="text-lg md:text-xl text-teal-300 font-bold italic mb-6 mt-1">
+        Kuiz Game Interaktif Agama Islam
+      </p>
+
+      <p class="text-sm md:text-base text-gray-300 max-w-lg mx-auto mb-10 leading-relaxed bg-teal-950/40 p-4 rounded-2xl border border-teal-800/30">
+        Choose a module based on the educational series written by <span class="text-teal-300 font-semibold">Dr. Mohd Rosmizi bin Abd Rahman (Dr. MRAR)</span> published in 2026.
+        <span class="block text-xs text-teal-400 mt-2 italic">Pilih modul berasaskan siri buku pendidikan oleh Dr. Mohd Rosmizi bin Abd Rahman (Dr. MRAR) terbitan tahun 2026.</span>
+      </p>
+
+      <!-- GAME SET SELECTORS -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
+        
+        <!-- MODULE 1 CARD -->
+        <button onclick="startQuizSet(1)" class="glow-btn text-left bg-gradient-to-br from-teal-900/90 to-teal-950/90 p-5 rounded-2xl border-2 border-teal-700/60 flex items-start gap-4 hover:border-teal-400 group">
+          <div class="bg-teal-500/20 text-teal-300 p-4 rounded-xl group-hover:bg-teal-400 group-hover:text-teal-950 transition-colors duration-300">
+            <i class="fa-solid fa-clock-rotate-left text-2xl"></i>
+          </div>
+          <div class="flex-grow">
+            <span class="text-[11px] font-bold tracking-wider uppercase text-teal-400 bg-teal-900/80 px-2 py-0.5 rounded">SET 1 &bull; HISTORY</span>
+            <h3 class="text-lg font-black text-white mt-1 group-hover:text-teal-300 transition-colors duration-200">Islam: History & the Prophet</h3>
+            <p class="text-xs text-teal-100/70 mt-1 italic">Islam: Sejarah dan Nabi &bull; 10 Questions</p>
+          </div>
+        </button>
+
+        <!-- MODULE 2 CARD -->
+        <button onclick="startQuizSet(2)" class="glow-btn text-left bg-gradient-to-br from-emerald-900/90 to-emerald-950/90 p-5 rounded-2xl border-2 border-emerald-700/60 flex items-start gap-4 hover:border-emerald-400 group">
+          <div class="bg-emerald-500/20 text-emerald-300 p-4 rounded-xl group-hover:bg-emerald-400 group-hover:text-emerald-950 transition-colors duration-300">
+            <i class="fa-solid fa-book-open-reader text-2xl"></i>
+          </div>
+          <div class="flex-grow">
+            <span class="text-[11px] font-bold tracking-wider uppercase text-emerald-400 bg-emerald-900/80 px-2 py-0.5 rounded">SET 2 &bull; TEACHINGS</span>
+            <h3 class="text-lg font-black text-white mt-1 group-hover:text-emerald-300 transition-colors duration-200 font-fredoka">Core Teachings & Beliefs</h3>
+            <p class="text-xs text-emerald-100/70 mt-1 italic">Ajaran Utama, Kepercayaan & Kerohanian &bull; 10 Questions</p>
+          </div>
+        </button>
+
+      </div>
+
+      <!-- LEADERBOARD SECTION PREVIEW -->
+      <div class="mt-12 pt-6 border-t border-teal-900/40 max-w-xl mx-auto">
+        <button onclick="toggleLeaderboardModal(true)" class="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-teal-950 px-5 py-2.5 rounded-full font-bold text-sm shadow-md transition-all duration-200">
+          <i class="fa-solid fa-trophy"></i>
+          <span>View Leaderboard / Lihat Kedudukan</span>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- SCREEN 2: ACTIVE QUIZ AREA -->
+    <div id="quizScreen" class="hidden w-full max-w-4xl glass-card rounded-3xl p-6 md:p-8 flex flex-col relative animate-fade-in">
+      
+      <!-- TOP PANEL: Progress & Stats -->
+      <div class="flex items-center justify-between gap-4 border-b border-teal-800/50 pb-4 mb-6">
+        <div class="flex items-center gap-3">
+          <span id="quizModuleBadge" class="text-xs font-bold tracking-wider uppercase text-teal-950 bg-teal-400 px-3 py-1 rounded-full">Set 1</span>
+          <span class="text-sm font-semibold text-teal-300">
+            Question <span id="currentQuestionNum">1</span>/10
+            <span class="text-xs text-teal-500 block italic">Soalan <span id="currentQuestionNumBM">1</span>/10</span>
+          </span>
+        </div>
+        
+        <!-- Score and Streaks -->
+        <div class="flex items-center gap-4">
+          <div class="bg-teal-950/80 px-4 py-2 rounded-xl text-center border border-teal-800/40">
+            <span class="block text-[10px] uppercase font-bold text-teal-400">SCORE / SKOR</span>
+            <span id="scoreDisplay" class="text-lg font-bold text-teal-300">0</span>
+          </div>
+          <div id="timerContainer" class="bg-teal-950/80 px-4 py-2 rounded-xl text-center border border-teal-800/40 min-w-[70px]">
+            <span class="block text-[10px] uppercase font-bold text-amber-400">TIME / MASA</span>
+            <span id="timerDisplay" class="text-lg font-bold text-amber-300">0s</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROGRESS BAR -->
+      <div class="w-full bg-teal-950/60 rounded-full h-3 mb-6 p-0.5 border border-teal-800/30 overflow-hidden">
+        <div id="progressBarFill" class="bg-gradient-to-r from-teal-500 to-emerald-400 h-2 rounded-full transition-all duration-300" style="width: 10%;"></div>
+      </div>
+
+      <!-- QUESTION TEXT (BILINGUAL) -->
+      <div class="bg-teal-950/40 border border-teal-800/20 p-5 rounded-2xl mb-6 shadow-inner text-center">
+        <!-- English Large -->
+        <h3 id="questionTextEN" class="text-lg md:text-2xl font-bold leading-snug text-white tracking-wide">
+          Loading question text in English...
+        </h3>
+        <!-- Divider icon -->
+        <div class="my-2 text-teal-500/40"><i class="fa-solid fa-ellipsis"></i></div>
+        <!-- BM Secondary -->
+        <p id="questionTextBM" class="text-sm md:text-base italic text-teal-300 font-medium leading-relaxed">
+          Memuatkan teks soalan dalam Bahasa Melayu...
+        </p>
+      </div>
+
+      <!-- INTERACTIVE QUESTION ACTION SLOTS (GAYA ADVANCED EDUTECH) -->
+      <div id="questionActionArea" class="flex-grow flex flex-col justify-center min-h-[250px] mb-6">
+        <!-- Dynamic content for quiz style is loaded here -->
+      </div>
+
+      <!-- HINT & FEEDBACK DRAWER -->
+      <div id="hintFeedbackBox" class="hidden rounded-2xl p-4 text-center border transition-all duration-300">
+        <p id="feedbackTitle" class="text-lg font-black uppercase mb-1"></p>
+        <p id="feedbackMsgEN" class="text-sm font-semibold"></p>
+        <p id="feedbackMsgBM" class="text-xs italic opacity-90 mt-1"></p>
+      </div>
+
+    </div>
+
+    <!-- SCREEN 3: RESULTS & LEADERBOARD SUBMISSION -->
+    <div id="resultScreen" class="hidden w-full max-w-2xl glass-card rounded-3xl p-6 md:p-10 text-center relative overflow-hidden animate-fade-in">
+      
+      <!-- Celebratory Ribbons and Stars SVG -->
+      <div class="mb-4">
+        <i class="fa-solid fa-trophy text-amber-400 text-7xl drop-shadow-[0_0_20px_rgba(245,158,11,0.5)] star-animation"></i>
+      </div>
+
+      <h2 class="text-3xl md:text-4xl font-extrabold text-white">QUIZ COMPLETED!</h2>
+      <p class="text-lg text-teal-300 font-bold italic mb-6">Kuiz Selesai Berjaya!</p>
+
+      <div class="bg-teal-950/60 p-6 rounded-2xl border border-teal-800/40 mb-6 max-w-md mx-auto">
+        <p class="text-xs text-teal-400 uppercase tracking-widest font-bold">Your Achievements / Pencapaian Anda</p>
+        
+        <div class="grid grid-cols-2 gap-4 mt-4">
+          <div class="bg-teal-900/40 p-3 rounded-xl border border-teal-800/30">
+            <span class="block text-2xl font-extrabold text-emerald-400" id="finalScoreText">1000</span>
+            <span class="text-xs text-gray-300">Total Score / Skor Jumlah</span>
+          </div>
+          <div class="bg-teal-900/40 p-3 rounded-xl border border-teal-800/30">
+            <span class="block text-2xl font-extrabold text-teal-400" id="finalTimeText">45s</span>
+            <span class="text-xs text-gray-300">Completion Time / Masa</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- LEADERBOARD SUBMISSION FORM -->
+      <div class="max-w-md mx-auto bg-teal-950/40 p-6 rounded-2xl border border-teal-800/30 mb-6">
+        <h4 class="text-sm font-bold uppercase text-amber-300 tracking-wider">Save Your Score / Simpan Skor Anda</h4>
+        <p class="text-xs text-gray-300 mb-4 mt-1">Enter your nickname to climb the educational ranks!</p>
+        
+        <div class="flex gap-2">
+          <input id="playerNameInput" type="text" placeholder="Enter Nickname..." maxlength="15" class="flex-grow px-4 py-3 bg-teal-900/60 border-2 border-teal-700 rounded-xl text-white placeholder-teal-500/60 font-bold focus:outline-none focus:border-teal-400 text-center">
+          <button onclick="submitScore()" class="bg-teal-500 hover:bg-teal-400 text-teal-950 px-6 py-3 rounded-xl font-bold transition-all duration-200">
+            SUBMIT
+          </button>
+        </div>
+      </div>
+
+      <div class="flex justify-center gap-4">
+        <button onclick="showMainMenu()" class="bg-teal-600/90 hover:bg-teal-500 text-white px-6 py-3 rounded-xl font-black shadow-lg transition-all duration-200">
+          Main Menu / Menu Utama
+        </button>
+        <button id="retrySetBtn" onclick="restartQuiz()" class="bg-amber-500 hover:bg-amber-400 text-teal-950 px-6 py-3 rounded-xl font-black shadow-lg transition-all duration-200">
+          Try Again / Cuba Lagi
+        </button>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- LEADERBOARD OVERLAY MODAL -->
+  <div id="leaderboardModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-fade-in">
+    <div class="w-full max-w-lg glass-card rounded-3xl p-6 border-2 border-teal-500">
+      <div class="flex items-center justify-between border-b border-teal-800/40 pb-3 mb-4">
+        <h3 class="text-xl font-black text-teal-300 flex items-center gap-2">
+          <i class="fa-solid fa-trophy text-amber-400"></i>
+          <span>LEADERBOARD / PAPAN KEDUDUKAN</span>
+        </h3>
+        <button onclick="toggleLeaderboardModal(false)" class="text-gray-400 hover:text-white">
+          <i class="fa-solid fa-xmark text-xl"></i>
+        </button>
+      </div>
+      
+      <div class="overflow-y-auto max-h-[300px] pr-2 space-y-2" id="leaderboardEntries">
+        <!-- Rendered dynamically -->
+      </div>
+      
+      <div class="mt-6 text-center">
+        <button onclick="toggleLeaderboardModal(false)" class="bg-teal-500 hover:bg-teal-400 text-teal-950 px-6 py-2.5 rounded-xl font-bold text-sm transition-all duration-200">
+          Close / Tutup
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- POPUP IN-GAME DIALOGS FOR ANSWERS -->
+  <!-- CORRECT ANSWER REVEN MODAL -->
+  <div id="correctPopup" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-teal-950/70 backdrop-blur-xs">
+    <div class="bg-teal-900 border-4 border-emerald-400 rounded-3xl p-6 text-center max-w-md w-full shadow-2xl relative overflow-hidden animate-scale-up">
+      <!-- Star decor -->
+      <div class="absolute -top-6 -left-6 text-amber-300 text-4xl star-animation"><i class="fa-solid fa-star"></i></div>
+      <div class="absolute -bottom-6 -right-6 text-amber-300 text-4xl star-animation"><i class="fa-solid fa-star"></i></div>
+      
+      <div class="w-20 h-20 bg-emerald-500 text-teal-950 flex items-center justify-center rounded-full text-4xl mx-auto mb-4 animate-bounce">
+        <i class="fa-solid fa-check-double"></i>
+      </div>
+      
+      <h3 class="text-2xl font-black text-emerald-300">EXCELLENT / CEMERLANG!</h3>
+      <div class="w-full h-1 bg-gradient-to-r from-teal-500 via-emerald-400 to-teal-500 my-3"></div>
+      
+      <p id="correctPopupExplanationEN" class="text-sm font-bold text-white mb-2"></p>
+      <p id="correctPopupExplanationBM" class="text-xs italic text-teal-200 mb-4"></p>
+      
+      <button onclick="dismissCorrectPopup()" class="w-full bg-emerald-400 hover:bg-emerald-300 text-teal-950 font-black py-3 rounded-2xl transition-all duration-200 uppercase tracking-wider">
+        Proceed / Seterusnya &rarr;
+      </button>
+    </div>
+  </div>
+
+  <!-- TRY AGAIN DIALOG WITH EDUCATIONAL HINT -->
+  <div id="wrongPopup" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-teal-950/70 backdrop-blur-xs">
+    <div class="bg-teal-900 border-4 border-rose-500 rounded-3xl p-6 text-center max-w-md w-full shadow-2xl relative animate-scale-up">
+      <div class="w-16 h-16 bg-rose-500 text-white flex items-center justify-center rounded-full text-3xl mx-auto mb-4">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+      </div>
+      
+      <h3 class="text-xl font-black text-rose-300">TRY AGAIN / CUBA LAGI!</h3>
+      <p class="text-xs text-rose-400 font-bold mb-3">Don't give up! Learning is a journey.</p>
+      
+      <div class="bg-teal-950/80 p-4 rounded-xl border border-rose-500/20 text-left mb-4">
+        <span class="block text-xs uppercase font-extrabold text-amber-400 mb-1">
+          <i class="fa-solid fa-lightbulb"></i> Educational Hint / Pembayang:
+        </span>
+        <p id="wrongPopupHintEN" class="text-sm text-gray-200 font-medium"></p>
+        <p id="wrongPopupHintBM" class="text-xs text-rose-200 italic mt-1"></p>
+      </div>
+      
+      <button onclick="dismissWrongPopup()" class="w-full bg-rose-500 hover:bg-rose-400 text-white font-black py-3 rounded-2xl transition-all duration-200 uppercase tracking-wider">
+        Back to Question / Kembali Cuba
+      </button>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="w-full py-4 text-center text-xs text-teal-500 font-semibold z-40 bg-teal-950/40 border-t border-teal-800/30">
+    <p>&copy; 2026 Dr. MRAR (Dr. Mohd Rosmizi bin Abd Rahman). All rights reserved. Interactive Game Platform for Academic Studies.</p>
+  </footer>
+
+  <!-- ==================== SOUND SYNTHESIZER AND INTERACTIVE LOGIC ==================== -->
+  <script>
+    // Audio Class using Web Audio API to prevent broken/unloaded MP3 assets
+    class GameAudioEngine {
+      constructor() {
+        this.ctx = null;
+        this.masterVolume = 0.4;
+        this.isMuted = true;
+        this.bgmTimer = null;
+        this.isPlayingBGM = false;
+        this.tempo = 120;
+      }
+
+      initContext() {
+        if (!this.ctx) {
+          this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+
+      playTone(freq, type, duration, volumeStart, decay = 0.1) {
+        this.initContext();
+        if (this.isMuted) return;
+
+        const osc = this.ctx.createOscillator();
+        const gainNode = this.ctx.createGain();
+
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+        
+        gainNode.gain.setValueAtTime(volumeStart * this.masterVolume, this.ctx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + duration);
+
+        osc.connect(gainNode);
+        gainNode.connect(this.ctx.destination);
+
+        osc.start();
+        osc.stop(this.ctx.currentTime + duration);
+      }
+
+      // Beautiful ascending celebratory arpeggio (Islamic-gamified style)
+      playCorrectSound() {
+        const notes = [261.63, 329.63, 392.00, 523.25, 659.25, 783.99, 1046.50]; // C Major scale arpeggio
+        notes.forEach((freq, index) => {
+          setTimeout(() => {
+            this.playTone(freq, 'triangle', 0.6, 0.4);
+          }, index * 90);
+        });
+      }
+
+      // Soft reminder sound for wrong answer
+      playWrongSound() {
+        this.playTone(220.00, 'sawtooth', 0.4, 0.3); // Soft A3 sawtooth
+        setTimeout(() => {
+          this.playTone(164.81, 'sawtooth', 0.5, 0.3); // E3 falling note
+        }, 150);
+      }
+
+      // Start beautiful meditative, ambient loop simulating classical acoustic tones
+      startAmbientBGM() {
+        if (this.isPlayingBGM) return;
+        this.initContext();
+        this.isPlayingBGM = true;
+        
+        const chords = [
+          [196.00, 246.94, 293.66, 392.00], // G major drone
+          [220.00, 261.63, 329.63, 440.00], // A minor space
+          [164.81, 196.00, 246.94, 329.63], // E minor drone
+          [220.00, 261.63, 329.63, 440.00]  // A minor return
+        ];
+        
+        let chordIndex = 0;
+        const playNextChord = () => {
+          if (!this.isPlayingBGM || this.isMuted) return;
+          this.initContext();
+          
+          const notes = chords[chordIndex];
+          notes.forEach((freq, idx) => {
+            // Soft atmospheric sine waves to create peaceful Islamic drone
+            setTimeout(() => {
+              if (!this.isPlayingBGM) return;
+              this.playTone(freq, 'sine', 3.5, 0.15);
+            }, idx * 100);
+          });
+
+          chordIndex = (chordIndex + 1) % chords.length;
+          this.bgmTimer = setTimeout(playNextChord, 4000); // repeat every 4 seconds
+        };
+
+        playNextChord();
+      }
+
+      stopAmbientBGM() {
+        this.isPlayingBGM = false;
+        if (this.bgmTimer) clearTimeout(this.bgmTimer);
+      }
+    }
+
+    const audio = new GameAudioEngine();
+
+    function toggleMusic() {
+      audio.initContext();
+      audio.isMuted = !audio.isMuted;
+      const musicIcon = document.getElementById('musicIcon');
+      
+      if (audio.isMuted) {
+        musicIcon.className = "fa-solid fa-volume-xmark text-lg";
+        audio.stopAmbientBGM();
+      } else {
+        musicIcon.className = "fa-solid fa-volume-high text-lg text-teal-400";
+        audio.startAmbientBGM();
+      }
+    }
+
+    function changeVolume(val) {
+      audio.masterVolume = parseFloat(val);
+      if (audio.masterVolume > 0 && audio.isMuted) {
+        toggleMusic();
+      }
+    }
+
+    // ==================== STATE MANAGEMENT ====================
+    let currentQuizSet = null;
+    let currentQuestionIndex = 0;
+    let currentScore = 0;
+    let secondsElapsed = 0;
+    let quizTimerInterval = null;
+    let activeQuestionData = null;
+    let currentSetQuestions = [];
+
+    // Storage key for leaders
+    const LEADERBOARD_KEY = "dr_mrar_quiz_leaderboard_v1";
+
+    // ==================== QUESTIONS DATABASE ====================
+    // Formulated precisely from PDF 5.1 and PDF 5.2.
+    // Each question contains required phrase like "According to Islam...", "Islam teaches...", etc.
+    const quizSet1_History = [
+      {
+        id: 1,
+        type: "MCQ",
+        questionEN: "According to Islam, in which year did Prophet Muhammad received the first revelation in the Cave of Hira?",
+        questionBM: "Menurut Islam, pada tahun manakah Nabi Muhammad menerima wahyu pertama di Gua Hira?",
+        options: [
+          { textEN: "610 CE", textBM: "610 Masihi", isCorrect: true },
+          { textEN: "570 CE", textBM: "570 Masihi", isCorrect: false },
+          { textEN: "622 CE", textBM: "622 Masihi", isCorrect: false },
+          { textEN: "632 CE", textBM: "632 Masihi", isCorrect: false }
+        ],
+        explanationEN: "The final message of Islam started in 610 CE with the first revelation, although Islam as submission has existed since the first man.",
+        explanationBM: "Utusan terakhir Islam bermula pada 610 M dengan wahyu pertama, walaupun Islam sebagai ketundukan telah wujud sejak manusia pertama.",
+        hintEN: "Think of the year before the Hijrah migration to Medina, which occurred in 622 CE.",
+        hintBM: "Fikirkan tahun sebelum peristiwa Hijrah ke Madinah, yang berlaku pada 622 M."
+      },
+      {
+        id: 2,
+        type: "MCQ",
+        questionEN: "Islam teaches that Prophet Muhammad did not invent a new faith, but rather finalized the teachings of how many prophets?",
+        questionBM: "Islam mengajar bahawa Nabi Muhammad tidak mencipta kepercayaan baru, sebaliknya menyempurnakan ajaran seramai berapa orang nabi?",
+        options: [
+          { textEN: "124,000 Prophets", textBM: "124,000 Para Nabi", isCorrect: true },
+          { textEN: "25 Prophets", textBM: "25 Para Nabi", isCorrect: false },
+          { textEN: "313 Messengers", textBM: "313 Para Rasul", isCorrect: false },
+          { textEN: "1,400 Prophets", textBM: "1,400 Para Nabi", isCorrect: false }
+        ],
+        explanationEN: "Islam sees itself as the heirs to a continuous golden chain of 124,000 prophets, from Adam to Isa (Jesus) and finally Prophet Muhammad.",
+        explanationBM: "Islam melihat dirinya sebagai pewaris rantaian emas berterusan daripada 124,000 nabi, dari Adam hingga Isa dan akhirnya Nabi Muhammad.",
+        hintEN: "The correct option is a very large traditional number indicating all prophets sent by Allah.",
+        hintBM: "Pilihan yang betul ialah jumlah tradisional yang sangat besar menunjukkan semua nabi yang diutus oleh Allah."
+      },
+      {
+        id: 3,
+        type: "DRAG_DROP",
+        questionEN: "According to Islam, Allah created mankind with an innate, pure nature to recognize Him. This is called:",
+        questionBM: "Menurut Islam, Allah menciptakan manusia dengan sifat semula jadi yang suci untuk mengenali-Nya. Ini dipanggil:",
+        // Placeholder inside square brackets
+        textWithBlankEN: "Muslims believe that [BLANK] represents our innate, pure design aligned with the natural laws of Allah.",
+        textWithBlankBM: "Umat Islam percaya bahawa [BLANK] mewakili fitrah suci kita yang sejajar dengan undang-undang semula jadi Allah.",
+        correctAnswer: "Fitrah",
+        options: ["Fitrah", "Aqidah", "Sunnah", "Shari'ah"],
+        explanationEN: "Fitrah is the primordial nature or innate disposition of the human soul designed by Allah to recognize its Creator easily.",
+        explanationBM: "Fitrah ialah sifat primordial atau kecenderungan semula jadi jiwa manusia yang direka oleh Allah untuk mengenali Penciptanya dengan mudah.",
+        hintEN: "It sounds similar to the word 'nature' or 'primordial state' in Arabic.",
+        hintBM: "Sebutannya hampir sama dengan perkataan 'nature' atau 'keadaan asal' dalam bahasa Arab."
+      },
+      {
+        id: 4,
+        type: "MATCHING",
+        questionEN: "Islam teaches us about the roles and timelines of key figures. Match the prophetic references to their descriptions:",
+        questionBM: "Islam mengajar kita tentang peranan dan garis masa tokoh-tokoh penting. Padankan rujukan kenabian dengan huraiannya:",
+        left: [
+          { id: "L1", textEN: "Prophet Adam", textBM: "Nabi Adam" },
+          { id: "L2", textEN: "Prophet Muhammad", textBM: "Nabi Muhammad" },
+          { id: "L3", textEN: "Prophet Isa", textBM: "Nabi Isa" }
+        ],
+        right: [
+          { id: "R1", textEN: "Heir of the First Man & start of Islam's timeline", textBM: "Pewaris Manusia Pertama & permulaan garis masa Islam", matches: "L1" },
+          { id: "R2", textEN: "The Seal of the Prophets (Final Messenger)", textBM: "Penutup Segala Nabi (Utusan Terakhir)", matches: "L2" },
+          { id: "R3", textEN: "Prophet Jesus, the predecessor to the final message", textBM: "Nabi Jesus, pembawa risalah sebelum pesanan terakhir", matches: "L3" }
+        ],
+        explanationEN: "Prophet Adam is the first man, Prophet Isa is Jesus, and Prophet Muhammad is the final messenger who sealed the divine prophecy.",
+        explanationBM: "Nabi Adam adalah manusia pertama, Nabi Isa adalah Jesus, dan Nabi Muhammad adalah utusan terakhir yang menyempurnakan kenabian ilahi.",
+        hintEN: "Match Muhammad with 'Seal', Adam with 'First Man', and Isa with 'Jesus'.",
+        hintBM: "Padankan Muhammad dengan 'Penutup', Adam dengan 'Manusia Pertama', dan Isa dengan 'Jesus'."
+      },
+      {
+        id: 5,
+        type: "MCQ",
+        questionEN: "According to Islam, faith is a perfect harmony of intellect, spirit, and action. Which three aspects of a human are aligned through this?",
+        questionBM: "Menurut Islam, iman adalah keharmonian sempurna bagi intelek, rohani, dan tindakan. Tiga aspek manusia manakah yang diselaraskan melalui ini?",
+        options: [
+          { textEN: "Mind, Heart, and Body", textBM: "Minda, Hati, dan Jasad", isCorrect: true },
+          { textEN: "Wealth, Fame, and Power", textBM: "Kekayaan, Kemasyhuran, dan Kuasa", isCorrect: false },
+          { textEN: "Ego, Pride, and Desire", textBM: "Ego, Kesombongan, dan Nafsu", isCorrect: false },
+          { textEN: "Time, Age, and Environment", textBM: "Masa, Umur, dan Persekitaran", isCorrect: false }
+        ],
+        explanationEN: "Page 25 of the book states that Islam encompasses knowledge for the mind, spirit for the heart, and physical action for the body, making it a complete harmony.",
+        explanationBM: "Halaman 25 buku menyatakan bahawa Islam merangkumi pengetahuan untuk minda, roh untuk hati, dan tindakan fizikal untuk jasad, menjadikannya satu keharmonian lengkap.",
+        hintEN: "Think of the three parts described by Professor Idris: knowledge (intellect), spirit (inner soul), and physical actions.",
+        hintBM: "Fikirkan tentang tiga bahagian yang diterangkan oleh Profesor Idris: ilmu (intelek), roh (jiwa dalaman), dan tindakan fizikal."
+      },
+      {
+        id: 6,
+        type: "MCQ",
+        questionEN: "Islam teaches that prior to his prophetic calling, Muhammad (570-632 CE) was widely recognized by society for his integrity. What was his title?",
+        questionBM: "Islam mengajar bahawa sebelum menjadi nabi, Muhammad (570-632 M) sangat dikenali masyarakat kerana integritinya. Apakah gelaran beliau?",
+        options: [
+          { textEN: "Al-Amin (The Trustworthy)", textBM: "Al-Amin (Yang Dipercayai)", isCorrect: true },
+          { textEN: "Al-Malik (The Sovereign)", textBM: "Al-Malik (Pemerintah)", isCorrect: false },
+          { textEN: "Al-Ghani (The Wealthy)", textBM: "Al-Ghani (Yang Kaya)", isCorrect: false },
+          { textEN: "Al-Kamil (The Perfect)", textBM: "Al-Kamil (Yang Sempurna)", isCorrect: false }
+        ],
+        explanationEN: "Prophet Muhammad rejected pagan ignorance long before his revelation and was widely respected as Al-Amin (The Trustworthy).",
+        explanationBM: "Nabi Muhammad menolak kejahilan syirik lama sebelum menerima wahyu dan amat dihormati sebagai Al-Amin (Yang Dipercayai).",
+        hintEN: "The title means the one who never lies, keeping trusts safe.",
+        hintBM: "Gelaran tersebut bermaksud orang yang tidak pernah berbohong, memegang amanah dengan selamat."
+      },
+      {
+        id: 7,
+        type: "FILL_BLANK",
+        questionEN: "According to Islamic history, the mission of Prophet Muhammad spanned over 23 years. Complete the duration details of his mission:",
+        questionBM: "Menurut sejarah Islam, misi dakwah Nabi Muhammad menjangkau tempoh 23 tahun. Lengkapkan butiran tempoh dakwah baginda:",
+        textWithBlankEN: "His mission consisted of [BLANK1] years of secret Da'wah followed by [BLANK2] years of public mission in Mecca and Medina.",
+        textWithBlankBM: "Misi baginda terdiri daripada [BLANK1] tahun dakwah secara rahsia diikuti oleh [BLANK2] tahun misi dakwah terbuka di Mekah dan Madinah.",
+        blanks: [
+          { id: "BLANK1", correct: "3", options: ["3", "5", "10"] },
+          { id: "BLANK2", correct: "20", options: ["20", "13", "10"] }
+        ],
+        explanationEN: "Prophet Muhammad carried out secret propagation for 3 years, and then propagated Islam publicly for another 20 years.",
+        explanationBM: "Nabi Muhammad menjalankan dakwah secara sulit selama 3 tahun, dan kemudian menyebarkan Islam secara terbuka selama 20 tahun berikutnya.",
+        hintEN: "The total years of prophecy is 23 years (3 secret + 20 public).",
+        hintBM: "Jumlah tahun kenabian ialah 23 tahun (3 rahsia + 20 terbuka)."
+      },
+      {
+        id: 8,
+        type: "MCQ",
+        questionEN: "According to Islamic historical records, who were the four prominent companions (Khulafa) who supported Prophet Muhammad's mission?",
+        questionBM: "Menurut rekod sejarah Islam, siapakah empat sahabat terkemuka (Khulafa) yang menyokong kuat misi perjuangan Nabi Muhammad?",
+        options: [
+          { textEN: "Abu Bakr, 'Umar, 'Uthman, and 'Ali", textBM: "Abu Bakr, 'Umar, 'Uthman, dan 'Ali", isCorrect: true },
+          { textEN: "Zaid, Hassan, Bilal, and Yusuf", textBM: "Zaid, Hassan, Bilal, dan Yusuf", isCorrect: false },
+          { textEN: "Idris, Hamid, Ahmad, and Bilal", textBM: "Idris, Hamid, Ahmad, dan Bilal", isCorrect: false },
+          { textEN: "Hamzah, Khalid, Salman, and Anas", textBM: "Hamzah, Khalid, Salman, dan Anas", isCorrect: false }
+        ],
+        explanationEN: "These four are the primary righteous companions (Khulafa al-Rashidin) who guided the early Muslim community after the Prophet passed away.",
+        explanationBM: "Mereka berempat merupakan sahabat-sahabat utama (Khulafa al-Rashidin) yang memimpin masyarakat Islam selepas kewafatan Baginda.",
+        hintEN: "The classic four companions beginning with Abu Bakr.",
+        hintBM: "Empat sahabat klasik yang bermula dengan nama Abu Bakr."
+      },
+      {
+        id: 9,
+        type: "MATCHING",
+        questionEN: "Islam teaches that the Prophet left two eternal anchors before his death. Match the terms related to these anchors:",
+        questionBM: "Islam mengajar bahawa Nabi meninggalkan dua sauh abadi sebelum kewafatan baginda. Padankan istilah berkaitan sauh ini:",
+        left: [
+          { id: "L1", textEN: "The Qur'an", textBM: "Al-Qur'an" },
+          { id: "L2", textEN: "The Sunnah", textBM: "As-Sunnah" },
+          { id: "L3", textEN: "632 CE", textBM: "632 Masihi" }
+        ],
+        right: [
+          { id: "R1", textEN: "Word of Allah compiled in 114 Surahs", textBM: "Kalam Allah yang terkandung dalam 114 Surah", matches: "L1" },
+          { id: "R2", textEN: "Prophetic traditions, sayings, and actions", textBM: "Tradisi kenabian, sabdaan, dan tindakan baginda", matches: "L2" },
+          { id: "R3", textEN: "The historical year the Prophet passed away", textBM: "Tahun sejarah kewafatan Nabi Muhammad", matches: "L3" }
+        ],
+        explanationEN: "The Quran (114 Surahs) and Sunnah (Prophetic actions/sayings) act as the twin anchors keeping believers grounded in truth.",
+        explanationBM: "Al-Quran (114 Surah) dan As-Sunnah (perbuatan/sabdaan Nabi) berfungsi sebagai dua sauh utama menjaga keimanan umat Islam.",
+        hintEN: "Remember that Quran is the direct word of God, while Sunnah is the action of the Prophet.",
+        hintBM: "Ingat bahawa Al-Quran adalah kalam langsung daripada Allah, manakala As-Sunnah adalah tindakan Nabi."
+      },
+      {
+        id: 10,
+        type: "DRAG_DROP",
+        questionEN: "According to Islam, the Quranic verses state: 'Surely the true religion with Allah is...'",
+        questionBM: "Menurut Islam, ayat Al-Quran menyatakan: 'Sesungguhnya agama yang (benar) di sisi Allah ialah...'",
+        textWithBlankEN: "Muslims believe that [BLANK] is the only submission accepted by Allah since the beginning of creation.",
+        textWithBlankBM: "Umat Islam percaya bahawa [BLANK] adalah satu-satunya penyerahan diri yang diterima oleh Allah sejak awal penciptaan.",
+        correctAnswer: "Islam",
+        options: ["Islam", "Iman", "Ihsan", "Tawhid"],
+        explanationEN: "As cited in Surah Ali 'Imran (3:19 & 3:85), Islam (pure submission to Allah) is the primordial and only path accepted by the Creator.",
+        explanationBM: "Seperti yang dinyatakan dalam Surah Ali 'Imran (3:19 & 3:85), Islam (penyerahan mutlak kepada Allah) adalah jalan asal dan satu-satunya yang diterima oleh Pencipta.",
+        hintEN: "It is the very name of the religion mentioned in Ali 'Imran verse 19.",
+        hintBM: "Ia merupakan nama agama itu sendiri yang disebut dalam Surah Ali 'Imran ayat 19."
+      }
+    ];
+
+    const quizSet2_Teachings = [
+      {
+        id: 1,
+        type: "MCQ",
+        questionEN: "Islam teaches a beautiful analogy of faith as a green garden. Creed (Aqidah) represents which part of this garden?",
+        questionBM: "Islam mengajar analogi iman yang indah sebagai sebuah taman yang menghijau. Akidah (Creed) mewakili bahagian manakah di dalam taman ini?",
+        options: [
+          { textEN: "The deep-hidden Roots", textBM: "Akar yang tersembunyi jauh di dalam tanah", isCorrect: true },
+          { textEN: "The spreading Branches", textBM: "Dahan-dahan yang tumbuh subur", isCorrect: false },
+          { textEN: "The sweet edible Fruits", textBM: "Buah-buahan manis yang memberi manfaat", isCorrect: false },
+          { textEN: "The colorful blooming Flowers", textBM: "Bunga-bunga berwarna-warni yang mekar", isCorrect: false }
+        ],
+        explanationEN: "According to Dr. Hamid's explanation, Aqidah (creed) represents the roots that hold the believer's faith firm and unshakable.",
+        explanationBM: "Menurut penerangan Dr. Hamid, Akidah (creed) mewakili akar yang mencengkam kuat untuk memelihara keimanan seseorang agar teguh.",
+        hintEN: "Roots are buried deep beneath the ground, providing ultimate stability.",
+        hintBM: "Akar tertanam jauh di bawah tanah, membekalkan kestabilan utama kepada seluruh pokok."
+      },
+      {
+        id: 2,
+        type: "MATCHING",
+        questionEN: "Islam teaches that each element of religion has a structural part in the spiritual garden. Match each term with its correct representation:",
+        questionBM: "Islam mengajar bahawa setiap unsur agama mempunyai struktur dalam taman kerohanian. Padankan setiap istilah dengan representasi yang betul:",
+        left: [
+          { id: "L1", textEN: "Aqidah (Creed)", textBM: "Akidah (Creed)" },
+          { id: "L2", textEN: "Shari'ah (Law)", textBM: "Syariah (Law)" },
+          { id: "L3", textEN: "Akhlak / Ihsan (Excellence)", textBM: "Akhlak / Ihsan (Excellence)" }
+        ],
+        right: [
+          { id: "R1", textEN: "The Roots that hold faith firm under the soil", textBM: "Akar yang memegang teguh iman di bawah tanah", matches: "L1" },
+          { id: "R2", textEN: "The Branches that grow and guide daily actions", textBM: "Dahan-dahan yang tumbuh dan memandu amalan harian", matches: "L2" },
+          { id: "R3", textEN: "The beneficial Fruits of character and sincerity", textBM: "Buah-buahan bermanfaat yang mencerminkan karakter & keikhlasan", matches: "L3" }
+        ],
+        explanationEN: "Aqidah represents roots, Shari'ah represents structural law (branches), and Akhlak/Ihsan represents the fruits (character and sincerity).",
+        explanationBM: "Akidah mewakili akar, Syariah mewakili hukum amalan (dahan), dan Akhlak/Ihsan mewakili buah (peribadi mulia & keikhlasan).",
+        hintEN: "Think of fruits as the final produce (character/beauty) and roots as foundational creed.",
+        hintBM: "Fikirkan buah-buahan sebagai hasil akhir (karakter/keindahan) dan akar sebagai asas pegangan keyakinan."
+      },
+      {
+        id: 3,
+        type: "FILL_BLANK",
+        questionEN: "According to Islam, the Hadith of Jibril explains the structure of the religion in three progressive levels. Complete the levels:",
+        questionBM: "Menurut Islam, Hadis Jibril menerangkan struktur agama dalam tiga peringkat progresif. Lengkapkan tahap-tahap tersebut:",
+        textWithBlankEN: "The three progressive levels described are [BLANK1] (outer actions/practices), [BLANK2] (inner beliefs/faith), and [BLANK3] (spiritual excellence and sincerity).",
+        textWithBlankBM: "Tiga tahap progresif yang diterangkan ialah [BLANK1] (amalan lahiriah), [BLANK2] (kepercayaan batiniah), dan [BLANK3] (kecemerlangan rohani dan keikhlasan).",
+        blanks: [
+          { id: "BLANK1", correct: "Islam", options: ["Islam", "Zakat", "Tawhid"] },
+          { id: "BLANK2", correct: "Iman", options: ["Iman", "Akhlak", "Qadar"] },
+          { id: "BLANK3", correct: "Ihsan", options: ["Ihsan", "Fitrah", "Shari'ah"] }
+        ],
+        explanationEN: "The Hadith of Jibril defines Islam (practices), Iman (faith), and Ihsan (constant state of spiritual perfection).",
+        explanationBM: "Hadis Jibril mentakrifkan Islam (amalan praktikal), Iman (iman/kepercayaan), dan Ihsan (kesempurnaan ibadah/keikhlasan).",
+        hintEN: "The order is: outer practice (Islam), internal creed (Iman), ultimate beauty (Ihsan).",
+        hintBM: "Susunannya ialah: amalan luaran (Islam), akidah dalaman (Iman), keindahan tertinggi (Ihsan)."
+      },
+      {
+        id: 4,
+        type: "MCQ",
+        questionEN: "Muslims believe that the physical practice of Islam is built upon five foundational pillars. Which of the following represents the third pillar?",
+        questionBM: "Umat Islam percaya bahawa amalan fizikal Islam dibina di atas lima tiang asas. Antara berikut, yang manakah mewakili rukun ketiga?",
+        options: [
+          { textEN: "Zakat (Charitable Purifying Alms)", textBM: "Zakat (Amalan Mensucikan Harta)", isCorrect: true },
+          { textEN: "Salah (Five Daily Prayers)", textBM: "Solat (Sembahyang Lima Waktu)", isCorrect: false },
+          { textEN: "Sawm (Ramadan Fasting)", textBM: "Puasa (Berpuasa di Bulan Ramadan)", isCorrect: false },
+          { textEN: "Shahadah (Declaration of Faith)", textBM: "Syahadah (Penyaksian Iman)", isCorrect: false }
+        ],
+        explanationEN: "The order of the 5 Pillars is: 1) Shahadah, 2) Salah, 3) Zakat, 4) Sawm, and 5) Hajj.",
+        explanationBM: "Susunan 5 Rukun Islam ialah: 1) Syahadah, 2) Solat, 3) Zakat, 4) Puasa, dan 5) Haji.",
+        hintEN: "The third pillar is associated with purifying your wealth and helping those in need.",
+        hintBM: "Rukun ketiga dikaitkan dengan menyucikan harta anda dan membantu golongan yang memerlukan."
+      },
+      {
+        id: 5,
+        type: "DRAG_DROP",
+        questionEN: "According to Islam, the daily obligatory prayer (Salah) keeps the heart connected to the Creator. How many times must they perform it?",
+        questionBM: "Menurut Islam, solat fardu harian memastikan hati sentiasa berhubung dengan Pencipta. Berapa kalikah mereka perlu mendirikannya?",
+        textWithBlankEN: "Muslims perform [BLANK] obligatory prayers daily: Fajr, Dhuhr, Asr, Maghrib, and Isha'.",
+        textWithBlankBM: "Umat Islam menunaikan [BLANK] solat fardu setiap hari: Subuh, Zohor, Asar, Maghrib, dan Isyak.",
+        correctAnswer: "Five",
+        options: ["Five", "Three", "Seven", "Two"],
+        explanationEN: "Muslims perform five obligatory prayers at specific intervals from dawn until nightfall daily.",
+        explanationBM: "Umat Islam mendirikan sembahyang fardu sebanyak lima kali sehari pada selang masa tertentu dari subuh hingga malam.",
+        hintEN: "Count the names: Fajr, Dhuhr, Asr, Maghrib, Isha'.",
+        hintBM: "Kira nama-nama solat tersebut: Subuh, Zohor, Asar, Maghrib, Isyak."
+      },
+      {
+        id: 6,
+        type: "FILL_BLANK",
+        questionEN: "Islam teaches that giving charity (Zakah) is a beautiful way to enrich the community. Complete the core purpose of Zakah:",
+        questionBM: "Islam mengajar bahawa mengeluarkan zakat (Zakah) ialah cara yang indah untuk memakmurkan komuniti. Lengkapkan tujuan utama Zakat:",
+        textWithBlankEN: "According to Islam, giving sincerely removes [BLANK1] from the human heart and brings [BLANK2] to one's wealth.",
+        textWithBlankBM: "Menurut Islam, memberi dengan ikhlas membuang sifat [BLANK1] daripada hati manusia dan mendatangkan [BLANK2] kepada harta.",
+        blanks: [
+          { id: "BLANK1", correct: "Greed", options: ["Greed", "Memory", "Laughter"] },
+          { id: "BLANK2", correct: "Blessings", options: ["Blessings", "Bills", "Danger"] }
+        ],
+        explanationEN: "Zakah purifies the heart from greed, reminds us that everything belongs to Allah, and grows wealth in blessings.",
+        explanationBM: "Zakat menyucikan hati daripada sifat bakhil/tamak, mengingatkan kita bahawa segala-galanya milik Allah, dan memberkati harta.",
+        hintEN: "Zakah removes bad feelings like stinginess/greed and invites divine goodness/blessings.",
+        hintBM: "Zakat menghilangkan sifat buruk seperti bakhil/tamak dan menarik kebaikan ilahi/berkat."
+      },
+      {
+        id: 7,
+        type: "MCQ",
+        questionEN: "According to Islam, what are the primary spiritual benefits of fasting (Sawm) during the sacred month of Ramadan?",
+        questionBM: "Menurut Islam, apakah manfaat rohani utama berpuasa (Sawm) sepanjang bulan suci Ramadan?",
+        options: [
+          { textEN: "To develop self-control, empathy, and deep awareness of Allah", textBM: "Membina kawalan diri, empati, dan kesedaran mendalam tentang Allah", isCorrect: true },
+          { textEN: "To sleep longer, save food, and avoid physical work", textBM: "Untuk tidur lebih lama, menjimatkan makanan, dan mengelak kerja fizikal", isCorrect: false },
+          { textEN: "To test athletic physical stamina and reduce daily activities", textBM: "Menguji stamina sukan fizikal dan mengurangkan aktiviti harian", isCorrect: false },
+          { textEN: "To gather strictly for evening commercial shopping events", textBM: "Berkumpul semata-mata untuk membeli-belah di festival malam", isCorrect: false }
+        ],
+        explanationEN: "Fasting is not just avoiding food; it is designed to cultivate Taqwa (piety), self-discipline, and empathy for the less fortunate.",
+        explanationBM: "Berpuasa bukan sekadar menahan lapar; ia bertujuan untuk memupuk takwa, disiplin diri, dan perasaan empati terhadap golongan miskin.",
+        hintEN: "Look for the option highlighting self-control and spiritual proximity (awareness) to Allah.",
+        hintBM: "Cari pilihan yang menekankan disiplin diri serta kesedaran rohani mendekatkan diri kepada Allah."
+      },
+      {
+        id: 8,
+        type: "MATCHING",
+        questionEN: "Muslims believe in six pillars of faith (Iman). Match the pillar of Iman to its correct conceptual translation:",
+        questionBM: "Umat Islam percaya kepada enam rukun iman (Iman). Padankan rukun Iman dengan terjemahan konsepnya yang betul:",
+        left: [
+          { id: "L1", textEN: "Belief in Holy Books", textBM: "Beriman kepada Kitab" },
+          { id: "L2", textEN: "Belief in Messengers", textBM: "Beriman kepada Rasul" },
+          { id: "L3", textEN: "Belief in Divine Decree", textBM: "Beriman kepada Qadar" }
+        ],
+        right: [
+          { id: "R1", textEN: "Belief in divine revelations like Quran", textBM: "Percaya kepada wahyu suci yang diturunkan seperti Al-Quran", matches: "L1" },
+          { id: "R2", textEN: "Belief in prophets sent to guide humanity", textBM: "Percaya kepada utusan nabi yang membimbing manusia", matches: "L2" },
+          { id: "R3", textEN: "Belief in Predestination / destiny by Allah", textBM: "Percaya kepada ketentuan takdir/ketetapan oleh Allah", matches: "L3" }
+        ],
+        explanationEN: "These three pillars represent the core tenets of belief: Books (revelation), Messengers (prophets), and Qadar (destiny/decree).",
+        explanationBM: "Tiga rukun ini mewakili akidah penting: Kitab (wahyu), Rasul (nabi), dan Qadar (ketentuan/takdir ilahi).",
+        hintEN: "Divine decree means destiny (Qadar), Holy Books means the scriptures, and Messengers means the prophets.",
+        hintBM: "Ketetapan ilahi bermaksud takdir (Qadar), Kitab suci bermaksud lembaran wahyu, dan Rasul bermaksud para nabi."
+      },
+      {
+        id: 9,
+        type: "DRAG_DROP",
+        questionEN: "According to Islam, the concept of Ihsan represents spiritual excellence. What is its famous definition from the Hadith?",
+        questionBM: "Menurut Islam, konsep Ihsan mewakili kecemerlangan rohani. Apakah takrifan masyhurnya daripada Hadis Jibril?",
+        textWithBlankEN: "Ihsan is to worship Allah as if you [BLANK] Him, and if you do not, know that He sees you.",
+        textWithBlankBM: "Ihsan adalah menyembah Allah seolah-olah kamu [BLANK] Dia, dan jika kamu tidak, ketahuilah bahawa Dia melihatmu.",
+        correctAnswer: "See",
+        options: ["See", "Hear", "Know", "Praise"],
+        explanationEN: "Ihsan cultivates constant awareness of the Creator, making the believer sincere in both private and public spheres.",
+        explanationBM: "Ihsan memupuk kesedaran berterusan terhadap Pencipta, menjadikan seseorang itu ikhlas sama ada bersendirian mahupun di khalayak ramai.",
+        hintEN: "It begins with looking / visually perceiving with absolute devotion.",
+        hintBM: "Ia bermula dengan tindakan melihat / memerhati dengan penuh pengabdian diri."
+      },
+      {
+        id: 10,
+        type: "MCQ",
+        questionEN: "Islam teaches that the concept of Tawhid plays a central role in theology. What does Tawhid mean?",
+        questionBM: "Islam mengajar bahawa konsep Tauhid (Tawhid) memainkan peranan utama dalam teologi. Apakah maksud Tauhid?",
+        options: [
+          { textEN: "That Allah is One absolutely, having no partners or equals", textBM: "Bahawa Allah adalah Maha Esa secara mutlak, tidak mempunyai sekutu mahupun tandingan", isCorrect: true },
+          { textEN: "That there are multiple divine entities dividing supreme powers", textBM: "Bahawa terdapat banyak entiti ketuhanan yang membahagi-bahagikan kuasa tertinggi", isCorrect: false },
+          { textEN: "That humans can intermediate divine powers through hierarchy", textBM: "Bahawa manusia boleh menjadi pengantara kuasa ilahi melalui kedudukan bertingkat", isCorrect: false },
+          { textEN: "That spiritual laws change based on modern scientific models", textBM: "Bahawa hukum kerohanian berubah-ubah mengikut model saintifik moden", isCorrect: false }
+        ],
+        explanationEN: "Tawhid is the core declaration of Monotheism in Islam: Allah is One, perfect, direct, and unmediated.",
+        explanationBM: "Tauhid ialah deklarasi utama kepercayaan Monoteisme dalam Islam: Allah adalah Esa, sempurna, langsung, tanpa sebarang perantara.",
+        hintEN: "Tawhid comes from the root word 'Wahid', which means One in Arabic.",
+        hintBM: "Tauhid berasal daripada kata dasar 'Wahid', yang bermaksud Satu/Esa dalam bahasa Arab."
+      }
+    ];
+
+    // ==================== ENGINE FLOW ====================
+
+    function showMainMenu() {
+      clearInterval(quizTimerInterval);
+      document.getElementById('backToMenuBtn').classList.add('hidden');
+      document.getElementById('mainMenuScreen').classList.remove('hidden');
+      document.getElementById('quizScreen').classList.add('hidden');
+      document.getElementById('resultScreen').classList.add('hidden');
+      
+      // Stop celebratory animations
+      celebrating = false;
+    }
+
+    function startQuizSet(setNum) {
+      audio.initContext();
+      if (!audio.isMuted && !audio.isPlayingBGM) {
+        audio.startAmbientBGM();
+      }
+
+      currentQuizSet = setNum;
+      currentQuestionIndex = 0;
+      currentScore = 0;
+      secondsElapsed = 0;
+      
+      if (setNum === 1) {
+        currentSetQuestions = JSON.parse(JSON.stringify(quizSet1_History));
+        document.getElementById('quizModuleBadge').innerText = "SET 1: History";
+        document.getElementById('quizModuleBadge').className = "text-xs font-bold tracking-wider uppercase text-teal-950 bg-teal-400 px-3 py-1 rounded-full";
+      } else {
+        currentSetQuestions = JSON.parse(JSON.stringify(quizSet2_Teachings));
+        document.getElementById('quizModuleBadge').innerText = "SET 2: Teachings";
+        document.getElementById('quizModuleBadge').className = "text-xs font-bold tracking-wider uppercase text-emerald-950 bg-emerald-400 px-3 py-1 rounded-full";
+      }
+
+      // Show elements
+      document.getElementById('backToMenuBtn').classList.remove('hidden');
+      document.getElementById('mainMenuScreen').classList.add('hidden');
+      document.getElementById('quizScreen').classList.remove('hidden');
+      document.getElementById('resultScreen').classList.add('hidden');
+
+      // Start timer
+      document.getElementById('timerDisplay').innerText = "0s";
+      clearInterval(quizTimerInterval);
+      quizTimerInterval = setInterval(() => {
+        secondsElapsed++;
+        document.getElementById('timerDisplay').innerText = secondsElapsed + "s";
+      }, 1000);
+
+      loadQuestion();
+    }
+
+    function loadQuestion() {
+      if (currentQuestionIndex >= currentSetQuestions.length) {
+        finishQuiz();
+        return;
+      }
+
+      // Reset feedback box
+      const fbBox = document.getElementById('hintFeedbackBox');
+      fbBox.classList.add('hidden');
+      fbBox.className = "hidden rounded-2xl p-4 text-center border transition-all duration-300";
+
+      activeQuestionData = currentSetQuestions[currentQuestionIndex];
+      
+      // Update stats
+      document.getElementById('currentQuestionNum').innerText = (currentQuestionIndex + 1);
+      document.getElementById('currentQuestionNumBM').innerText = (currentQuestionIndex + 1);
+      document.getElementById('scoreDisplay').innerText = currentScore;
+      
+      // Progress bar
+      const progressPercent = ((currentQuestionIndex + 1) / currentSetQuestions.length) * 100;
+      document.getElementById('progressBarFill').style.width = progressPercent + "%";
+
+      // Question texts
+      document.getElementById('questionTextEN').innerText = activeQuestionData.questionEN;
+      document.getElementById('questionTextBM').innerText = activeQuestionData.questionBM;
+
+      // Build interactive action area based on question type
+      const actionArea = document.getElementById('questionActionArea');
+      actionArea.innerHTML = ""; // clear previous layout
+
+      switch(activeQuestionData.type) {
+        case "MCQ":
+          renderMCQ(actionArea);
+          break;
+        case "DRAG_DROP":
+          renderDragDrop(actionArea);
+          break;
+        case "MATCHING":
+          renderMatching(actionArea);
+          break;
+        case "FILL_BLANK":
+          renderFillBlanks(actionArea);
+          break;
+      }
+    }
+
+    // ==================== RENDERERS ====================
+
+    // MCQ Style - Randomized Options Grid
+    function renderMCQ(container) {
+      // Shuffle options copy
+      const shuffledOptions = [...activeQuestionData.options].sort(() => Math.random() - 0.5);
+      
+      const grid = document.createElement('div');
+      grid.className = "grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-2xl mx-auto";
+
+      shuffledOptions.forEach((opt, index) => {
+        const btn = document.createElement('button');
+        btn.className = "glow-btn bg-teal-900/50 hover:bg-teal-800/80 p-5 rounded-2xl border-2 border-teal-700 text-left transition-all duration-200 flex flex-col gap-1 focus:ring-2 focus:ring-teal-400";
+        
+        const optionLetter = String.fromCharCode(65 + index); // A, B, C, D
+        
+        btn.innerHTML = `
+          <div class="flex items-start gap-3">
+            <span class="w-7 h-7 flex items-center justify-center rounded-full bg-teal-500 text-teal-950 font-black text-sm shrink-0">${optionLetter}</span>
+            <div class="flex-grow">
+              <span class="block text-base font-bold text-white leading-snug">${opt.textEN}</span>
+              <span class="block text-xs italic text-teal-300 font-medium mt-0.5">${opt.textBM}</span>
+            </div>
+          </div>
+        `;
+
+        btn.onclick = () => {
+          checkAnswer(opt.isCorrect);
+        };
+
+        grid.appendChild(btn);
+      });
+
+      container.appendChild(grid);
+    }
+
+    // Drag and Drop (Dwi-fungsi: Drag ATAU Tap untuk Mobile)
+    let selectedWordForDrop = null;
+    function renderDragDrop(container) {
+      const dropLayout = document.createElement('div');
+      dropLayout.className = "flex flex-col items-center gap-6 w-full max-w-xl mx-auto";
+
+      // Replace [BLANK] with interactive visual placeholder in both languages
+      const blankWordEN = activeQuestionData.textWithBlankEN.replace("[BLANK]", `<span id="targetDropZone" class="inline-flex items-center justify-center px-6 py-2 mx-1 border-2 border-dashed border-amber-400 bg-amber-500/10 rounded-xl text-amber-300 font-bold tracking-wider text-base min-w-[120px] transition-all duration-200 cursor-pointer">?</span>`);
+      const blankWordBM = activeQuestionData.textWithBlankBM.replace("[BLANK]", `<span class="inline-flex items-center justify-center px-4 py-1 mx-1 border border-dashed border-amber-500/40 bg-amber-500/5 rounded-lg text-amber-200 text-xs font-bold min-w-[80px]">?</span>`);
+
+      const sentenceBox = document.createElement('div');
+      sentenceBox.className = "bg-teal-950/70 p-6 rounded-2xl border border-teal-800 text-center w-full shadow-inner";
+      sentenceBox.innerHTML = `
+        <p class="text-base md:text-lg text-white font-semibold leading-relaxed">${blankWordEN}</p>
+        <div class="my-2 border-t border-teal-800/40 w-12 mx-auto"></div>
+        <p class="text-xs md:text-sm text-teal-300 italic leading-relaxed">${blankWordBM}</p>
+      `;
+
+      // Options wrapper (shuffled)
+      const optionsBox = document.createElement('div');
+      optionsBox.className = "flex flex-wrap justify-center gap-3 w-full mt-4";
+
+      const shuffledOptions = [...activeQuestionData.options].sort(() => Math.random() - 0.5);
+      
+      shuffledOptions.forEach(optWord => {
+        const wordBtn = document.createElement('button');
+        wordBtn.className = "bg-teal-800 hover:bg-teal-700 text-white font-bold px-5 py-3 rounded-xl border border-teal-600 shadow transition-all duration-200 hover:scale-105 active:scale-95";
+        wordBtn.innerText = optWord;
+        
+        // Mobile tap selection support
+        wordBtn.onclick = () => {
+          // Visual selection toggle
+          document.querySelectorAll('#questionActionArea button').forEach(b => b.classList.remove('ring-4', 'ring-amber-400'));
+          wordBtn.classList.add('ring-4', 'ring-amber-400');
+          selectedWordForDrop = optWord;
+          
+          // Auto-simulate fill when selecting
+          const target = document.getElementById('targetDropZone');
+          if (target) {
+            target.innerText = optWord;
+            target.className = "inline-flex items-center justify-center px-6 py-2 mx-1 border-2 border-solid border-emerald-400 bg-emerald-500/20 text-emerald-300 font-black tracking-wider text-base min-w-[120px] transition-all duration-200 animate-pulse";
+            
+            // Check immediately
+            setTimeout(() => {
+              checkAnswer(optWord === activeQuestionData.correctAnswer);
+            }, 500);
+          }
+        };
+
+        optionsBox.appendChild(wordBtn);
+      });
+
+      dropLayout.appendChild(sentenceBox);
+      dropLayout.appendChild(optionsBox);
+      container.appendChild(dropLayout);
+    }
+
+    // Matching Columns (Left to Right clickable connecting system)
+    let selectedLeftId = null;
+    let matchingPairsLeft = {}; // leftId -> rightId
+    function renderMatching(container) {
+      const matchGrid = document.createElement('div');
+      matchGrid.className = "grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-2xl mx-auto relative";
+
+      const leftCol = document.createElement('div');
+      leftCol.className = "flex flex-col gap-3";
+      
+      const rightCol = document.createElement('div');
+      rightCol.className = "flex flex-col gap-3";
+
+      // Copy and shuffle lists to ensure they are NOT aligned initially
+      const shuffledLeft = [...activeQuestionData.left].sort(() => Math.random() - 0.5);
+      const shuffledRight = [...activeQuestionData.right].sort(() => Math.random() - 0.5);
+
+      // Keep tracking completed connections
+      const completedMatches = {}; // leftId -> true
+
+      shuffledLeft.forEach(leftItem => {
+        const btn = document.createElement('button');
+        btn.id = `match-left-${leftItem.id}`;
+        btn.className = "text-left bg-teal-950/70 hover:bg-teal-900 border-2 border-teal-700/60 p-4 rounded-xl text-white transition-all duration-200 flex flex-col gap-0.5 relative";
+        btn.innerHTML = `
+          <span class="block text-sm font-bold">${leftItem.textEN}</span>
+          <span class="block text-[11px] text-teal-300 italic font-medium">${leftItem.textBM}</span>
+          <span class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 rounded-full border border-teal-500 bg-teal-950 flex items-center justify-center">
+            <span class="dot-indicator w-2 h-2 rounded-full bg-transparent"></span>
+          </span>
+        `;
+
+        btn.onclick = () => {
+          if (completedMatches[leftItem.id]) return; // ignore completed
+          selectedLeftId = leftItem.id;
+          
+          // Clear active classes from left
+          shuffledLeft.forEach(l => {
+            const el = document.getElementById(`match-left-${l.id}`);
+            el.classList.remove('border-amber-400', 'bg-amber-500/10');
+            el.querySelector('.dot-indicator').classList.replace('bg-amber-400', 'bg-transparent');
+          });
+
+          btn.classList.add('border-amber-400', 'bg-amber-500/10');
+          btn.querySelector('.dot-indicator').className = "dot-indicator w-2 h-2 rounded-full bg-amber-400 shadow-glow";
+        };
+
+        leftCol.appendChild(btn);
+      });
+
+      shuffledRight.forEach(rightItem => {
+        const btn = document.createElement('button');
+        btn.id = `match-right-${rightItem.id}`;
+        btn.className = "text-left bg-teal-950/70 hover:bg-teal-900 border-2 border-teal-700/60 p-4 rounded-xl text-white transition-all duration-200 flex flex-col gap-0.5 relative";
+        btn.innerHTML = `
+          <span class="block text-xs font-bold leading-snug">${rightItem.textEN}</span>
+          <span class="block text-[10px] text-teal-300 italic font-medium mt-0.5 leading-snug">${rightItem.textBM}</span>
+        `;
+
+        btn.onclick = () => {
+          if (!selectedLeftId) {
+            // Warn that they must select Left first
+            audio.playWrongSound();
+            const fbBox = document.getElementById('hintFeedbackBox');
+            fbBox.classList.remove('hidden');
+            fbBox.className = "rounded-2xl p-4 text-center border-2 border-amber-500 bg-amber-500/10 text-amber-300 animate-pulse";
+            fbBox.innerHTML = `Please select an item from the left column first! <span class="block text-xs italic">Sila pilih item di lajur kiri terlebih dahulu!</span>`;
+            return;
+          }
+
+          // Register connection
+          matchingPairsLeft[selectedLeftId] = rightItem.matches;
+          completedMatches[selectedLeftId] = true;
+
+          // Colorize paired elements visually
+          const leftEl = document.getElementById(`match-left-${selectedLeftId}`);
+          const rightEl = document.getElementById(`match-right-${rightItem.id}`);
+
+          leftEl.className = "text-left bg-emerald-950/40 border-2 border-emerald-500 p-4 rounded-xl text-emerald-200 transition-all duration-200 flex flex-col gap-0.5 relative opacity-80 cursor-default";
+          leftEl.querySelector('.dot-indicator').className = "dot-indicator w-2 h-2 rounded-full bg-emerald-400";
+          
+          rightEl.className = "text-left bg-emerald-950/40 border-2 border-emerald-500 p-4 rounded-xl text-emerald-200 transition-all duration-200 flex flex-col gap-0.5 relative opacity-80 cursor-default";
+
+          selectedLeftId = null;
+
+          // Check if all lefts are matched
+          const leftIds = activeQuestionData.left.map(l => l.id);
+          const allCompleted = leftIds.every(id => completedMatches[id]);
+
+          if (allCompleted) {
+            // Check correctness of all pairings
+            const isCorrect = leftIds.every(id => {
+              return matchingPairsLeft[id] === id; // matches value set to identical Left item key representation
+            });
+
+            // Delay checking for visual ease
+            setTimeout(() => {
+              checkAnswer(isCorrect);
+            }, 600);
+          }
+        };
+
+        rightCol.appendChild(btn);
+      });
+
+      matchGrid.appendChild(leftCol);
+      matchGrid.appendChild(rightCol);
+      container.appendChild(matchGrid);
+    }
+
+    // Fill in the Blanks with floating action word buttons
+    let fillAnswers = {}; // blankId -> selectedVal
+    function renderFillBlanks(container) {
+      const fillLayout = document.createElement('div');
+      fillLayout.className = "flex flex-col gap-6 w-full max-w-2xl mx-auto";
+
+      // Render sentence by swapping placeholders with input blocks
+      let htmlEN = activeQuestionData.textWithBlankEN;
+      let htmlBM = activeQuestionData.textWithBlankBM;
+
+      activeQuestionData.blanks.forEach(blank => {
+        const val = fillAnswers[blank.id] || "?";
+        const hasSelected = fillAnswers[blank.id] ? "border-solid border-emerald-400 text-emerald-300 font-bold bg-emerald-500/10" : "border-dashed border-amber-400 text-amber-300 font-bold bg-amber-500/10";
+        
+        htmlEN = htmlEN.replace(`[${blank.id}]`, `<span data-blank-id="${blank.id}" class="blank-slot inline-block px-4 py-1 mx-1 border-2 ${hasSelected} rounded-xl min-w-[70px] text-center cursor-pointer transition-all duration-200 animate-pulse">${val}</span>`);
+        htmlBM = htmlBM.replace(`[${blank.id}]`, `<span class="inline-block px-3 py-0.5 mx-1 border border-teal-800 bg-teal-950/40 text-teal-400 text-xs rounded-lg min-w-[50px] text-center">${val}</span>`);
+      });
+
+      const sentenceBox = document.createElement('div');
+      sentenceBox.className = "bg-teal-950/70 p-6 rounded-2xl border border-teal-800 shadow-inner leading-relaxed";
+      sentenceBox.innerHTML = `
+        <p class="text-base md:text-lg text-white font-medium">${htmlEN}</p>
+        <div class="my-3 border-t border-teal-800/40 w-12 mx-auto"></div>
+        <p class="text-xs md:text-sm text-teal-300 italic">${htmlBM}</p>
+      `;
+
+      // Active selected blank slot selector highlight
+      let activeBlankId = activeQuestionData.blanks[0].id;
+      
+      const optionsTitle = document.createElement('p');
+      optionsTitle.className = "text-center text-xs font-bold text-amber-400 uppercase tracking-widest mt-2";
+      optionsTitle.innerHTML = `<i class="fa-solid fa-arrow-down-long animate-bounce"></i> Choose word for highlighted blank:`;
+
+      const optionsBox = document.createElement('div');
+      optionsBox.className = "flex flex-wrap justify-center gap-3 mt-1";
+
+      const loadWordOptionsForActiveBlank = () => {
+        optionsBox.innerHTML = "";
+        const blankDef = activeQuestionData.blanks.find(b => b.id === activeBlankId);
+        if (!blankDef) return;
+
+        // Highlight active blank slot
+        document.querySelectorAll('.blank-slot').forEach(el => {
+          if (el.getAttribute('data-blank-id') === activeBlankId) {
+            el.classList.add('ring-4', 'ring-amber-400');
+          } else {
+            el.classList.remove('ring-4', 'ring-amber-400');
+          }
+        });
+
+        // Mix options
+        const shuffledWords = [...blankDef.options].sort(() => Math.random() - 0.5);
+        shuffledWords.forEach(word => {
+          const btn = document.createElement('button');
+          btn.className = "bg-teal-800 hover:bg-teal-700 text-white font-bold px-4 py-2 rounded-xl border border-teal-600 shadow-md transition-all duration-200";
+          btn.innerText = word;
+
+          btn.onclick = () => {
+            fillAnswers[activeBlankId] = word;
+            
+            // Advance to next unfilled blank, or re-render
+            const nextUnfilled = activeQuestionData.blanks.find(b => !fillAnswers[b.id]);
+            if (nextUnfilled) {
+              activeBlankId = nextUnfilled.id;
+              renderFillBlanks(container); // re-draw
+            } else {
+              // All filled, verify
+              const isCorrect = activeQuestionData.blanks.every(b => fillAnswers[b.id] === b.correct);
+              renderFillBlanks(container); // visual feedback update first
+              
+              setTimeout(() => {
+                checkAnswer(isCorrect);
+              }, 800);
+            }
+          };
+
+          optionsBox.appendChild(btn);
+        });
+      };
+
+      fillLayout.appendChild(sentenceBox);
+      fillLayout.appendChild(optionsTitle);
+      fillLayout.appendChild(optionsBox);
+      container.appendChild(fillLayout);
+
+      loadWordOptionsForActiveBlank();
+
+      // Setup click listeners on blank slots to let users change active blank focus
+      document.querySelectorAll('.blank-slot').forEach(slot => {
+        slot.onclick = () => {
+          activeBlankId = slot.getAttribute('data-blank-id');
+          loadWordOptionsForActiveBlank();
+        };
+      });
+    }
+
+    // ==================== CHECKING LOGIC & FEEDBACK ====================
+
+    function checkAnswer(isCorrect) {
+      if (isCorrect) {
+        audio.playCorrectSound();
+        triggerConfettiCelebration();
+
+        // Increment score
+        currentScore += 100;
+        document.getElementById('scoreDisplay').innerText = currentScore;
+
+        // Feed pop up explanation
+        document.getElementById('correctPopupExplanationEN').innerText = activeQuestionData.explanationEN;
+        document.getElementById('correctPopupExplanationBM').innerText = activeQuestionData.explanationBM;
+        
+        // Show Correct ribbon modal
+        document.getElementById('correctPopup').classList.remove('hidden');
+
+      } else {
+        audio.playWrongSound();
+        
+        // Feed educational hints
+        document.getElementById('wrongPopupHintEN').innerText = activeQuestionData.hintEN;
+        document.getElementById('wrongPopupHintBM').innerText = activeQuestionData.hintBM;
+
+        // Show Try Again popup
+        document.getElementById('wrongPopup').classList.remove('hidden');
+      }
+    }
+
+    function dismissCorrectPopup() {
+      document.getElementById('correctPopup').classList.add('hidden');
+      
+      // Move forward directly (as requested: "terus beralih ke soalan seterusnya")
+      currentQuestionIndex++;
+      
+      // Reset matching & fill tracking arrays
+      matchingPairsLeft = {};
+      selectedLeftId = null;
+      fillAnswers = {};
+      selectedWordForDrop = null;
+
+      loadQuestion();
+    }
+
+    function dismissWrongPopup() {
+      document.getElementById('wrongPopup').classList.add('hidden');
+      // Let them retry the current question index instantly
+      loadQuestion();
+    }
+
+    function finishQuiz() {
+      clearInterval(quizTimerInterval);
+      
+      document.getElementById('quizScreen').classList.add('hidden');
+      document.getElementById('resultScreen').classList.remove('hidden');
+      document.getElementById('backToMenuBtn').classList.add('hidden');
+
+      // Setup final stats text displays
+      document.getElementById('finalScoreText').innerText = currentScore;
+      document.getElementById('finalTimeText').innerText = secondsElapsed + "s";
+    }
+
+    function restartQuiz() {
+      startQuizSet(currentQuizSet);
+    }
+
+    // ==================== LEADERBOARD LOCAL STORAGE SYSTEM ====================
+
+    function getLeaderboard() {
+      const records = localStorage.getItem(LEADERBOARD_KEY);
+      return records ? JSON.parse(records) : [
+        { name: "Siti Aminah", score: 1000, time: 28, set: 1, date: "15-06-2026" },
+        { name: "Ahmad Danish", score: 900, time: 35, set: 2, date: "15-06-2026" },
+        { name: "Prof Idris Fan", score: 800, time: 42, set: 1, date: "15-06-2026" }
+      ];
+    }
+
+    function saveLeaderboard(board) {
+      localStorage.setItem(LEADERBOARD_KEY, JSON.stringify(board));
+    }
+
+    function submitScore() {
+      const nameInput = document.getElementById('playerNameInput');
+      const name = nameInput.value.trim() || "Anonymous Hero";
+      
+      const newRecord = {
+        name: name,
+        score: currentScore,
+        time: secondsElapsed,
+        set: currentQuizSet,
+        date: new Date().toLocaleDateString('en-GB').replace(/\//g, '-')
+      };
+
+      let board = getLeaderboard();
+      board.push(newRecord);
+      
+      // Sort primarily by Score (Descending), then Time (Ascending)
+      board.sort((a, b) => {
+        if (b.score !== a.score) return b.score - a.score;
+        return a.time - b.time;
+      });
+
+      // Keep top 10
+      board = board.slice(0, 10);
+      saveLeaderboard(board);
+
+      nameInput.value = ""; // clear
+      
+      // Load and toggle leaderboard display
+      renderLeaderboard();
+      toggleLeaderboardModal(true);
+    }
+
+    function renderLeaderboard() {
+      const board = getLeaderboard();
+      const listContainer = document.getElementById('leaderboardEntries');
+      listContainer.innerHTML = "";
+
+      board.forEach((record, index) => {
+        const row = document.createElement('div');
+        
+        let rankColor = "bg-teal-950/40 border-teal-800/40 text-gray-200";
+        let trophyIcon = "";
+        
+        if (index === 0) {
+          rankColor = "bg-amber-500/20 border-amber-500/60 text-amber-300";
+          trophyIcon = `<i class="fa-solid fa-crown text-amber-400"></i> `;
+        } else if (index === 1) {
+          rankColor = "bg-slate-300/20 border-slate-300/60 text-slate-300";
+          trophyIcon = `<i class="fa-solid fa-medal text-slate-400"></i> `;
+        } else if (index === 2) {
+          rankColor = "bg-amber-800/20 border-amber-800/60 text-amber-600";
+          trophyIcon = `<i class="fa-solid fa-medal text-amber-600"></i> `;
+        }
+
+        row.className = `flex items-center justify-between p-3 rounded-xl border ${rankColor} font-bold text-sm transition-all duration-300 hover:scale-[1.01]`;
+        row.innerHTML = `
+          <div class="flex items-center gap-3">
+            <span class="w-6 text-center font-black">${index + 1}</span>
+            <div class="flex flex-col">
+              <span class="text-base">${trophyIcon}${record.name}</span>
+              <span class="text-[10px] uppercase tracking-wider text-teal-400">Module Set ${record.set} &bull; ${record.date}</span>
+            </div>
+          </div>
+          <div class="text-right">
+            <span class="block text-emerald-400 font-extrabold text-base">${record.score} pts</span>
+            <span class="block text-[10px] text-gray-400 font-normal">Completed in ${record.time}s</span>
+          </div>
+        `;
+        listContainer.appendChild(row);
+      });
+    }
+
+    function toggleLeaderboardModal(show) {
+      const modal = document.getElementById('leaderboardModal');
+      if (show) {
+        renderLeaderboard();
+        modal.classList.remove('hidden');
+      } else {
+        modal.classList.add('hidden');
+      }
+    }
+
+    // ==================== FIREWORKS & CONFETTI CELEBRATORY VISUALS ====================
+    const canvas = document.getElementById("celebrationCanvas");
+    const ctx = canvas.getContext("2d");
+    let particles = [];
+    let celebrating = false;
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+
+    class Particle {
+      constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.size = Math.random() * 8 + 4;
+        this.speedX = Math.random() * 8 - 4;
+        this.speedY = Math.random() * -10 - 2;
+        this.gravity = 0.2;
+        this.color = `hsl(${Math.random() * 360}, 100%, 65%)`;
+        this.alpha = 1;
+        this.decay = Math.random() * 0.02 + 0.015;
+      }
+
+      update() {
+        this.speedY += this.gravity;
+        this.x += this.speedX;
+        this.y += this.speedY;
+        this.alpha -= this.decay;
+      }
+
+      draw() {
+        ctx.save();
+        ctx.globalAlpha = this.alpha;
+        ctx.fillStyle = this.color;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    function triggerConfettiCelebration() {
+      celebrating = true;
+      particles = [];
+      
+      // Explode 100 particles at center-bottom of screen moving upwards
+      const sourceX = window.innerWidth / 2;
+      const sourceY = window.innerHeight * 0.75;
+      
+      for (let i = 0; i < 120; i++) {
+        particles.push(new Particle(sourceX, sourceY));
+      }
+
+      // Also detonate fireworks on sides
+      for (let i = 0; i < 40; i++) {
+        particles.push(new Particle(window.innerWidth * 0.2, window.innerHeight * 0.5));
+        particles.push(new Particle(window.innerWidth * 0.8, window.innerHeight * 0.5));
+      }
+
+      animateCelebration();
+    }
+
+    function animateCelebration() {
+      if (!celebrating) return;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.update();
+        p.draw();
+        
+        if (p.alpha <= 0) {
+          particles.splice(i, 1);
+        }
+      }
+
+      if (particles.length > 0) {
+        requestAnimationFrame(animateCelebration);
+      } else {
+        celebrating = false;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+    }
+
+  </script>
+</body>
+</html>

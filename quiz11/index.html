@@ -1,0 +1,1465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zoroastrianism Quest: Interactive Edu-Game</title>
+    <!-- Tailwind CSS for modern fluid responsive design -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for cute kid-friendly icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts for friendly rounded layout -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: radial-gradient(circle, #fef3c7 0%, #fde68a 100%);
+            overflow-x: hidden;
+        }
+        .title-font {
+            font-family: 'Fredoka One', cursive;
+        }
+        /* Custom bounce animation for elements */
+        .bubble-hover:hover {
+            transform: scale(1.03) rotate(-0.5deg);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        /* Confetti piece styling */
+        .confetti-piece {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #ffd300;
+            top: 0;
+            opacity: 0;
+            animation: fall 3s infinite linear;
+        }
+        @keyframes fall {
+            0% { top: -10%; opacity: 1; transform: rotate(0deg); }
+            100% { top: 100%; opacity: 0.3; transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between text-slate-800 transition-colors duration-500">
+
+    <!-- TOP HEADER BAR: Always active with Exit and Sound buttons -->
+    <header class="bg-amber-400 border-b-4 border-amber-500 shadow-md p-4 sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <!-- Back to Main Menu Button -->
+            <button onclick="confirmExitToMenu()" class="bg-rose-500 hover:bg-rose-600 text-white font-bold px-4 py-2 rounded-full border-b-4 border-rose-700 bubble-hover flex items-center gap-2 text-sm sm:text-base">
+                <i class="fa-solid fa-house-chimney"></i>
+                <span class="hidden md:inline">Menu Utama /</span> Back to Menu
+            </button>
+            
+            <!-- Game Logo -->
+            <div class="text-center">
+                <h1 class="title-font text-xl sm:text-3xl text-amber-900 tracking-wider flex items-center gap-2 justify-center">
+                    <i class="fa-solid fa-fire-flame-curved text-orange-600 animate-pulse"></i>
+                    <span>ZOROASTRIAN QUEST</span>
+                </h1>
+            </div>
+
+            <!-- Sound Controls -->
+            <div class="flex items-center gap-2">
+                <button id="musicToggleBtn" onclick="toggleMusic()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold p-3 rounded-full border-b-4 border-indigo-900 flex items-center justify-center w-11 h-11 bubble-hover" title="Toggle BG Music">
+                    <i id="musicIcon" class="fa-solid fa-music"></i>
+                </button>
+                <button id="sfxToggleBtn" onclick="toggleSFX()" class="bg-violet-600 hover:bg-violet-700 text-white font-bold p-3 rounded-full border-b-4 border-violet-900 flex items-center justify-center w-11 h-11 bubble-hover" title="Toggle SFX">
+                    <i id="sfxIcon" class="fa-solid fa-volume-high"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- CONFETTI CONTAINERS -->
+    <div id="confettiContainer" class="fixed inset-0 pointer-events-none z-40 hidden"></div>
+
+    <!-- MAIN GAME AREA -->
+    <main class="flex-grow max-w-5xl w-full mx-auto p-4 flex flex-col justify-center">
+        
+        <!-- ================= MAIN MENU SCREEN ================= -->
+        <section id="menuScreen" class="block bg-white border-4 border-amber-300 rounded-3xl p-6 sm:p-10 shadow-2xl text-center relative overflow-hidden">
+            <!-- Background Cute Graphics -->
+            <div class="absolute -top-10 -left-10 w-40 h-40 bg-amber-100 rounded-full opacity-50 pointer-events-none"></div>
+            <div class="absolute -bottom-10 -right-10 w-48 h-48 bg-orange-100 rounded-full opacity-50 pointer-events-none"></div>
+
+            <div class="mb-8">
+                <div class="inline-block bg-amber-100 p-4 rounded-full mb-4 animate-bounce">
+                    <svg class="w-20 h-20 text-orange-500 mx-auto" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A2,2 0 0,1 14,6A2,2 0 0,1 12,8A2,2 0 0,1 10,6A2,2 0 0,1 12,4M12,18C8.69,18 6,15.31 6,12C6,9.09 8.08,6.67 10.88,6.13C10.33,7.4 10.78,8.87 11.85,9.66C12.72,10.3 13.82,10.45 14.81,10.15C15.65,11 15.9,12.23 15.42,13.31C14.85,14.57 13.48,15.25 12.16,14.82C12.06,15.21 12,15.6 12,16C12,16.7 12.18,17.37 12.5,17.95C12.33,18 12.17,18 12,18Z"/>
+                    </svg>
+                </div>
+                <h2 class="title-font text-3xl sm:text-5xl text-amber-900 mb-2">ZOROASTRIANISM QUEST</h2>
+                <p class="text-lg sm:text-xl text-amber-700 font-bold mb-1">Terokai Sejarah, Kepercayaan, & Amalan Purba</p>
+                <p class="text-sm sm:text-base text-slate-500 italic">Explore Ancient History, Beliefs, & Practices</p>
+            </div>
+
+            <!-- Main selection cards for Set 1 and Set 2 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto my-8">
+                <!-- Book Set 1 -->
+                <button onclick="startGame(1)" class="bg-gradient-to-br from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-white rounded-3xl p-6 shadow-lg border-b-8 border-orange-700 bubble-hover flex flex-col items-center justify-between transition-all duration-300">
+                    <div class="mb-4 text-5xl bg-white/20 p-4 rounded-2xl">
+                        <i class="fa-solid fa-monument"></i>
+                    </div>
+                    <div>
+                        <span class="block text-2xl font-black uppercase mb-1">Set 1: Sejarah & Perkembangan</span>
+                        <span class="block text-sm text-amber-100 font-bold mb-4">Set 1: History & Development</span>
+                        <span class="inline-block bg-white text-orange-600 font-extrabold px-4 py-2 rounded-full text-xs sm:text-sm shadow">
+                            10 Cabaran / Challenges <i class="fa-solid fa-play ml-1"></i>
+                        </span>
+                    </div>
+                </button>
+
+                <!-- Book Set 2 -->
+                <button onclick="startGame(2)" class="bg-gradient-to-br from-cyan-400 to-indigo-500 hover:from-cyan-500 hover:to-indigo-600 text-white rounded-3xl p-6 shadow-lg border-b-8 border-indigo-700 bubble-hover flex flex-col items-center justify-between transition-all duration-300">
+                    <div class="mb-4 text-5xl bg-white/20 p-4 rounded-2xl">
+                        <i class="fa-solid fa-hands-praying"></i>
+                    </div>
+                    <div>
+                        <span class="block text-2xl font-black uppercase mb-1">Set 2: Amalan, Kepercayaan & Ritual</span>
+                        <span class="block text-sm text-cyan-100 font-bold mb-4">Set 2: Beliefs, Rites & Rituals</span>
+                        <span class="inline-block bg-white text-indigo-600 font-extrabold px-4 py-2 rounded-full text-xs sm:text-sm shadow">
+                            10 Cabaran / Challenges <i class="fa-solid fa-play ml-1"></i>
+                        </span>
+                    </div>
+                </button>
+            </div>
+
+            <!-- High scores button -->
+            <div class="flex justify-center gap-4 mt-8">
+                <button onclick="showLeaderboardView()" class="bg-emerald-500 hover:bg-emerald-600 text-white font-black px-6 py-3 rounded-2xl border-b-4 border-emerald-700 flex items-center gap-2 bubble-hover">
+                    <i class="fa-solid fa-trophy text-yellow-300"></i>
+                    Papan Skor / Leaderboard
+                </button>
+            </div>
+        </section>
+
+        <!-- ================= GAMEPLAY CONTAINER ================= -->
+        <section id="gameScreen" class="hidden">
+            <!-- Progress & Stats Panel -->
+            <div class="bg-white border-2 border-slate-200 rounded-2xl p-4 shadow-md mb-6 flex flex-wrap justify-between items-center gap-4">
+                <div class="flex items-center gap-3">
+                    <div id="setIndicator" class="bg-amber-100 text-amber-800 font-bold px-3 py-1.5 rounded-xl text-xs sm:text-sm">SET 1</div>
+                    <div class="text-slate-600 text-sm font-bold">
+                        Soalan / Question: <span id="questionNumText" class="text-indigo-600 font-black">1/10</span>
+                    </div>
+                </div>
+                <!-- Dynamic Progress Bar -->
+                <div class="flex-grow max-w-xs md:max-w-md bg-slate-100 h-4 rounded-full overflow-hidden border border-slate-200 mx-2">
+                    <div id="progressBar" class="bg-gradient-to-r from-emerald-400 to-teal-500 h-full transition-all duration-500" style="width: 10%;"></div>
+                </div>
+                <!-- Live Score -->
+                <div class="bg-amber-100 px-4 py-1 rounded-full flex items-center gap-2 font-black text-amber-900 shadow-sm">
+                    <i class="fa-solid fa-star text-yellow-500 animate-spin-slow"></i>
+                    <span id="scoreText">0 Pts</span>
+                </div>
+            </div>
+
+            <!-- Dynamic Question Card -->
+            <div id="questionCard" class="bg-white border-4 border-amber-300 rounded-3xl p-6 sm:p-8 shadow-xl relative min-h-[350px] flex flex-col justify-between">
+                <!-- Question Texts -->
+                <div class="mb-6 border-b border-slate-100 pb-4">
+                    <span class="text-xs font-bold uppercase tracking-widest text-indigo-500" id="styleIndicator">Style: Multiple Choice</span>
+                    <h3 id="questionTextEN" class="text-xl sm:text-2xl font-extrabold text-slate-800 mt-2 leading-relaxed"></h3>
+                    <h4 id="questionTextBM" class="text-base sm:text-lg italic font-semibold text-slate-500 mt-2 leading-relaxed"></h4>
+                </div>
+
+                <!-- Interactive Work Area (Changes dynamically based on question style) -->
+                <div id="interactiveArea" class="my-4 min-h-[160px]">
+                    <!-- Generated via JS -->
+                </div>
+
+                <!-- Guidance Tips / Hint (if wrong) -->
+                <div id="hintBox" class="mt-4 p-3 bg-red-50 text-red-700 rounded-xl border border-red-200 text-xs sm:text-sm hidden items-center gap-2 animate-pulse">
+                    <i class="fa-solid fa-circle-info text-base"></i>
+                    <div>
+                        <strong class="block">Pembayang / Hint:</strong>
+                        <span id="hintText">Try another approach!</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= EXPLANATION OVERLAY (Success/Correct) ================= -->
+        <section id="explanationScreen" class="hidden bg-white border-4 border-emerald-400 rounded-3xl p-6 sm:p-10 shadow-2xl text-center relative overflow-hidden">
+            <div class="absolute -top-10 -right-10 w-32 h-32 bg-emerald-100 rounded-full opacity-50"></div>
+            
+            <!-- Big celebratory banner -->
+            <div class="animate-bounce mb-6">
+                <span class="inline-block bg-emerald-500 text-white rounded-full p-4 shadow-lg text-4xl">
+                    <i class="fa-solid fa-ribbon text-yellow-300 animate-pulse"></i>
+                </span>
+            </div>
+
+            <h2 class="title-font text-3xl sm:text-5xl text-emerald-600 mb-2">JAWABAN BIJAK!</h2>
+            <h3 class="text-xl font-bold text-slate-500 mb-6">Brilliant Answer!</h3>
+
+            <!-- Explanation Content Container -->
+            <div class="bg-emerald-50 border-2 border-emerald-100 rounded-2xl p-5 mb-8 max-w-2xl mx-auto text-left">
+                <h4 class="font-extrabold text-emerald-800 mb-2 flex items-center gap-2">
+                    <i class="fa-solid fa-circle-check"></i>
+                    Kenapa ini betul? / Why is this correct?
+                </h4>
+                <p id="explanationTextEN" class="text-slate-700 font-semibold mb-2 leading-relaxed"></p>
+                <p id="explanationTextBM" class="text-slate-500 italic font-medium border-t border-emerald-200/50 pt-2 leading-relaxed"></p>
+            </div>
+
+            <!-- Progress Action Button -->
+            <button onclick="advanceQuestion()" class="bg-gradient-to-r from-emerald-400 to-teal-500 hover:from-emerald-500 hover:to-teal-600 text-white text-xl font-black px-8 py-4 rounded-full border-b-6 border-emerald-700 shadow-xl bubble-hover inline-flex items-center gap-3">
+                Teruskan / Continue <i class="fa-solid fa-forward"></i>
+            </button>
+        </section>
+
+        <!-- ================= TRY AGAIN MODAL (Wrong Feedback) ================= -->
+        <div id="tryAgainModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+            <div class="bg-white border-4 border-rose-400 rounded-3xl p-6 sm:p-8 shadow-2xl max-w-md w-full text-center relative transform scale-95 transition-transform">
+                <div class="text-rose-500 text-6xl mb-4">
+                    <i class="fa-solid fa-face-sad-tear animate-bounce"></i>
+                </div>
+                <h3 class="title-font text-2xl sm:text-3xl text-rose-600">Alamak, Cuba Lagi!</h3>
+                <h4 class="text-base font-bold text-slate-400 mb-4">Oops, Try Again!</h4>
+                
+                <div class="bg-rose-50 border border-rose-200 rounded-xl p-4 mb-6 text-left">
+                    <span class="block text-rose-800 font-extrabold mb-1"><i class="fa-solid fa-lightbulb"></i> Petunjuk / Hint:</span>
+                    <p id="tryAgainHintText" class="text-slate-700 text-sm font-semibold leading-relaxed"></p>
+                </div>
+
+                <button onclick="closeTryAgain()" class="bg-rose-500 hover:bg-rose-600 text-white font-black px-8 py-3 rounded-full border-b-4 border-rose-700 bubble-hover">
+                    Cuba Semula / Retry
+                </button>
+            </div>
+        </div>
+
+        <!-- ================= GAME OVER / RESULTS SCREEN ================= -->
+        <section id="gameOverScreen" class="hidden bg-white border-4 border-indigo-400 rounded-3xl p-6 sm:p-10 shadow-2xl text-center relative overflow-hidden">
+            <div class="absolute -top-10 -left-10 w-40 h-40 bg-indigo-50 rounded-full opacity-60"></div>
+            
+            <h2 class="title-font text-3xl sm:text-5xl text-indigo-700 mb-2">TAMAT PERMAINAN!</h2>
+            <h3 class="text-xl font-bold text-slate-400 mb-6">Game Completed!</h3>
+
+            <!-- Dynamic Badge / Rank based on score -->
+            <div class="my-6">
+                <div class="inline-block bg-indigo-50 p-6 rounded-full relative">
+                    <span class="absolute top-0 right-0 bg-yellow-400 text-amber-950 font-black rounded-full px-3 py-1 text-xs shadow-lg animate-pulse">RANK</span>
+                    <span id="rankBadgeIcon" class="text-7xl">🏆</span>
+                </div>
+                <h4 id="rankTitleEN" class="text-2xl font-black text-slate-800 mt-4 uppercase">Avesta Scholar</h4>
+                <h5 id="rankTitleBM" class="text-lg italic font-bold text-slate-500">Cendekiawan Avesta</h5>
+            </div>
+
+            <!-- Stats Panel -->
+            <div class="grid grid-cols-2 gap-4 max-w-sm mx-auto my-8">
+                <div class="bg-amber-50 border-2 border-amber-200 p-4 rounded-2xl shadow-sm">
+                    <span class="block text-slate-500 text-xs sm:text-sm font-bold">Skor Akhir / Score</span>
+                    <span id="finalScore" class="text-3xl font-black text-amber-700">0</span>
+                </div>
+                <div class="bg-indigo-50 border-2 border-indigo-200 p-4 rounded-2xl shadow-sm">
+                    <span class="block text-slate-500 text-xs sm:text-sm font-bold">Ketepatan / Accuracy</span>
+                    <span id="finalAccuracy" class="text-3xl font-black text-indigo-700">0%</span>
+                </div>
+            </div>
+
+            <!-- Save Score to Leaderboard -->
+            <div id="saveScoreBox" class="bg-slate-50 border border-slate-200 rounded-2xl p-4 sm:p-6 max-w-md mx-auto mb-8 text-left">
+                <label class="block text-slate-700 font-black mb-2 text-sm sm:text-base">
+                    Simpan rekod anda ke Papan Skor!<br>
+                    <span class="text-slate-400 font-medium text-xs sm:text-sm">Save your record to the leaderboard!</span>
+                </label>
+                <div class="flex gap-2">
+                    <input type="text" id="playerNameInput" placeholder="Nama Anda / Your Name" class="bg-white border-2 border-slate-300 rounded-xl px-4 py-2 flex-grow focus:outline-none focus:border-indigo-500 font-bold">
+                    <button onclick="savePlayerScore()" class="bg-emerald-500 hover:bg-emerald-600 text-white font-black px-6 py-2 rounded-xl border-b-4 border-emerald-700 bubble-hover">
+                        Simpan / Save
+                    </button>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex flex-wrap justify-center gap-4">
+                <button onclick="replayCurrentSet()" class="bg-amber-400 hover:bg-amber-500 text-amber-950 font-black px-6 py-3 rounded-2xl border-b-4 border-amber-700 bubble-hover">
+                    <i class="fa-solid fa-rotate-right mr-1"></i> Main Lagi / Play Again
+                </button>
+                <button onclick="exitToMenu()" class="bg-slate-400 hover:bg-slate-500 text-white font-black px-6 py-3 rounded-2xl border-b-4 border-slate-600 bubble-hover">
+                    Menu Utama / Main Menu
+                </button>
+            </div>
+        </section>
+
+        <!-- ================= LEADERBOARD SCREEN ================= -->
+        <section id="leaderboardScreen" class="hidden bg-white border-4 border-emerald-300 rounded-3xl p-6 sm:p-10 shadow-2xl text-center relative overflow-hidden">
+            <h2 class="title-font text-3xl sm:text-5xl text-emerald-700 mb-2">PAPAN SKOR UTAMA</h2>
+            <h3 class="text-xl font-bold text-slate-400 mb-6">Global Leaderboard</h3>
+
+            <!-- Leaderboard Table -->
+            <div class="max-w-md mx-auto bg-slate-50 rounded-2xl border border-slate-200 overflow-hidden mb-8 shadow-sm">
+                <div class="bg-emerald-500 text-white font-black p-3 flex justify-between text-sm sm:text-base">
+                    <span>Nama / Player</span>
+                    <span>Skor / Score</span>
+                </div>
+                <div id="leaderboardList" class="divide-y divide-slate-200 max-h-60 overflow-y-auto">
+                    <!-- Dynamic Rows -->
+                </div>
+            </div>
+
+            <div class="flex justify-center gap-4">
+                <button onclick="clearLeaderboard()" class="bg-rose-500 hover:bg-rose-600 text-white font-black px-4 py-2 rounded-xl border-b-4 border-rose-700 bubble-hover text-sm">
+                    Padam Semua / Clear Records
+                </button>
+                <button onclick="exitToMenu()" class="bg-slate-400 hover:bg-slate-500 text-white font-black px-6 py-3 rounded-2xl border-b-4 border-slate-600 bubble-hover">
+                    Kembali / Back
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER PANEL -->
+    <footer class="bg-amber-500 border-t-4 border-amber-600 text-amber-950 text-center py-4 px-6 text-xs sm:text-sm mt-8">
+        <p class="font-extrabold mb-1">Copyright © 2026 by DR. MRAR. Semua hak terpelihara / All rights reserved.</p>
+        <p class="text-amber-100 font-bold opacity-90">Permainan Interaktif Pendidikan Zoroastrianisme dwi-bahasa.</p>
+    </footer>
+
+    <!-- EXIT CONFIRMATION MODAL -->
+    <div id="exitConfirmModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white border-4 border-amber-400 rounded-3xl p-6 sm:p-8 shadow-2xl max-w-sm w-full text-center">
+            <div class="text-amber-500 text-5xl mb-4">
+                <i class="fa-solid fa-triangle-exclamation animate-pulse"></i>
+            </div>
+            <h3 class="title-font text-2xl text-amber-900">Kembali ke Menu?</h3>
+            <p class="text-slate-600 font-semibold my-4 text-sm sm:text-base">
+                Anda akan kehilangan progres semasa. Anda pasti?<br>
+                <span class="text-slate-400 font-medium text-xs sm:text-sm">You will lose current progress. Are you sure?</span>
+            </p>
+            <div class="flex gap-4 justify-center">
+                <button onclick="exitToMenu()" class="bg-rose-500 hover:bg-rose-600 text-white font-black px-6 py-2 rounded-xl border-b-4 border-rose-700 bubble-hover">
+                    Ya / Exit
+                </button>
+                <button onclick="closeExitConfirm()" class="bg-slate-300 hover:bg-slate-400 text-slate-800 font-black px-6 py-2 rounded-xl border-b-4 border-slate-400 bubble-hover">
+                    Batal / Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= JAVASCRIPT GAME LOGIC & SOUND SYNTHESIS ================= -->
+    <script>
+        // ------------------ CHEERFUL GAME SOUND ENGINE (WEB AUDIO API) ------------------
+        let audioCtx = null;
+        let isMusicPlaying = false;
+        let isSFXEnabled = true;
+        
+        let activeNodes = [];
+        let musicTimer = null;
+        let nextNoteTime = 0;
+        let currentStep = 0;
+
+        // Upbeat, retro-inspired cheerful melody patterns (C Major Scale)
+        const melodyNotes = [
+            523.25, 659.25, 587.33, 783.99, 659.25, 880.00, 783.99, 0,
+            659.25, 587.33, 523.25, 493.88, 440.00, 523.25, 587.33, 0
+        ];
+
+        // Alternating cheerful bouncing bass notes
+        const bassNotes = [
+            130.81, 130.81, 164.81, 164.81, 146.83, 146.83, 196.00, 196.00,
+            220.00, 220.00, 174.61, 174.61, 130.81, 130.81, 196.00, 196.00
+        ];
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        // Play an individual synthesized note with standard chiptune sound style
+        function playSynthNote(freq, startTime, duration, volume, waveType) {
+            if (!audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            
+            osc.type = waveType; // 'triangle' for chimes, 'sine' for warm bass
+            osc.frequency.setValueAtTime(freq, startTime);
+            
+            // Fast attack and natural decay for a highly bouncy retro feeling
+            gainNode.gain.setValueAtTime(0, startTime);
+            gainNode.gain.linearRampToValueAtTime(volume, startTime + 0.02);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+            
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            
+            osc.start(startTime);
+            osc.stop(startTime + duration);
+            
+            activeNodes.push({ osc, gainNode, stopTime: startTime + duration });
+        }
+
+        // Clock scheduler schedules notes in advance for ultra-smooth performance
+        function playNextStep() {
+            if (!audioCtx) return;
+            
+            const stepDuration = 0.16; // 160ms per step (~140 BPM)
+            const nextTime = nextNoteTime;
+
+            // Play melody note
+            const melodyFreq = melodyNotes[currentStep];
+            if (melodyFreq > 0) {
+                playSynthNote(melodyFreq, nextTime, 0.25, 0.012, 'triangle');
+            }
+
+            // Play bouncing retro bass line on odd beats
+            if (currentStep % 2 === 0) {
+                const bassFreq = bassNotes[currentStep];
+                playSynthNote(bassFreq, nextTime, 0.35, 0.03, 'sine');
+            }
+
+            nextNoteTime += stepDuration;
+            currentStep = (currentStep + 1) % 16;
+        }
+
+        function scheduler() {
+            if (!audioCtx) return;
+            while (nextNoteTime < audioCtx.currentTime + 0.1) {
+                playNextStep();
+            }
+            activeNodes = activeNodes.filter(node => audioCtx.currentTime < node.stopTime);
+        }
+
+        function startBackgroundMusic() {
+            initAudio();
+            if (isMusicPlaying) stopBackgroundMusic();
+            
+            currentStep = 0;
+            nextNoteTime = audioCtx.currentTime;
+            
+            scheduler();
+            musicTimer = setInterval(scheduler, 35);
+            isMusicPlaying = true;
+            updateAudioButtons();
+        }
+
+        function stopBackgroundMusic() {
+            if (musicTimer) {
+                clearInterval(musicTimer);
+                musicTimer = null;
+            }
+            activeNodes.forEach(node => {
+                try {
+                    node.osc.stop();
+                } catch(e) {}
+            });
+            activeNodes = [];
+            isMusicPlaying = false;
+            updateAudioButtons();
+        }
+
+        function toggleMusic() {
+            initAudio();
+            if (isMusicPlaying) {
+                stopBackgroundMusic();
+            } else {
+                startBackgroundMusic();
+            }
+        }
+
+        function toggleSFX() {
+            isSFXEnabled = !isSFXEnabled;
+            updateAudioButtons();
+        }
+
+        function updateAudioButtons() {
+            document.getElementById('musicIcon').className = isMusicPlaying ? 'fa-solid fa-volume-high' : 'fa-solid fa-volume-xmark';
+            document.getElementById('sfxIcon').className = isSFXEnabled ? 'fa-solid fa-bell' : 'fa-solid fa-bell-slash';
+        }
+
+        function playCorrectSound() {
+            if (!isSFXEnabled) return;
+            initAudio();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            osc.type = 'sine';
+            const now = audioCtx.currentTime;
+            
+            osc.frequency.setValueAtTime(523.25, now); // C5
+            osc.frequency.setValueAtTime(659.25, now + 0.1); // E5
+            osc.frequency.setValueAtTime(783.99, now + 0.2); // G5
+            osc.frequency.setValueAtTime(1046.50, now + 0.3); // C6
+            
+            gain.gain.setValueAtTime(0.15, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+            
+            osc.start(now);
+            osc.stop(now + 0.5);
+        }
+
+        function playWrongSound() {
+            if (!isSFXEnabled) return;
+            initAudio();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            osc.type = 'sawtooth';
+            const now = audioCtx.currentTime;
+            
+            osc.frequency.setValueAtTime(300, now);
+            osc.frequency.linearRampToValueAtTime(120, now + 0.4);
+            
+            gain.gain.setValueAtTime(0.12, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.45);
+            
+            osc.start(now);
+            osc.stop(now + 0.5);
+        }
+
+        function playSelectSound() {
+            if (!isSFXEnabled) return;
+            initAudio();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            osc.type = 'triangle';
+            const now = audioCtx.currentTime;
+            
+            osc.frequency.setValueAtTime(440, now); // A4
+            gain.gain.setValueAtTime(0.1, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+            
+            osc.start(now);
+            osc.stop(now + 0.12);
+        }
+
+        // ------------------ BILINGUAL QUESTIONS AND ANSWERS DATA ------------------
+        const questionSets = {
+            1: [
+                {
+                    style: "MCQ",
+                    textEN: "According to Zoroastrianism, in which ancient region was the prophet Zarathustra born around 630 BCE?",
+                    textBM: "Menurut Zoroastrianisme, di rantau purba manakah nabi Zarathustra dilahirkan sekitar 630 SM?",
+                    options: [
+                        { text: "Azerbaijan / Northern Iran (Azerbaijan / Iran Utara)", correct: true },
+                        { text: "Alexandria / Egypt (Alexandria / Mesir)", correct: false },
+                        { text: "Athens / Greece (Athens / Yunani)", correct: false },
+                        { text: "Punjab / India (Punjab / India)", correct: false }
+                    ],
+                    hint: "He came from the Spitama warrior clan located in the wild mountainous northern region. / Beliau berasal daripada klan pahlawan Spitama di kawasan pergunungan utara yang liar.",
+                    explanation: "Zarathustra, the founder of Zoroastrianism, was born in Azerbaijan (Northern Iran) in the 7th Century BCE.",
+                    explanationBM: "Zarathustra, pengasas Zoroastrianisme, dilahirkan di Azerbaijan (Iran Utara) pada Abad ke-7 SM."
+                },
+                {
+                    style: "MCQ",
+                    textEN: "Zoroastrianism teaches that at his birth, Zarathustra did something miraculous unlike other infants. What was it?",
+                    textBM: "Zoroastrianisme mengajar bahawa semasa kelahirannya, Zarathustra melakukan sesuatu yang ajaib berbeza dengan bayi lain. Apakah ia?",
+                    options: [
+                        { text: "He smiled instead of crying (Beliau tersenyum dan bukannya menangis)", correct: true },
+                        { text: "He immediately pointed to the sun (Beliau terus menunjuk ke arah matahari)", correct: false },
+                        { text: "A continuous sweet fragrance filled the room (Bau harum memenuhi bilik)", correct: false },
+                        { text: "He walked three steps forward immediately (Beliau terus berjalan tiga langkah)", correct: false }
+                    ],
+                    hint: "This was seen as a divine sign that he would bring joy. / Ini dilihat sebagai tanda ketuhanan bahawa beliau membawa kegembiraan.",
+                    explanation: "Unlike other infants, Zarathustra smiled at birth, representing a sign of bringing joy to a confused world.",
+                    explanationBM: "Berbeza dengan bayi lain, Zarathustra tersenyum semasa lahir, menandakan kedatangan kegembiraan ke dunia yang keliru."
+                },
+                {
+                    style: "MCQ",
+                    textEN: "Zoroastrianism teaches that before Zarathustra's revelations, ancient Persians practiced polytheism and appeased their elements with:",
+                    textBM: "Zoroastrianisme mengajar bahawa sebelum wahyu Zarathustra, orang Parsi purba mengamalkan politeisme dan menenangkan elemen alam mereka dengan:",
+                    options: [
+                        { text: "Bloody animal sacrifices and complex rituals (Korban haiwan berdarah dan ritual yang rumit)", correct: true },
+                        { text: "Silent meditation inside deep mountain caves (Meditasi senyap di dalam gua gunung yang dalam)", correct: false },
+                        { text: "Drowning golden items in the sacred rivers (Menenggelamkan barangan emas di dalam sungai suci)", correct: false },
+                        { text: "Planting a thousand sacred cedar trees every year (Menanam seribu pohon sedar suci setiap tahun)", correct: false }
+                    ],
+                    hint: "These brutal ceremonies deeply upset young Zarathustra. / Upacara kejam ini sangat mengganggu perasaan Zarathustra ketika muda.",
+                    explanation: "Ancient Persians worshiped elements like Fire, Water, and Earth, believing they needed bloody animal sacrifices.",
+                    explanationBM: "Orang Parsi purba menyembah unsur alam seperti Api, Air, dan Tanah, mempercayai mereka memerlukan korban haiwan berdarah."
+                },
+                {
+                    style: "FILL_BLANKS",
+                    textEN: "Zoroastrianism believes that Zarathustra meditated on Mount _________ where he was guided by _________ into the presence of Ahura Mazda.",
+                    textBM: "Zoroastrianisme percaya bahawa Zarathustra bermeditasi di Gunung _________ di mana dia dibimbing oleh _________ ke hadrat Ahura Mazda.",
+                    blanks: ["Sabalan", "Vohu Manah"],
+                    options: [
+                        { en: "Sabalan", display: "Sabalan (Mount Sabalan / Gunung Sabalan)" },
+                        { en: "Vohu Manah", display: "Vohu Manah (Good Thought / Fikiran Baik)" },
+                        { en: "Persepolis", display: "Persepolis (Persepolis)" },
+                        { en: "Ahriman", display: "Ahriman (Destructive Spirit / Roh Pemusnah)" }
+                    ],
+                    hint: "He meditated in a silent wilderness and met the spirit of Good Thought. / Beliau bermeditasi di belantara sunyi dan menemui roh Fikiran Baik.",
+                    explanation: "During deep meditation atop Mount Sabalan, the spiritual being Vohu Manah guided Zarathustra to God.",
+                    explanationBM: "Semasa meditasi mendalam di puncak Gunung Sabalan, makhluk rohani Vohu Manah membimbing Zarathustra kepada Tuhan."
+                },
+                {
+                    style: "DRAG_DROP",
+                    textEN: "Drag the historical events to match their descriptions according to Zoroastrian history:",
+                    textBM: "Seret peristiwa sejarah untuk memadankan huraiannya mengikut sejarah Zoroastrianisme:",
+                    pairs: [
+                        { id: 0, source: "Alexander the Great / Alexander Agung", target: "Burned the royal library of Persepolis in 330 BCE / Membakar perpustakaan diraja Persepolis pada 330 SM" },
+                        { id: 1, source: "Sasanian Dynasty / Dinasti Sasanian", target: "Reconstructed the Avesta from memory and oral traditions / Membina semula Avesta daripada ingatan dan tradisi lisan" },
+                        { id: 2, source: "Parsis (Persian Zoroastrians) / Kaum Parsi", target: "Zoroastrians of Persian origin who fled to India in 651 CE / Penganut Zoroastrian asal Parsi yang melarikan diri ke India pada 651 M" }
+                    ],
+                    hint: "Match the Greek invader, the medieval restorers, and the migrants who fled to India. / Padankan penceroboh Yunani, pemulih zaman pertengahan, dan migran yang berpindah ke India.",
+                    explanation: "Alexander burned the original library, Sasanian priests pieced it back from memory, and Persian Zoroastrians (known as 'Parsis' in India) preserved it.",
+                    explanationBM: "Alexander membakar perpustakaan asal, paderi Sasanian membina semula teks melalui ingatan, dan penganut Zoroastrian Parsi (dikenali sebagai 'Kaum Parsi' di India) memeliharanya."
+                },
+                {
+                    style: "MATCH_COLUMN",
+                    textEN: "Match the ancient holy scriptures with their correct descriptions according to Zoroastrianism:",
+                    textBM: "Padankan kitab suci purba dengan huraian yang betul menurut Zoroastrianisme:",
+                    left: [
+                        "Avesta (Holy Text / Kitab Suci)",
+                        "Zand (Old Persian Translation / Terjemahan Parsi Kuno)",
+                        "Pahlavi (Middle Persian / Bahasa Parsi Pertengahan)"
+                    ],
+                    right: [
+                        "The Middle Persian translation used in Sasanian era / Terjemahan Bahasa Parsi Pertengahan pada era Sasanian",
+                        "The overall collection of surviving sacred texts / Keseluruhan koleksi teks suci yang masih terselamat",
+                        "The Old Persian language of the original texts / Bahasa Parsi Purba bagi teks-teks asal"
+                    ],
+                    rightBM: [
+                        "The Middle Persian translation used in Sasanian era / Terjemahan Bahasa Parsi Pertengahan pada era Sasanian",
+                        "The overall collection of surviving sacred texts / Keseluruhan koleksi teks suci yang masih terselamat",
+                        "The Old Persian language of the original texts / Bahasa Parsi Purba bagi teks-teks asal"
+                    ],
+                    correctMap: {0: 1, 1: 2, 2: 0},
+                    hint: "Avesta is the overall collection; Zand is the original old language; Pahlavi is the middle translation. / Avesta ialah keseluruhan koleksi; Zand ialah bahasa kuno asal; Pahlavi ialah terjemahan pertengahan.",
+                    explanation: "Avesta is the main text. Its original language was Zand, translated to Pahlavi as languages changed over time.",
+                    explanationBM: "Avesta ialah teks utama. Bahasa asalnya ialah Zand, diterjemah ke Pahlavi mengikut peredaran bahasa zaman ke zaman."
+                },
+                {
+                    style: "MCQ",
+                    textEN: "Zoroastrianism teaches that after 10 years of preaching, how many followers did Zarathustra manage to convert initially?",
+                    textBM: "Zoroastrianisme mengajar bahawa selepas 10 tahun berdakwah, berapakah bilangan pengikut yang berjaya diislamkan/ditukar oleh Zarathustra pada mulanya?",
+                    options: [
+                        { text: "Only one follower (his cousin) / Hanya seorang pengikut (sepupunya)", correct: true },
+                        { text: "Almost the entire Spitama warrior clan / Hampir keseluruhan klan pahlawan Spitama", correct: false },
+                        { text: "Twelve wise kings from neighboring empires / Dua belas raja bijaksana dari empayar jiran", correct: false },
+                        { text: "Five prominent priests from Northern Iran / Lima paderi terkemuka dari Iran Utara", correct: false }
+                    ],
+                    hint: "He faced severe mockery and had only one family member join him initially. / Beliau menghadapi ejekan hebat dan hanya seorang ahli keluarga menyertainya pada mulanya.",
+                    explanation: "For ten long years, Zarathustra struggled and managed to convert only one follower: his cousin.",
+                    explanationBM: "Selama sepuluh tahun yang panjang, Zarathustra bergelut dan hanya berjaya menarik seorang pengikut: sepupunya."
+                },
+                {
+                    style: "FILL_BLANKS",
+                    textEN: "Zoroastrianism teaches that at age 40, Zarathustra debated court priests for 3 days to convince King _________, who then made Zoroastrianism the _________ religion.",
+                    textBM: "Zoroastrianisme mengajar bahawa pada usia 40 tahun, Zarathustra berdebat dengan paderi istana selama 3 hari untuk meyakinkan Raja _________, yang kemudian menjadikan Zoroastrianisme sebagai agama _________.",
+                    blanks: ["Vishtaspa", "official"],
+                    options: [
+                        { en: "Vishtaspa", display: "Vishtaspa (King Vishtaspa / Raja Vishtaspa)" },
+                        { en: "official", display: "official (Official / Rasmi)" },
+                        { en: "Cyrus", display: "Cyrus (King Cyrus / Raja Cyrus)" },
+                        { en: "forgotten", display: "forgotten (Forgotten / Terpinggir)" }
+                    ],
+                    hint: "He won the royal debate, securing patronage for the faith. / Beliau memenangi debat diraja, mendapatkan sokongan rasmi bagi agama tersebut.",
+                    explanation: "King Kavi Vishtaspa accepted Zarathustra's message and declared it the official state religion.",
+                    explanationBM: "Raja Kavi Vishtaspa menerima ajaran Zarathustra dan mengisytiharkannya sebagai agama rasmi kerajaan."
+                },
+                {
+                    style: "MCQ",
+                    textEN: "According to Zoroastrianism, what is the 'Khorda Avesta' used for by the public?",
+                    textBM: "Menurut Zoroastrianisme, untuk apakah 'Khorda Avesta' digunakan oleh orang awam?",
+                    options: [
+                        { text: "Daily prayers and public devotions / Doa harian dan pengabdian awam", correct: true },
+                        { text: "Strict laws and cosmic creation diagrams / Undang-undang ketat dan rajah penciptaan kosmik", correct: false },
+                        { text: "Sacred funeral and mummification rites / Ritual pengebumian dan pengawetan mayat suci", correct: false },
+                        { text: "Historical records of the ancient emperors / Rekod sejarah maharaja-maharaja purba", correct: false }
+                    ],
+                    hint: "It is translated as the 'Small Avesta' for daily lay use. / Ia diterjemahkan sebagai 'Avesta Kecil' untuk kegunaan harian orang biasa.",
+                    explanation: "The Khorda Avesta is the 'Small Avesta' containing short daily prayers for everyday practitioners.",
+                    explanationBM: "Khorda Avesta ialah 'Avesta Kecil' yang mengandungi doa-doa harian ringkas untuk penganut biasa."
+                },
+                {
+                    style: "MCQ",
+                    textEN: "Zoroastrianism teaches that the holy book 'Yasna' is highly significant because it contains Zarathustra's own sacred hymns called:",
+                    textBM: "Zoroastrianisme mengajar bahawa kitab suci 'Yasna' sangat penting kerana ia mengandungi lagu suci Zarathustra sendiri yang dipanggil:",
+                    options: [
+                        { text: "Gathas (Sacred Hymns / Lagu Suci)", correct: true },
+                        { text: "Vendidad (Laws Against Evil / Undang-undang Menentang Kejahatan)", correct: false },
+                        { text: "Yashts (Hymns to Angels / Nyanyian Kepada Malaikat)", correct: false },
+                        { text: "Visperad (Celestial Praises / Pujian Makhluk Langit)", correct: false }
+                    ],
+                    hint: "These are the exact poetic hymns composed by the prophet himself. / Ini merupakan nyanyian puisi yang digubah oleh nabi itu sendiri.",
+                    explanation: "The Gathas are 17 hymns composed by Zarathustra, preserved within the liturgical Yasna text.",
+                    explanationBM: "Gathas merupakan 17 nyanyian suci yang digubah oleh Zarathustra sendiri, yang dipelihara di dalam kitab Yasna."
+                }
+            ],
+            2: [
+                {
+                    style: "MCQ",
+                    textEN: "Zoroastrianism teaches that the supreme, wise creator god is known by 101 sacred names. What is His name?",
+                    textBM: "Zoroastrianisme mengajar bahawa tuhan pencipta yang agung lagi bijaksana dikenali dengan 101 nama suci. Siapakah nama-Nya?",
+                    options: [
+                        { text: "Ahura Mazda (The Wise Lord / Tuhan Yang Bijaksana)", correct: true },
+                        { text: "Angra Mainyu (The Evil Spirit / Roh Jahat)", correct: false },
+                        { text: "Mithra (The Solar Angel / Malaikat Cahaya)", correct: false },
+                        { text: "Spitama (The Spitama Ancestor / Leluhur Spitama)", correct: false }
+                    ],
+                    hint: "He represents the source of all goodness and light in the universe. / Beliau melambangkan punca segala kebaikan dan cahaya di alam semesta.",
+                    explanation: "Ahura Mazda (The Wise Lord) is the sole monotheistic creator and source of all cosmic goodness.",
+                    explanationBM: "Ahura Mazda (Tuhan Yang Bijaksana) ialah tuhan pencipta monoteistik tunggal dan sumber segala kebaikan."
+                },
+                {
+                    style: "DRAG_DROP",
+                    textEN: "Zoroastrianism teaches three core moral pillars. Match each term with its correct moral meaning:",
+                    textBM: "Zoroastrianisme mengajar tiga tiang moral utama. Padankan setiap istilah dengan maksud moralnya yang betul:",
+                    pairs: [
+                        { id: 0, source: "Humata", target: "Good Thoughts / Fikiran Baik" },
+                        { id: 1, source: "Hukata / Hukhta", target: "Good Words / Kata-kata Baik" },
+                        { id: 2, source: "Huvarshta", target: "Good Deeds / Perbuatan Baik" }
+                    ],
+                    hint: "Thoughts, words, and deeds represent the moral triplet in order. / Fikiran, perkataan, dan perbuatan mewakili gandingan moral mengikut urutan.",
+                    explanation: "Humata (Good Thoughts), Hukata (Good Words), and Huvarshta (Good Deeds) are the basic pillars of daily life.",
+                    explanationBM: "Humata (Fikiran Baik), Hukata (Kata-kata Baik), dan Huvarshta (Perbuatan Baik) merupakan tiang asas kehidupan seharian."
+                },
+                {
+                    style: "MCQ",
+                    textEN: "Zoroastrianism believes that sacred fire, called Atar, is used in temples for what purpose?",
+                    textBM: "Zoroastrianisme percaya bahawa api suci, yang dipanggil Atar, digunakan di kuil untuk tujuan apa?",
+                    options: [
+                        { text: "As a focus for prayer towards divine light / Sebagai fokus berdoa ke arah cahaya ketuhanan", correct: true },
+                        { text: "As a god to be worshiped directly / Sebagai tuhan fizikal untuk disembah secara langsung", correct: false },
+                        { text: "To burn away historical books of other faiths / Untuk membakar kitab-kitab sejarah agama lain", correct: false },
+                        { text: "To cook the sacrificial meats of communal feasts / Untuk memasak daging korban bagi kenduri masyarakat", correct: false }
+                    ],
+                    hint: "Zoroastrians are not 'fire-worshipers'; the flame is a mirror of purity. / Penganut Zoroastrian bukan 'penyembah api'; api hanyalah cermin kesucian.",
+                    explanation: "Fire (Atar) serves as a sacred symbol of truth and a mirror of Ahura Mazda's divine presence.",
+                    explanationBM: "Api (Atar) berfungsi sebagai simbol suci kebenaran dan cermin kepada kehadiran ilahi Ahura Mazda."
+                },
+                {
+                    style: "MATCH_COLUMN",
+                    textEN: "Match the three categories of sacred fire with their descriptions according to Zoroastrian beliefs:",
+                    textBM: "Padankan tiga kategori api suci dengan huraiannya mengikut kepercayaan Zoroastrianisme:",
+                    left: [
+                        "Atash Behram",
+                        "Atash Adaran",
+                        "Atash Dadgah"
+                    ],
+                    right: [
+                        "The humble fire for everyday people to pray / Api biasa untuk kegunaan harian orang ramai berdoa",
+                        "The highest 'King' fire kept hidden from sunlight / Api 'Raja' tertinggi yang disembunyikan daripada cahaya matahari",
+                        "The medium fire for local community shrines / Api gred sederhana untuk kuil komuniti tempatan"
+                    ],
+                    rightBM: [
+                        "The humble fire for everyday people to pray / Api biasa untuk kegunaan harian orang ramai berdoa",
+                        "The highest 'King' fire kept hidden from sunlight / Api 'Raja' tertinggi yang disembunyikan daripada cahaya matahari",
+                        "The medium fire for local community shrines / Api gred sederhana untuk kuil komuniti tempatan"
+                    ],
+                    correctMap: {0: 1, 1: 2, 2: 0},
+                    hint: "Behram is the majestic King grade; Adaran is for community; Dadgah is the household grade. / Behram ialah api gred Raja yang agung; Adaran untuk komuniti; Dadgah ialah gred rumah tangga biasa.",
+                    explanation: "Atash Behram is the highest consecrated grade of fire, followed by Atash Adaran and Atash Dadgah.",
+                    explanationBM: "Atash Behram merupakan gred api suci yang tertinggi, diikuti oleh Atash Adaran dan Atash Dadgah."
+                },
+                {
+                    style: "FILL_BLANKS",
+                    textEN: "Zoroastrianism teaches that before praying five times daily, devotees must perform a ritual wash of the face, hands, and feet called _________ to maintain physical and spiritual _________.",
+                    textBM: "Zoroastrianisme mengajar bahawa sebelum berdoa lima kali sehari, penganut mesti melakukan basuhan ritual pada muka, tangan, dan kaki yang dipanggil _________ untuk mengekalkan kebersihan fizikal dan _________.",
+                    blanks: ["Padyab", "purity"],
+                    options: [
+                        { en: "Padyab", display: "Padyab (Ritual Purification / Pembersihan Ritual)" },
+                        { en: "purity", display: "purity (Spiritual Cleanness / Kesucian Rohani)" },
+                        { en: "Visperad", display: "Visperad (Celestial Praises / Nyanyian Angkasa)" },
+                        { en: "chaos", display: "chaos (Disorder / Kekacauan)" }
+                    ],
+                    hint: "They clean outward to prepare for inward devotion. / Mereka membersihkan fizikal luar untuk bersiap sedia bagi pengabdian dalaman.",
+                    explanation: "Devotees wash themselves via Padyab, because physical cleanliness and spiritual purity are linked in this faith.",
+                    explanationBM: "Penganut membersihkan diri melalui Padyab, kerana kebersihan fizikal dan kesucian rohani saling berkait rapat dalam ajaran ini."
+                },
+                {
+                    style: "MCQ",
+                    textEN: "Zoroastrianism teaches that nature is holy, and burying a dead body in the soil is strictly forbidden because it would:",
+                    textBM: "Zoroastrianisme mengajar bahawa alam semula jadi adalah suci, dan menanam mayat di dalam tanah adalah dilarang sama sekali kerana ia akan:",
+                    options: [
+                        { text: "Pollute the pure earth and soil / Mencemarkan tanah dan bumi yang suci", correct: true },
+                        { text: "Anger the spirits of the deep oceans / Memurkai roh-roh di lautan dalam", correct: false },
+                        { text: "Stop the seasonal spring festival of Nowruz / Menghentikan perayaan musim bunga Nowruz", correct: false },
+                        { text: "Prevent the physical rebirth of the deceased / Menghalang kelahiran semula fizikal si mati", correct: false }
+                    ],
+                    hint: "Corpses are viewed as carrying physical and spiritual decay. / Mayat dipandang membawa reputan dan pencemaran fizikal serta rohani.",
+                    explanation: "Sacred elements like soil, water, air, and fire must never be contaminated by dead tissue.",
+                    explanationBM: "Elemen suci seperti tanah, air, udara, dan api tidak boleh dicemari oleh tisu mati."
+                },
+                {
+                    style: "DRAG_DROP",
+                    textEN: "According to Zoroastrian beliefs, after death, the soul meets its conscience. Match the appearance of the conscience with the soul's deeds:",
+                    textBM: "Mengikut kepercayaan Zoroastrianisme, selepas kematian, jiwa akan bertemu dengan hatinya. Padankan rupa hati dengan amalan jiwa:",
+                    pairs: [
+                        { id: 0, source: "Beautiful young woman / Wanita muda cantik", target: "Reflects a life of goodness and good deeds / Mencerminkan kehidupan penuh kebaikan" },
+                        { id: 1, source: "Scary, ugly old woman / Wanita tua hodoh", target: "Reflects a life of selfishness and wrongdoing / Mencerminkan kehidupan mementingkan diri & jahat" },
+                        { id: 2, source: "Three days / Tiga hari", target: "The length of time the soul lingers near the body / Jangka masa jiwa berada berhampiran mayat" }
+                    ],
+                    hint: "A good life displays beauty, while evil deeds reflect a withered hag. / Kehidupan baik memaparkan kecantikan, manakala amalan jahat mencerminkan wanita tua buruk.",
+                    explanation: "The conscience is not an outside force; it is a direct energetic mirror of your thoughts and deeds in life.",
+                    explanationBM: "Suara nurani/hati bukanlah kuasa luar; ia adalah cerminan tenaga langsung daripada fikiran dan perbuatan kita semasa hidup."
+                },
+                {
+                    style: "MCQ",
+                    textEN: "Zoroastrianism believes that souls must cross which bridge to face judgment, where it widens for the righteous and narrows for the wicked?",
+                    textBM: "Zoroastrianisme percaya bahawa jiwa mesti menyeberangi jambatan mana untuk menghadapi penghakiman, di mana ia melebar untuk orang benar dan menyempit untuk orang jahat?",
+                    options: [
+                        { text: "Cinvat Bridge / Jambatan Cinvat", correct: true },
+                        { text: "Sabalan Bridge / Jambatan Sabalan", correct: false },
+                        { text: "Nowruz Bridge / Jambatan Nowruz", correct: false },
+                        { text: "Ahriman's Abyss / Gaung dalam Ahriman", correct: false }
+                    ],
+                    hint: "The righteous cross easily to Paradise, while the wicked fall into hellfire. / Orang benar menyeberang dengan mudah ke Syurga, manakala orang jahat terjatuh ke api neraka.",
+                    explanation: "All souls face the Cinvat Bridge. For the righteous, it widens; for the wicked, it becomes thin like a razor.",
+                    explanationBM: "Semua jiwa akan melalui Jambatan Cinvat. Bagi orang benar ia melebar, manakala bagi orang jahat ia menipis seperti pisau cukur."
+                },
+                {
+                    style: "FILL_BLANKS",
+                    textEN: "Zoroastrianism believes that corpses should be placed in a roofless circular tower called _________, where they are exposed to _________ to avoid polluting nature.",
+                    textBM: "Zoroastrianisme percaya bahawa mayat harus diletakkan di dalam menara bulat tanpa bumbung yang dipanggil _________, di mana ia didedahkan kepada _________ untuk mengelakkan pencemaran alam semula jadi.",
+                    blanks: ["Dakhma", "vultures"],
+                    options: [
+                        { en: "Dakhma", display: "Dakhma (Tower of Silence / Menara Kesunyian)" },
+                        { en: "vultures", display: "vultures (Birds of Prey / Burung Pemangsa)" },
+                        { en: "Atar", display: "Atar (Holy Fire / Api Suci)" },
+                        { en: "rivers", display: "rivers (Flowing Water / Air Mengalir)" }
+                    ],
+                    hint: "This roofless structure is designed for swift natural decomposers. / Struktur tanpa bumbung ini dibina khas untuk reputan semula jadi oleh haiwan pemangsa.",
+                    explanation: "A Dakhma (Tower of Silence) exposes corpses to scavengers like vultures to prevent environmental contamination.",
+                    explanationBM: "Dakhma (Menara Kesunyian) mendedahkan mayat kepada pemangsa seperti burung hering bagi mengelakkan pencemaran alam."
+                },
+                {
+                    style: "MCQ",
+                    textEN: "According to Zoroastrianism, the ultimate savior who will completely conquer evil and restore the world to a state of peace is named:",
+                    textBM: "Menurut Zoroastrianisme, penyelamat muktamad yang akan menakluki kejahatan sepenuhnya dan mengembalikan dunia ke keadaan aman dinamakan:",
+                    options: [
+                        { text: "Shayoshant / Soshyant (The Cosmic Savior / Penyelamat Kosmik)", correct: true },
+                        { text: "Aushedar (The First Savior / Penyelamat Pertama)", correct: false },
+                        { text: "Ahriman (The Prince of Darkness / Putera Kegelapan)", correct: false },
+                        { text: "Angra Mainyu (The Hostile Spirit / Roh Permusuhan)", correct: false }
+                    ],
+                    hint: "He is the third of three major saviors, born from the Prophet's line to rule a thousand years of peace. / Beliau merupakan penyelamat ketiga daripada jurai nabi yang memerintah seribu tahun keamanan.",
+                    explanation: "Shayoshant defeats evil, paving the way for the physical resurrection and final renewal of creation.",
+                    explanationBM: "Shayoshant akan mengalahkan kejahatan, membuka jalan kepada kebangkitan fizikal dan pembaharuan kosmik terakhir."
+                }
+            ]
+        };
+
+        // ------------------ GAME STATE ------------------
+        let currentSet = 1;
+        let currentQuestionIdx = 0;
+        let score = 0;
+        let totalAttempts = 0;
+        let correctAnswers = 0;
+        let selectedDragSource = null; // Touch/Click navigation support for drag-and-drop
+        let columnSelections = { left: null, right: null }; // Matching columns selection tracking
+
+        // Run on load
+        window.onload = function() {
+            loadLeaderboard();
+        };
+
+        // UI view switcher helper
+        function showView(viewId) {
+            const views = ['menuScreen', 'gameScreen', 'explanationScreen', 'gameOverScreen', 'leaderboardScreen'];
+            views.forEach(id => {
+                const el = document.getElementById(id);
+                if (id === viewId) {
+                    el.classList.remove('hidden');
+                    el.classList.add('block');
+                } else {
+                    el.classList.add('hidden');
+                    el.classList.remove('block');
+                }
+            });
+        }
+
+        // Initialize and Start Game
+        function startGame(setNum) {
+            initAudio();
+            if (!isMusicPlaying) {
+                startBackgroundMusic();
+            }
+            currentSet = setNum;
+            currentQuestionIdx = 0;
+            score = 0;
+            totalAttempts = 0;
+            correctAnswers = 0;
+            
+            document.getElementById('setIndicator').innerText = `SET ${setNum}`;
+            document.getElementById('scoreText').innerText = `0 Pts`;
+            
+            showView('gameScreen');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const set = questionSets[currentSet];
+            const q = set[currentQuestionIdx];
+            
+            // Progress Update
+            document.getElementById('questionNumText').innerText = `${currentQuestionIdx + 1}/${set.length}`;
+            document.getElementById('progressBar').style.width = `${((currentQuestionIdx + 1) / set.length) * 100}%`;
+            document.getElementById('hintBox').classList.add('hidden');
+
+            // Render text
+            document.getElementById('questionTextEN').innerText = q.textEN;
+            document.getElementById('questionTextBM').innerText = q.textBM;
+            document.getElementById('styleIndicator').innerText = `Gaya / Style: ${q.style}`;
+
+            // Build dynamic layout
+            const area = document.getElementById('interactiveArea');
+            area.innerHTML = '';
+            selectedDragSource = null;
+            columnSelections = { left: null, right: null };
+
+            if (q.style === "MCQ") {
+                buildMCQ(q, area);
+            } else if (q.style === "FILL_BLANKS") {
+                buildFillBlanks(q, area);
+            } else if (q.style === "DRAG_DROP") {
+                buildDragDrop(q, area);
+            } else if (q.style === "MATCH_COLUMN") {
+                buildMatchColumn(q, area);
+            }
+        }
+
+        // ------------------ SOALAN STYLE 1: MCQ (OBJECTIVE) ------------------
+        function buildMCQ(q, container) {
+            // Shuffle options
+            const shuffled = [...q.options].sort(() => Math.random() - 0.5);
+            
+            const grid = document.createElement('div');
+            grid.className = "grid grid-cols-1 md:grid-cols-2 gap-4 w-full";
+            
+            shuffled.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = "bg-slate-50 hover:bg-amber-100 text-slate-800 font-extrabold p-4 rounded-2xl border-4 border-slate-200 hover:border-amber-400 shadow-sm transition-all text-left flex items-center gap-3 bubble-hover text-base sm:text-lg";
+                btn.innerHTML = `<span class="bg-amber-400 text-amber-950 w-8 h-8 rounded-full flex items-center justify-center font-black shadow-inner flex-shrink-0"><i class="fa-solid fa-circle"></i></span> <span>${opt.text}</span>`;
+                
+                btn.onclick = () => {
+                    playSelectSound();
+                    checkAnswer(opt.correct);
+                };
+                grid.appendChild(btn);
+            });
+            container.appendChild(grid);
+        }
+
+        // ------------------ SOALAN STYLE 2: FILL IN THE BLANKS ------------------
+        function buildFillBlanks(q, container) {
+            const sentenceBox = document.createElement('div');
+            sentenceBox.className = "p-4 bg-slate-50 rounded-2xl border-2 border-slate-200 text-base sm:text-xl font-bold mb-6 leading-relaxed";
+            
+            let htmlText = q.textEN;
+            let htmlBMText = q.textBM;
+            
+            q.blanks.forEach((b, idx) => {
+                const replaceStr = "_________";
+                const slotHTML = `<span id="blank-target-${idx}" data-answer="${b}" data-filled="" class="inline-block border-b-4 border-dashed border-indigo-500 text-indigo-600 px-4 min-w-[120px] text-center py-1 bg-indigo-50/50 cursor-pointer rounded-lg mx-1 text-sm sm:text-lg" onclick="handleTargetClick(${idx})">Klik Slot / Tap</span>`;
+                htmlText = htmlText.replace(replaceStr, slotHTML);
+                htmlBMText = htmlBMText.replace(replaceStr, slotHTML);
+            });
+
+            sentenceBox.innerHTML = `
+                <div class="mb-4">${htmlText}</div>
+                <div class="text-slate-500 italic text-sm sm:text-base border-t border-slate-200/50 pt-2">${htmlBMText}</div>
+            `;
+            container.appendChild(sentenceBox);
+
+            const bankContainer = document.createElement('div');
+            bankContainer.className = "flex flex-wrap gap-3 justify-center mt-4";
+            
+            const shuffledOpts = [...q.options].sort(() => Math.random() - 0.5);
+            
+            shuffledOpts.forEach(opt => {
+                const token = document.createElement('button');
+                token.id = 'token-' + opt.en;
+                token.className = "bg-amber-300 hover:bg-amber-400 text-amber-950 font-black px-5 py-2.5 rounded-full border-b-4 border-amber-600 shadow shadow-amber-200 flex items-center gap-2 text-sm sm:text-base bubble-hover";
+                token.innerHTML = `<i class="fa-solid fa-cloud text-orange-500"></i> ${opt.display}`;
+                
+                token.onclick = () => {
+                    playSelectSound();
+                    handleTokenSelect(opt.en);
+                };
+                bankContainer.appendChild(token);
+            });
+            container.appendChild(bankContainer);
+
+            window.activeToken = null;
+        }
+
+        function handleTokenSelect(word) {
+            window.activeToken = word;
+            document.querySelectorAll("[id^='token-']").forEach(btn => {
+                btn.classList.remove('ring-4', 'ring-indigo-500');
+            });
+            const targetBtn = document.getElementById('token-' + word);
+            if (targetBtn) {
+                targetBtn.classList.add('ring-4', 'ring-indigo-500');
+            }
+        }
+
+        function handleTargetClick(blankIdx) {
+            if (!window.activeToken) {
+                showToast("Pilih perkataan terapung dulu! / Select a floating word first!");
+                return;
+            }
+            playSelectSound();
+            const target = document.getElementById('blank-target-' + blankIdx);
+            const word = window.activeToken;
+            
+            target.innerText = word;
+            target.setAttribute('data-filled', word);
+            target.className = "inline-block border-b-4 border-indigo-600 text-indigo-700 font-extrabold px-4 min-w-[120px] text-center py-1 bg-indigo-100 rounded-lg mx-1 animate-pulse text-sm sm:text-lg";
+
+            const tokenBtn = document.getElementById('token-' + word);
+            if (tokenBtn) tokenBtn.classList.add('opacity-40');
+
+            window.activeToken = null;
+
+            const set = questionSets[currentSet];
+            const q = set[currentQuestionIdx];
+            let allFilled = true;
+            let correctCount = 0;
+
+            q.blanks.forEach((b, idx) => {
+                const fillEl = document.getElementById('blank-target-' + idx);
+                const filledVal = fillEl.getAttribute('data-filled');
+                if (!filledVal) {
+                    allFilled = false;
+                } else if (filledVal.toLowerCase() === b.toLowerCase()) {
+                    correctCount++;
+                }
+            });
+
+            if (allFilled) {
+                setTimeout(() => {
+                    checkAnswer(correctCount === q.blanks.length);
+                }, 600);
+            }
+        }
+
+        function showToast(msg) {
+            const toast = document.createElement('div');
+            toast.className = "fixed bottom-10 left-1/2 -translate-x-1/2 bg-slate-800 text-white px-6 py-3 rounded-full font-bold shadow-lg z-50 text-sm animate-bounce";
+            toast.innerText = msg;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 2500);
+        }
+
+        // ------------------ SOALAN STYLE 3: DRAG & DROP ------------------
+        function buildDragDrop(q, container) {
+            const flexDiv = document.createElement('div');
+            flexDiv.className = "flex flex-col gap-6 w-full max-w-3xl mx-auto";
+
+            const introText = document.createElement('p');
+            introText.className = "text-center text-sm font-bold text-slate-400 mb-2";
+            introText.innerText = "Klik Kotak Kuning (Kiri), kemudian klik Slot Merah (Kanan) / Click Yellow Box (Left), then click correct Red Slot (Right):";
+            flexDiv.appendChild(introText);
+
+            const sources = q.pairs.map((p) => ({ id: p.id, text: p.source }));
+            const targets = q.pairs.map((p) => ({ id: p.id, text: p.target }));
+
+            sources.sort(() => Math.random() - 0.5);
+
+            const rowContainer = document.createElement('div');
+            rowContainer.className = "grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch";
+
+            const srcCol = document.createElement('div');
+            srcCol.className = "flex flex-col gap-3 justify-between";
+            sources.forEach(src => {
+                const box = document.createElement('button');
+                box.id = 'drag-src-' + src.id;
+                box.className = "bg-amber-300 hover:bg-amber-400 text-amber-950 font-black p-4 rounded-xl border-b-4 border-amber-600 shadow-md text-left flex items-center justify-between transition-all bubble-hover text-sm sm:text-base min-h-[90px]";
+                box.innerHTML = `
+                    <div class="pr-2">${src.text}</div>
+                    <i class="fa-solid fa-puzzle-piece text-amber-800 flex-shrink-0"></i>
+                `;
+                box.onclick = () => {
+                    playSelectSound();
+                    selectDragSource(src.id);
+                };
+                srcCol.appendChild(box);
+            });
+
+            const tgtCol = document.createElement('div');
+            tgtCol.className = "flex flex-col gap-3 justify-between";
+            targets.forEach(tgt => {
+                const box = document.createElement('div');
+                box.id = 'drag-target-' + tgt.id;
+                box.className = "bg-rose-50 border-2 border-dashed border-rose-300 rounded-xl p-4 min-h-[90px] flex flex-col justify-center text-left relative transition-all text-sm sm:text-base";
+                box.innerHTML = `
+                    <div class="text-rose-900 font-extrabold mb-2 leading-relaxed">${tgt.text}</div>
+                    <div id="drop-slot-${tgt.id}" class="bg-white border border-slate-300 rounded-lg p-2.5 text-center text-xs text-slate-400 font-black flex items-center justify-center cursor-pointer hover:bg-rose-100 min-h-[44px]" onclick="handleDropTarget(${tgt.id})">
+                        Sila Padankan / Match Here
+                    </div>
+                `;
+                tgtCol.appendChild(box);
+            });
+
+            rowContainer.appendChild(srcCol);
+            rowContainer.appendChild(tgtCol);
+            flexDiv.appendChild(rowContainer);
+            container.appendChild(flexDiv);
+
+            window.dragMatches = {}; 
+        }
+
+        function selectDragSource(srcId) {
+            selectedDragSource = srcId;
+            document.querySelectorAll("[id^='drag-src-']").forEach(el => {
+                el.classList.remove('ring-4', 'ring-indigo-600');
+            });
+            document.getElementById('drag-src-' + srcId).classList.add('ring-4', 'ring-indigo-600');
+        }
+
+        function handleDropTarget(targetId) {
+            if (selectedDragSource === null) {
+                showToast("Pilih Kotak Kuning di sebelah kiri dulu! / Select a Yellow Box on the left first!");
+                return;
+            }
+            playSelectSound();
+            const srcId = selectedDragSource;
+            const slot = document.getElementById('drop-slot-' + targetId);
+            const srcEl = document.getElementById('drag-src-' + srcId);
+            
+            window.dragMatches[targetId] = srcId;
+
+            slot.innerHTML = `<span class="text-indigo-900 font-extrabold">${srcEl.innerText}</span>`;
+            slot.className = "bg-indigo-100 border border-indigo-400 rounded-lg p-2.5 text-center text-xs font-black flex items-center justify-center cursor-pointer min-h-[44px] animate-pulse";
+            
+            srcEl.classList.add('opacity-40');
+            srcEl.classList.remove('ring-4', 'ring-indigo-600');
+            selectedDragSource = null;
+
+            const set = questionSets[currentSet];
+            const q = set[currentQuestionIdx];
+            const matchedCount = Object.keys(window.dragMatches).length;
+            
+            if (matchedCount === q.pairs.length) {
+                let correct = true;
+                for (let tgt in window.dragMatches) {
+                    if (parseInt(tgt) !== parseInt(window.dragMatches[tgt])) {
+                        correct = false;
+                    }
+                }
+                setTimeout(() => {
+                    checkAnswer(correct);
+                }, 600);
+            }
+        }
+
+        // ------------------ SOALAN STYLE 4: MATCHING COLUMNS ------------------
+        function buildMatchColumn(q, container) {
+            const mainDiv = document.createElement('div');
+            mainDiv.className = "flex flex-col gap-4 w-full max-w-3xl mx-auto";
+
+            const instructions = document.createElement('p');
+            instructions.className = "text-center text-sm font-bold text-slate-400 mb-2";
+            instructions.innerText = "Padankan Lajur Kiri & Lajur Kanan mengikut warna! / Match Left and Right columns by colors!";
+            mainDiv.appendChild(instructions);
+
+            const grid = document.createElement('div');
+            grid.className = "grid grid-cols-2 gap-8 items-stretch relative";
+
+            const leftCol = document.createElement('div');
+            leftCol.className = "flex flex-col gap-4 justify-between";
+            q.left.forEach((text, i) => {
+                const card = document.createElement('button');
+                card.id = 'match-left-' + i;
+                card.className = "bg-white border-4 border-slate-200 text-slate-800 font-extrabold p-4 rounded-2xl shadow-sm text-left transition-all flex items-center gap-2 text-sm sm:text-base min-h-[90px] justify-between bubble-hover";
+                card.innerHTML = `<span>${text}</span> <span class="w-6 h-6 rounded-full border border-slate-300 flex items-center justify-center text-xs flex-shrink-0"><i class="fa-solid fa-link text-slate-400"></i></span>`;
+                card.onclick = () => {
+                    playSelectSound();
+                    selectColumnItem('left', i);
+                };
+                leftCol.appendChild(card);
+            });
+
+            const rightCol = document.createElement('div');
+            rightCol.className = "flex flex-col gap-4 justify-between";
+            
+            const rightOrders = [0, 1, 2];
+            rightOrders.sort(() => Math.random() - 0.5);
+
+            rightOrders.forEach(orderedIdx => {
+                const text = q.right[orderedIdx];
+                const card = document.createElement('button');
+                card.id = 'match-right-' + orderedIdx;
+                card.className = "bg-white border-4 border-slate-200 text-slate-800 font-bold p-4 rounded-2xl shadow-sm text-left transition-all flex flex-col justify-center text-xs sm:text-sm min-h-[90px] bubble-hover leading-relaxed";
+                card.innerHTML = `<div>${text}</div>`;
+                card.onclick = () => {
+                    playSelectSound();
+                    selectColumnItem('right', orderedIdx);
+                };
+                rightCol.appendChild(card);
+            });
+
+            grid.appendChild(leftCol);
+            grid.appendChild(rightCol);
+            mainDiv.appendChild(grid);
+            container.appendChild(mainDiv);
+
+            window.activeColumnConnections = {};
+        }
+
+        const matchColors = [
+            { border: 'border-emerald-400', bg: 'bg-emerald-50', text: 'text-emerald-700' },
+            { border: 'border-sky-400', bg: 'bg-sky-50', text: 'text-sky-700' },
+            { border: 'border-fuchsia-400', bg: 'bg-fuchsia-50', text: 'text-fuchsia-700' }
+        ];
+
+        function selectColumnItem(side, index) {
+            columnSelections[side] = index;
+            
+            document.querySelectorAll("[id^='match-" + side + "-']").forEach(el => {
+                el.classList.remove('ring-4', 'ring-indigo-600');
+            });
+            document.getElementById('match-' + side + '-' + index).classList.add('ring-4', 'ring-indigo-600');
+
+            if (columnSelections.left !== null && columnSelections.right !== null) {
+                const lIdx = columnSelections.left;
+                const rIdx = columnSelections.right;
+
+                const colorCount = Object.keys(window.activeColumnConnections).length;
+                const colors = matchColors[colorCount % matchColors.length];
+
+                const lCard = document.getElementById('match-left-' + lIdx);
+                const rCard = document.getElementById('match-right-' + rIdx);
+
+                lCard.className = `border-4 ${colors.border} ${colors.bg} ${colors.text} font-extrabold p-4 rounded-2xl shadow-sm text-left transition-all flex items-center justify-between text-sm sm:text-base min-h-[90px] pointer-events-none`;
+                lCard.innerHTML = `<span>${lCard.innerText}</span> <span class="w-6 h-6 rounded-full bg-indigo-500 text-white flex items-center justify-center text-xs flex-shrink-0"><i class="fa-solid fa-circle-check"></i></span>`;
+
+                rCard.className = `border-4 ${colors.border} ${colors.bg} ${colors.text} font-bold p-4 rounded-2xl shadow-sm text-left transition-all flex flex-col justify-center text-xs sm:text-sm min-h-[90px] pointer-events-none leading-relaxed`;
+
+                window.activeColumnConnections[lIdx] = rIdx;
+                columnSelections = { left: null, right: null };
+
+                const set = questionSets[currentSet];
+                const q = set[currentQuestionIdx];
+                const matchesSaved = Object.keys(window.activeColumnConnections).length;
+
+                if (matchesSaved === 3) {
+                    let allCorrect = true;
+                    for (let lKey in window.activeColumnConnections) {
+                        const matchedRightVal = window.activeColumnConnections[lKey];
+                        const actualCorrectTarget = q.correctMap[lKey];
+                        if (parseInt(matchedRightVal) !== parseInt(actualCorrectTarget)) {
+                            allCorrect = false;
+                        }
+                    }
+                    setTimeout(() => {
+                        checkAnswer(allCorrect);
+                    }, 600);
+                }
+            }
+        }
+
+        // ------------------ EVALUATION AND FEEDBACK SCREEN ------------------
+        function checkAnswer(isCorrect) {
+            totalAttempts++;
+            if (isCorrect) {
+                correctAnswers++;
+                score += 100;
+                document.getElementById('scoreText').innerText = `${score} Pts`;
+                
+                playCorrectSound();
+                triggerConfetti();
+
+                const set = questionSets[currentSet];
+                const q = set[currentQuestionIdx];
+                document.getElementById('explanationTextEN').innerText = q.explanation;
+                document.getElementById('explanationTextBM').innerText = q.explanationBM;
+
+                showView('explanationScreen');
+            } else {
+                playWrongSound();
+                
+                const set = questionSets[currentSet];
+                const q = set[currentQuestionIdx];
+                document.getElementById('tryAgainHintText').innerText = q.hint;
+                
+                document.getElementById('tryAgainModal').classList.remove('hidden');
+            }
+        }
+
+        function closeTryAgain() {
+            document.getElementById('tryAgainModal').classList.add('hidden');
+            loadQuestion();
+        }
+
+        function advanceQuestion() {
+            const set = questionSets[currentSet];
+            if (currentQuestionIdx < set.length - 1) {
+                currentQuestionIdx++;
+                showView('gameScreen');
+                loadQuestion();
+            } else {
+                showGameOverSummary();
+            }
+        }
+
+        function triggerConfetti() {
+            const container = document.getElementById('confettiContainer');
+            container.innerHTML = '';
+            container.classList.remove('hidden');
+
+            const colors = ['#f59e0b', '#3b82f6', '#10b981', '#ec4899', '#8b5cf6', '#ef4444'];
+            for (let i = 0; i < 60; i++) {
+                const piece = document.createElement('div');
+                piece.className = "confetti-piece";
+                piece.style.left = `${Math.random() * 100}%`;
+                piece.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                piece.style.animationDelay = `${Math.random() * 2}s`;
+                piece.style.animationDuration = `${1.5 + Math.random() * 2}s`;
+                container.appendChild(piece);
+            }
+
+            setTimeout(() => {
+                container.classList.add('hidden');
+            }, 3500);
+        }
+
+        // ------------------ GAME OVER RESULTS SYSTEM ------------------
+        function showGameOverSummary() {
+            const set = questionSets[currentSet];
+            const accuracy = Math.round((correctAnswers / totalAttempts) * 100) || 0;
+            
+            document.getElementById('finalScore').innerText = score;
+            document.getElementById('finalAccuracy').innerText = `${accuracy}%`;
+
+            let badge = "🏆";
+            let rankEN = "Avesta Scholar";
+            let rankBM = "Cendekiawan Avesta";
+
+            if (accuracy >= 90) {
+                badge = "👑";
+                rankEN = "Ahura Mazda's Warrior of Light";
+                rankBM = "Pahlawan Cahaya Ahura Mazda";
+            } else if (accuracy >= 70) {
+                badge = "🏅";
+                rankEN = "Gathas Protector";
+                rankBM = "Pelindung Lagu Suci Gathas";
+            } else if (accuracy >= 50) {
+                badge = "📜";
+                rankEN = "Sasanian Apprentice";
+                rankBM = "Magang Empayar Sasanian";
+            } else {
+                badge = "🕯️";
+                rankEN = "Flame Seeker";
+                rankBM = "Pencari Api Kesucian";
+            }
+
+            document.getElementById('rankBadgeIcon').innerText = badge;
+            document.getElementById('rankTitleEN').innerText = rankEN;
+            document.getElementById('rankTitleBM').innerText = rankBM;
+
+            document.getElementById('playerNameInput').value = '';
+            document.getElementById('saveScoreBox').classList.remove('hidden');
+
+            showView('gameOverScreen');
+        }
+
+        // ------------------ LOCAL STORAGE LEADERBOARD SYSTEM ------------------
+        let highScores = [];
+
+        function loadLeaderboard() {
+            const raw = localStorage.getItem('zoro_quest_scores_mrar_v1');
+            if (raw) {
+                highScores = JSON.parse(raw);
+            } else {
+                highScores = [
+                    { name: "Ali", score: 900 },
+                    { name: "ZoroMaster", score: 800 },
+                    { name: "Siti", score: 600 }
+                ];
+                localStorage.setItem('zoro_quest_scores_mrar_v1', JSON.stringify(highScores));
+            }
+            renderLeaderboard();
+        }
+
+        function savePlayerScore() {
+            const input = document.getElementById('playerNameInput');
+            const name = input.value.trim() || "Anonymous Hero";
+            
+            highScores.push({ name: name, score: score });
+            highScores.sort((a, b) => b.score - a.score);
+            highScores = highScores.slice(0, 10);
+
+            localStorage.setItem('zoro_quest_scores_mrar_v1', JSON.stringify(highScores));
+            renderLeaderboard();
+
+            document.getElementById('saveScoreBox').classList.add('hidden');
+            showToast("Skor Berjaya Disimpan! / Score Saved Successfully!");
+        }
+
+        function renderLeaderboard() {
+            const list = document.getElementById('leaderboardList');
+            list.innerHTML = '';
+            
+            if (highScores.length === 0) {
+                list.innerHTML = `<div class="p-4 text-center text-slate-400 font-bold">Tiada Rekod Lagi / No Records Yet</div>`;
+                return;
+            }
+
+            highScores.forEach((row, i) => {
+                const el = document.createElement('div');
+                el.className = `p-3 flex justify-between items-center font-bold text-sm sm:text-base ${i === 0 ? 'bg-amber-100 text-amber-950' : 'bg-white'}`;
+                
+                let prefix = `${i + 1}. `;
+                if (i === 0) prefix = "👑 ";
+                else if (i === 1) prefix = "🥈 ";
+                else if (i === 2) prefix = "🥉 ";
+
+                el.innerHTML = `
+                    <span class="flex items-center gap-2">
+                        <span class="font-black text-slate-400">${prefix}</span>
+                        <span>${row.name}</span>
+                    </span>
+                    <span class="text-indigo-600 font-black">${row.score} Pts</span>
+                `;
+                list.appendChild(el);
+            });
+        }
+
+        function clearLeaderboard() {
+            if (confirm("Adakah anda pasti mahu memadam semua skor? / Are you sure you want to clear all scores?")) {
+                highScores = [];
+                localStorage.setItem('zoro_quest_scores_mrar_v1', JSON.stringify(highScores));
+                renderLeaderboard();
+            }
+        }
+
+        function showLeaderboardView() {
+            renderLeaderboard();
+            showView('leaderboardScreen');
+        }
+
+        // ------------------ MENU NAVIGATION ------------------
+        function confirmExitToMenu() {
+            const gameScreenActive = !document.getElementById('gameScreen').classList.contains('hidden');
+            if (gameScreenActive) {
+                document.getElementById('exitConfirmModal').classList.remove('hidden');
+            } else {
+                exitToMenu();
+            }
+        }
+
+        function closeExitConfirm() {
+            document.getElementById('exitConfirmModal').classList.add('hidden');
+        }
+
+        function exitToMenu() {
+            closeExitConfirm();
+            showView('menuScreen');
+        }
+
+        function replayCurrentSet() {
+            startGame(currentSet);
+        }
+    </script>
+</body>
+</html>

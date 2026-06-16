@@ -1,0 +1,1614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Judaism: Interactive Sacred Journey Quiz</title>
+    <!-- Tailwind CSS untuk reka bentuk grafik premium -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts untuk tipografi mesra pendidikan -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght=500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Quicksand', sans-serif;
+        }
+        .title-font {
+            font-family: 'Fredoka One', cursive;
+        }
+        /* Animasi kilauan dan bayang-bayang khas */
+        .sparkle-hover:hover {
+            transform: scale(1.03);
+            box-shadow: 0 10px 25px -5px rgba(234, 179, 8, 0.4);
+        }
+        .drag-item:active {
+            cursor: grabbing;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-indigo-950 via-slate-900 to-violet-950 min-h-screen text-white relative overflow-x-hidden selection:bg-amber-400 selection:text-black">
+
+    <!-- Kanvas untuk perayaan Bunga Api / Konfeti apabila jawapan betul -->
+    <canvas id="celebCanvas" class="absolute inset-0 w-full h-full pointer-events-none z-50"></canvas>
+
+    <!-- BEKAS UTAMA APLIKASI -->
+    <div id="app" class="max-w-4xl mx-auto px-4 py-6 min-h-screen flex flex-col justify-between relative z-10">
+        
+        <!-- PANDU ARAH / KEPALA HALAMAN (Sentiasa Kelihatan) -->
+        <header class="flex justify-between items-center bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/15 shadow-xl mb-4 transition-all duration-300">
+            <div class="flex items-center gap-3">
+                <!-- Ikon Logo Bintang Emas Beranimasi -->
+                <div class="bg-amber-400 p-2 rounded-xl animate-bounce">
+                    <svg class="w-7 h-7 text-indigo-950" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 .587l3.668 7.431 8.2 1.192-5.934 5.787 1.4 8.168L12 18.896l-7.334 3.857 1.4-8.168L.132 9.21l8.2-1.192L12 .587z"/>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-xl md:text-2xl title-font text-amber-300 leading-none">SACRED JUDAISM</h1>
+                    <span class="text-xs text-slate-300 font-bold tracking-widest">KUIZ INTERAKTIF PEMBELAJARAN</span>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-3">
+                <!-- Butang Buka/Tutup Bunyi & Muzik Latar -->
+                <button id="soundBtn" onclick="toggleMute()" class="bg-indigo-600/50 hover:bg-indigo-600 border border-indigo-400/30 p-2.5 rounded-xl transition-all duration-200 shadow-md flex items-center justify-center" title="Pasang/Senyap Muzik">
+                    <svg id="soundOnIcon" class="w-5 h-5 text-amber-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
+                    <svg id="soundOffIcon" class="w-5 h-5 text-red-400 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15zm14.122-10L14 10.758M14 13.242L19.708 19"/></svg>
+                </button>
+                
+                <!-- Butang Kembali ke Menu Utama -->
+                <button id="mainMenuBtn" onclick="goToMainMenu()" class="bg-rose-600 hover:bg-rose-700 text-white font-bold px-4 py-2 rounded-xl border-b-4 border-rose-800 transition-all duration-200 flex items-center gap-2 text-sm md:text-base">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                    <span>MAIN MENU / MENU UTAMA</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- ================= SKRIN MENU UTAMA ================= -->
+        <div id="mainMenu" class="my-auto space-y-8 animate-fade-in">
+            <div class="text-center space-y-3">
+                <h2 class="text-3xl md:text-5xl title-font text-amber-300 drop-shadow-lg">Select Your Sacred Adventure!</h2>
+                <p class="text-base md:text-xl text-slate-300 font-medium">Sila pilih set modul buku pembelajaran di bawah untuk memulakan cabaran.</p>
+            </div>
+
+            <!-- KAD PILIHAN SET BUKU (3 Pilihan) -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Kad Buku 1 -->
+                <div onclick="startQuizSet(0)" class="bg-gradient-to-b from-indigo-900 to-indigo-950 border-2 border-indigo-500/30 rounded-3xl p-6 text-center cursor-pointer transform hover:-translate-y-2 hover:border-amber-400 transition-all duration-300 shadow-2xl relative overflow-hidden group sparkle-hover">
+                    <div class="absolute -top-10 -right-10 w-24 h-24 bg-amber-500/10 rounded-full blur-xl group-hover:bg-amber-500/20 transition-all"></div>
+                    <div class="bg-indigo-600 w-16 h-16 rounded-2xl mx-auto flex items-center justify-center mb-4 border border-indigo-400/30 shadow-inner">
+                        <svg class="w-8 h-8 text-amber-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                    </div>
+                    <h3 class="text-lg md:text-xl font-bold text-amber-300 mb-2 h-14 flex items-center justify-center">Judaism: History and Development</h3>
+                    <p class="text-xs text-slate-300 border-t border-white/10 pt-3">Explore the 4 great ages: Biblical, Hellenic, Diaspora, and Israel's birth.</p>
+                    <p class="text-[10px] text-amber-400 mt-2 font-bold uppercase tracking-wider">Teroka 4 zaman agung sejarah Yahudi.</p>
+                    <div class="mt-4 bg-indigo-500/20 text-xs py-1 rounded-full text-slate-200">High Score: <span id="highScore0">0</span>/10</div>
+                </div>
+
+                <!-- Kad Buku 2 -->
+                <div onclick="startQuizSet(1)" class="bg-gradient-to-b from-indigo-900 to-indigo-950 border-2 border-indigo-500/30 rounded-3xl p-6 text-center cursor-pointer transform hover:-translate-y-2 hover:border-amber-400 transition-all duration-300 shadow-2xl relative overflow-hidden group sparkle-hover">
+                    <div class="absolute -top-10 -right-10 w-24 h-24 bg-purple-500/10 rounded-full blur-xl group-hover:bg-purple-500/20 transition-all"></div>
+                    <div class="bg-indigo-600 w-16 h-16 rounded-2xl mx-auto flex items-center justify-center mb-4 border border-indigo-400/30 shadow-inner">
+                        <svg class="w-8 h-8 text-amber-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                    </div>
+                    <h3 class="text-lg md:text-xl font-bold text-amber-300 mb-2 h-14 flex items-center justify-center">Judaism: A Journey Through the Sacred Books</h3>
+                    <p class="text-xs text-slate-300 border-t border-white/10 pt-3">Discover the Tanakh, Talmud, Torah, Midrash, and mystical Zohar.</p>
+                    <p class="text-[10px] text-amber-400 mt-2 font-bold uppercase tracking-wider">Pelajari khazanah kitab suci & lisan.</p>
+                    <div class="mt-4 bg-indigo-500/20 text-xs py-1 rounded-full text-slate-200">High Score: <span id="highScore1">0</span>/10</div>
+                </div>
+
+                <!-- Kad Buku 3 -->
+                <div onclick="startQuizSet(2)" class="bg-gradient-to-b from-indigo-900 to-indigo-950 border-2 border-indigo-500/30 rounded-3xl p-6 text-center cursor-pointer transform hover:-translate-y-2 hover:border-amber-400 transition-all duration-300 shadow-2xl relative overflow-hidden group sparkle-hover">
+                    <div class="absolute -top-10 -right-10 w-24 h-24 bg-teal-500/10 rounded-full blur-xl group-hover:bg-teal-500/20 transition-all"></div>
+                    <div class="bg-indigo-600 w-16 h-16 rounded-2xl mx-auto flex items-center justify-center mb-4 border border-indigo-400/30 shadow-inner">
+                        <svg class="w-8 h-8 text-amber-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                    </div>
+                    <h3 class="text-lg md:text-xl font-bold text-amber-300 mb-2 h-14 flex items-center justify-center">Judaism: Covenant, Commandments, and Continuity</h3>
+                    <p class="text-xs text-slate-300 border-t border-white/10 pt-3">Learn about Maimonides' 13 Principles, holy rituals, food, and feasts.</p>
+                    <p class="text-[10px] text-amber-400 mt-2 font-bold uppercase tracking-wider">Fahami 13 rukun akidah & hukum ritual harian.</p>
+                    <div class="mt-4 bg-indigo-500/20 text-xs py-1 rounded-full text-slate-200">High Score: <span id="highScore2">0</span>/10</div>
+                </div>
+            </div>
+
+            <!-- JADUAL PAPAN PENDAHULU -->
+            <div class="bg-white/5 border border-white/10 rounded-3xl p-6 shadow-xl max-w-lg mx-auto">
+                <h3 class="text-lg md:text-xl title-font text-amber-300 mb-4 text-center flex items-center justify-center gap-2">
+                    <svg class="w-6 h-6 text-yellow-400 animate-pulse" fill="currentColor" viewBox="0 0 24 24"><path d="M19 5h-1.5V3c0-.55-.45-1-1-1h-9c-.55 0-1 .45-1 1v2H5c-1.1 0-2 .9-2 2v3c0 2.43 1.7 4.49 4 5l.17.03C7.94 17.5 10 19 12.5 19V21h-3c-.55 0-1 .45-1 1s.45 1 1 1h7c.55 0 1-.45 1-1s-.45-1-1-1h-3v-2c2.5 0 4.56-1.5 5.33-3.97l.17-.03c2.3-.51 4-2.57 4-5V7c0-1.1-.9-2-2-2zM5 10V7h1.5v4.43c-1-.44-1.5-1.19-1.5-1.43zm14 0c0 .24-.5 1-1.5 1.43V7H19v3z"/></svg>
+                    HALL OF FAME / PAPAN PENDAHULU
+                </h3>
+                <div class="space-y-3">
+                    <div class="flex justify-between border-b border-white/10 pb-2 text-xs font-bold text-slate-400">
+                        <span>MODULE MODULE / SET BUKU</span>
+                        <span>BEST SCORE / SKOR TERBAIK</span>
+                    </div>
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="text-indigo-200 font-medium">1. History and Development</span>
+                        <span id="boardScore0" class="bg-indigo-900 px-3 py-1 rounded-full text-amber-300 font-bold">0/10</span>
+                    </div>
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="text-indigo-200 font-medium">2. Sacred Books Journey</span>
+                        <span id="boardScore1" class="bg-indigo-900 px-3 py-1 rounded-full text-amber-300 font-bold">0/10</span>
+                    </div>
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="text-indigo-200 font-medium">3. Covenant and Commandments</span>
+                        <span id="boardScore2" class="bg-indigo-900 px-3 py-1 rounded-full text-amber-300 font-bold">0/10</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= PAPAN PERMAINAN AKTIF ================= -->
+        <div id="quizBoard" class="hidden flex-col justify-between flex-1 animate-fade-in my-auto gap-6">
+            
+            <!-- BAR KEMAJUAN & MARKAH -->
+            <div class="flex flex-col gap-2">
+                <div class="flex justify-between items-center text-sm font-bold text-slate-300">
+                    <span id="moduleBadge" class="bg-amber-400 text-indigo-950 px-3.5 py-1 rounded-full text-xs uppercase tracking-wide">Judaism: History & Development</span>
+                    <span class="text-amber-300">QUESTION <span id="currentQNum">1</span> OF 10</span>
+                </div>
+                <!-- Garis Kemajuan Visual -->
+                <div class="w-full bg-white/10 h-3 rounded-full overflow-hidden border border-white/5 p-[2px]">
+                    <div id="progressBar" class="bg-gradient-to-r from-amber-400 to-yellow-300 h-full rounded-full transition-all duration-300" style="width: 10%;"></div>
+                </div>
+                <!-- Pengesan Bintang Semasa -->
+                <div class="flex justify-between items-center mt-1 text-xs text-slate-400">
+                    <span>Stars Earned / Bintang Diperolehi: <span id="starCounter" class="text-amber-400 font-bold">⭐ 0</span></span>
+                    <span>Current Score / Skor Semasa: <span id="liveScore" class="text-green-400 font-bold">0</span>/10</span>
+                </div>
+            </div>
+
+            <!-- BEKAS SOALAN UTAMA (KAD HIASAN BINTANG & LOGO PREMIUM) -->
+            <div class="bg-gradient-to-b from-indigo-950 to-slate-900 border-2 border-white/10 rounded-3xl p-6 md:p-8 shadow-2xl relative min-h-[16rem] flex flex-col justify-between overflow-hidden">
+                <!-- Reben bingkai keemasan bertema edutech -->
+                <div class="absolute top-0 right-12 w-24 h-1 bg-amber-400 shadow-md"></div>
+                <div class="absolute top-1 right-16 flex gap-1">
+                    <span class="text-amber-400 animate-pulse text-sm">⭐</span>
+                    <span class="text-amber-400 animate-pulse text-sm">⭐</span>
+                    <span class="text-amber-400 animate-pulse text-sm">⭐</span>
+                </div>
+
+                <!-- Teks Soalan Dwibahasa -->
+                <div class="space-y-2 mt-4">
+                    <h3 id="questionTextEN" class="text-xl md:text-2xl font-bold text-white leading-relaxed">English Question Text here...</h3>
+                    <p id="questionTextMS" class="text-sm md:text-base text-amber-300/90 font-medium italic">Soalan Bahasa Melayu di sini...</p>
+                </div>
+
+                <!-- RUANG KERJA DINAMIK (Mengikut Jenis Gaya Soalan) -->
+                <div id="questionWorkspace" class="mt-6 flex-1 flex flex-col justify-center">
+                    <!-- HTML untuk MCQ, Padanan Kolum, Isi Tempat Kosong, dan Drag & Drop akan dimuatkan di sini -->
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ================= PAPAN POP-UP MAKLUM BALAS ================= -->
+        <!-- POPUP JAWAPAN BETUL (Sambutan Kejayaan) -->
+        <div id="correctModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+            <div class="bg-gradient-to-b from-indigo-900 to-indigo-950 border-4 border-emerald-400 rounded-3xl p-8 max-w-lg w-full text-center space-y-6 shadow-2xl relative transform scale-95 transition-all duration-300">
+                <!-- Reben Penghargaan -->
+                <div class="absolute -top-12 left-1/2 -translate-x-1/2 bg-emerald-500 text-white font-bold px-6 py-2 rounded-full border-2 border-emerald-300 shadow-lg text-lg animate-bounce uppercase">
+                    ⭐ CORRECT! ⭐
+                </div>
+                
+                <div class="space-y-2 pt-4">
+                    <h2 class="text-2xl title-font text-emerald-400">Hebat! Syabas! / Wonderful Job!</h2>
+                    <p class="text-sm text-slate-300">You earned a golden star for this question!</p>
+                </div>
+
+                <!-- Kotak Penerangan Interaktif -->
+                <div class="bg-emerald-950/40 border border-emerald-500/20 rounded-2xl p-4 text-left space-y-2">
+                    <h4 class="text-xs font-bold text-emerald-400 uppercase tracking-wider">Explanation / Penerangan:</h4>
+                    <p id="explainEN" class="text-sm text-white font-medium"></p>
+                    <p id="explainMS" class="text-xs text-amber-300 italic"></p>
+                </div>
+
+                <!-- Butang Soalan Seterusnya -->
+                <button onclick="advanceNext()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-4 rounded-2xl border-b-4 border-emerald-800 transition-all duration-150 shadow-md transform active:translate-y-1 text-lg">
+                    NEXT QUESTION / SOALAN SETERUSNYA ➔
+                </button>
+            </div>
+        </div>
+
+        <!-- POPUP JAWAPAN SALAH (Saranan Cuba Semula) -->
+        <div id="wrongModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+            <div class="bg-gradient-to-b from-indigo-900 to-indigo-950 border-4 border-rose-500 rounded-3xl p-8 max-w-lg w-full text-center space-y-6 shadow-2xl relative transform scale-95 transition-all duration-300">
+                
+                <div class="absolute -top-12 left-1/2 -translate-x-1/2 bg-rose-500 text-white font-bold px-6 py-2 rounded-full border-2 border-rose-300 shadow-lg text-lg animate-shake uppercase">
+                    ⚠️ TRY AGAIN! ⚠️
+                </div>
+
+                <div class="space-y-2 pt-4">
+                    <h2 class="text-2xl title-font text-rose-400">Cuba Lagi! / Don't Give Up!</h2>
+                    <p class="text-sm text-slate-300">That wasn't quite right, but you can try again!</p>
+                </div>
+
+                <!-- Kotak Pembayang Khas -->
+                <div class="bg-rose-950/40 border border-rose-500/20 rounded-2xl p-4 text-left space-y-2">
+                    <h4 class="text-xs font-bold text-rose-400 uppercase tracking-wider">Hint / Petunjuk:</h4>
+                    <p id="hintEN" class="text-sm text-white font-medium"></p>
+                    <p id="hintMS" class="text-xs text-amber-300 italic"></p>
+                </div>
+
+                <!-- Butang Tutup popup salah untuk mencuba semula -->
+                <button onclick="hideWrongModal()" class="w-full bg-rose-500 hover:bg-rose-600 text-white font-bold py-4 rounded-2xl border-b-4 border-rose-800 transition-all duration-150 shadow-md transform active:translate-y-1 text-lg">
+                    RETRY / CUBA SEMULA ↺
+                </button>
+            </div>
+        </div>
+
+        <!-- ================= SKRIN KEMENANGAN AKHIR ================= -->
+        <div id="victoryScreen" class="hidden my-auto space-y-8 animate-fade-in text-center max-w-xl mx-auto">
+            <!-- Banner Kejayaan Utama -->
+            <div class="relative inline-block">
+                <div class="bg-amber-400 text-indigo-950 font-bold text-2xl px-12 py-3 rounded-full border-4 border-yellow-300 shadow-2xl title-font uppercase animate-bounce">
+                    🎉 QUEST COMPLETED! 🎉
+                </div>
+            </div>
+
+            <div class="space-y-2">
+                <h2 class="text-3xl md:text-4xl title-font text-amber-300">Congratulations Master Scholar!</h2>
+                <p class="text-base text-slate-300">You have completed your sacred journey through the book:</p>
+                <p id="victoryBookTitle" class="text-lg md:text-xl font-bold text-indigo-300 italic"></p>
+            </div>
+
+            <!-- Bulatan Paparan Markah -->
+            <div class="bg-white/5 border border-white/10 rounded-full w-48 h-48 mx-auto flex flex-col justify-center items-center shadow-inner relative">
+                <!-- Gelang Hiasan Berpusing -->
+                <div class="absolute inset-2 border-2 border-dashed border-amber-400/40 rounded-full animate-spin" style="animation-duration: 20s"></div>
+                <span class="text-xs font-bold text-slate-400 uppercase">Your Score / Skor</span>
+                <span id="finalScoreText" class="text-5xl md:text-6xl title-font text-amber-400">10/10</span>
+                <span id="scorePercentage" class="text-xs font-bold text-green-400 mt-1">100% PERFECT!</span>
+            </div>
+
+            <!-- Pengumuman Rekod Baharu -->
+            <div id="highScoreAlert" class="bg-amber-400/10 border border-amber-400/30 rounded-2xl py-3 px-6 max-w-xs mx-auto text-sm text-amber-300 font-bold hidden animate-pulse">
+                🏆 NEW HIGH SCORE! SKOR TERBAIK! 🏆
+            </div>
+
+            <!-- Kawalan Pilihan Seterusnya -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <button onclick="goToMainMenu()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 px-6 rounded-2xl border-b-4 border-indigo-800 transition-all text-base">
+                    BACK TO MENU / BALIK MENU
+                </button>
+                <button onclick="restartCurrentSet()" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3.5 px-6 rounded-2xl border-b-4 border-emerald-800 transition-all text-base flex justify-center items-center gap-2">
+                    <span>PLAY AGAIN / MAIN LAGI ↺</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- ================= KAKI HALAMAN (FOOTER) ================= -->
+        <footer class="mt-8 pt-4 border-t border-white/5 flex flex-col sm:flex-row justify-between items-center text-[11px] text-slate-500 text-center sm:text-left gap-2">
+            <div>
+                <p>Judaism Interactive Game &copy; 2026. All Rights Reserved.</p>
+                <p class="text-amber-400/50">Scientific and educational materials sourced under prior written permission of Dr. MRAR.</p>
+            </div>
+            <div>
+                <p>Designed for Malaysian Top Kids Gamified Edutech Platform standard</p>
+                <p class="font-bold text-indigo-400/60">Dwi-Bahasa Melayu & English</p>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- ================= SISTEM LOGIK JAVASCRIPT ================= -->
+    <script>
+        // SISTEM SINTESISER API AUDIO WEB
+        let audioCtx = null;
+        let isMuted = false;
+        let musicInterval = null; // Menyimpan selang masa sequencer muzik latar
+        let currentStep = 0; // Langkah semasa di dalam grid sequencer muzik (16 langkah)
+        
+        // Aturan kord major yang gembira dan tenang (C - Dm - Em - F)
+        const chords = [
+            [130.81, 261.63, 329.63, 392.00], // C Major (C3, C4, E4, G4)
+            [146.83, 293.66, 349.23, 440.00], // D Minor (D3, D4, F4, A4)
+            [164.81, 329.63, 392.00, 493.88], // E Minor (E3, E4, G4, B4)
+            [174.61, 349.23, 440.00, 523.25]  // F Major (F3, F4, A4, C5)
+        ];
+        let currentChordIdx = 0;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        // Memainkan kesan bunyi interaksi secara programatik
+        function playSound(type) {
+            if (isMuted) return;
+            initAudio();
+            
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            const now = audioCtx.currentTime;
+
+            if (type === 'correct') {
+                // Bunyi kord major menaik yang gembira
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(261.63, now); // C4
+                osc.frequency.setValueAtTime(329.63, now + 0.08); // E4
+                osc.frequency.setValueAtTime(392.00, now + 0.16); // G4
+                osc.frequency.setValueAtTime(523.25, now + 0.24); // C5
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+                osc.start(now);
+                osc.stop(now + 0.5);
+            } else if (type === 'wrong') {
+                // Bunyi dengungan rendah menurun yang sedih
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(150.00, now);
+                osc.frequency.linearRampToValueAtTime(80.00, now + 0.35);
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+                osc.start(now);
+                osc.stop(now + 0.4);
+            } else if (type === 'click') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(600.00, now);
+                gain.gain.setValueAtTime(0.1, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                osc.start(now);
+                osc.stop(now + 0.1);
+            } else if (type === 'victory') {
+                // Bunyi tiupan fanfar kemenangan agung!
+                const notes = [293.66, 349.23, 440.00, 523.25, 587.33, 698.46, 880.00];
+                notes.forEach((freq, idx) => {
+                    const singleOsc = audioCtx.createOscillator();
+                    const singleGain = audioCtx.createGain();
+                    singleOsc.connect(singleGain);
+                    singleGain.connect(audioCtx.destination);
+                    singleOsc.type = 'square';
+                    singleOsc.frequency.setValueAtTime(freq, now + idx * 0.12);
+                    singleGain.gain.setValueAtTime(0.08, now + idx * 0.12);
+                    singleGain.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.12 + 0.4);
+                    singleOsc.start(now + idx * 0.12);
+                    singleOsc.stop(now + idx * 0.12 + 0.4);
+                });
+            }
+        }
+
+        // Sintesis muzik latar belakang masa nyata (sequencer melodi 16 langkah)
+        function startBgMusic() {
+            if (isMuted) return;
+            initAudio();
+            if (musicInterval) return;
+
+            // Memulakan penjadual langkah sequencer (120 BPM, 250ms setiap rentak)
+            musicInterval = setInterval(() => {
+                if (isMuted) {
+                    stopBgMusic();
+                    return;
+                }
+                playSequencerStep();
+            }, 250); 
+        }
+
+        function playSequencerStep() {
+            const now = audioCtx.currentTime;
+            
+            // Mengubah kord latar setiap 8 langkah (2 saat)
+            if (currentStep % 8 === 0) {
+                currentChordIdx = (currentChordIdx + 1) % chords.length;
+            }
+
+            const currentChord = chords[currentChordIdx];
+
+            // 1. Sintesis GARIS BASS (Melodi Triangul yang lembut pada rentak utama)
+            if (currentStep % 4 === 0) {
+                const bassOsc = audioCtx.createOscillator();
+                const bassGain = audioCtx.createGain();
+                bassOsc.connect(bassGain);
+                bassGain.connect(audioCtx.destination);
+                
+                bassOsc.type = 'triangle';
+                bassOsc.frequency.setValueAtTime(currentChord[0], now); // Memainkan nada asas kord
+                
+                bassGain.gain.setValueAtTime(0.05, now);
+                bassGain.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
+                
+                bassOsc.start(now);
+                bassOsc.stop(now + 0.6);
+            }
+
+            // 2. Sintesis ARPEGGIO MELODI (Nada bertingkat yang menenangkan)
+            const pattern = [1, 2, 3, 2, 3, 1, 2, 3];
+            const noteIdx = pattern[currentStep % pattern.length];
+            const pluckFreq = currentChord[noteIdx];
+
+            // Memberikan variasi ritma syncopation dengan melangkau langkah ke-4
+            if (currentStep % 4 !== 3) {
+                const pluckOsc = audioCtx.createOscillator();
+                const pluckGain = audioCtx.createGain();
+                pluckOsc.connect(pluckGain);
+                pluckGain.connect(audioCtx.destination);
+                
+                pluckOsc.type = 'sine';
+                pluckOsc.frequency.setValueAtTime(pluckFreq, now);
+                
+                pluckGain.gain.setValueAtTime(0.03, now);
+                pluckGain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+                
+                pluckOsc.start(now);
+                pluckOsc.stop(now + 0.35);
+            }
+
+            // 3. Sintesis ALAT KETUKAN HI-HAT (Ticking frekuensi tinggi digital yang lembut)
+            if (currentStep % 2 === 1) {
+                const hatOsc = audioCtx.createOscillator();
+                const hatGain = audioCtx.createGain();
+                hatOsc.connect(hatGain);
+                hatGain.connect(audioCtx.destination);
+                
+                hatOsc.type = 'triangle';
+                hatOsc.frequency.setValueAtTime(10000, now); // Frekuensi sangat tinggi
+                
+                hatGain.gain.setValueAtTime(0.004, now);
+                hatGain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+                
+                hatOsc.start(now);
+                hatOsc.stop(now + 0.05);
+            }
+
+            // Menggerakkan langkah sequencer ke hadapan
+            currentStep = (currentStep + 1) % 16;
+        }
+
+        // Memberhentikan selang masa penjadual muzik latar
+        function stopBgMusic() {
+            if (musicInterval) {
+                clearInterval(musicInterval);
+                musicInterval = null;
+            }
+        }
+
+        function toggleMute() {
+            isMuted = !isMuted;
+            if (isMuted) {
+                document.getElementById('soundOnIcon').classList.add('hidden');
+                document.getElementById('soundOffIcon').classList.remove('hidden');
+                stopBgMusic();
+            } else {
+                document.getElementById('soundOnIcon').classList.remove('hidden');
+                document.getElementById('soundOffIcon').classList.add('hidden');
+                startBgMusic();
+            }
+        }
+
+        // SISTEM BUNGA API & KONFETI MENGGUNAKAN KANVAS
+        const canvas = document.getElementById('celebCanvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        let animationFrameId = null;
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.color = color;
+                this.size = Math.random() * 5 + 4;
+                this.speedX = Math.random() * 6 - 3;
+                this.speedY = Math.random() * -10 - 5;
+                this.gravity = 0.2;
+                this.opacity = 1;
+                this.fade = Math.random() * 0.015 + 0.01;
+            }
+            update() {
+                this.speedY += this.gravity;
+                this.x += this.speedX;
+                this.y += this.speedY;
+                this.opacity -= this.fade;
+            }
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.opacity;
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        function createConfettiShower() {
+            const colors = ['#f59e0b', '#10b981', '#3b82f6', '#ec4899', '#a855f7', '#14b8a6'];
+            // Bina zarah konfeti daripada penjuru bawah skrin kiri & kanan
+            for (let i = 0; i < 40; i++) {
+                particles.push(new Particle(0, canvas.height, colors[Math.floor(Math.random() * colors.length)]));
+                particles.push(new Particle(canvas.width, canvas.height, colors[Math.floor(Math.random() * colors.length)]));
+            }
+            if (!animationFrameId) {
+                animateParticles();
+            }
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles = particles.filter(p => p.opacity > 0);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            if (particles.length > 0) {
+                animationFrameId = requestAnimationFrame(animateParticles);
+            } else {
+                animationFrameId = null;
+            }
+        }
+
+        // ================= PANGKALAN DATA 3 SET KUIZ DWI-BAHASA (10 soalan setiap set) =================
+        const quizDatabase = [
+            // BUKU 1: Judaism: History and Development
+            {
+                title: "Judaism: History and Development",
+                questions: [
+                    {
+                        style: "MCQ",
+                        en: "According to the book *Judaism: History and Development*, into which three historical periods is the ancient Biblical Age (2000-30 BCE) divided?",
+                        ms: "Menurut buku *Judaism: History and Development*, kepada tiga tempoh sejarah manakah Zaman Bible kuno (2000-30 SM) dibahagikan?",
+                        choices: [
+                            { en: "Early Patriarchal, Canaan, and Turbulent Periods", ms: "Tempoh Patriarki Awal, Kanaan, dan Golongan Goncang (Turbulent)", correct: true },
+                            { en: "Diaspora, Hellenic, and Roman Periods", ms: "Tempoh Diaspora, Hellenik, dan Rom", correct: false },
+                            { en: "Persian, Greek, and Egyptian Periods", ms: "Tempoh Parsi, Yunani, dan Mesir", correct: false },
+                            { en: "Zionism, Basle, and Statehood Periods", ms: "Tempoh Zionisme, Basle, dan Kenegaraan", correct: false }
+                        ],
+                        explainEN: "The book states on page 5 that the Biblical age is divided into the Early Patriarchal, Canaan, and Turbulent periods.",
+                        explainMS: "Buku ini menyatakan pada halaman 5 bahawa zaman Bible dibahagikan kepada tempoh Patriarki Awal, Kanaan, dan Turbulent (Golongan Goncang).",
+                        hintEN: "Look for the option starting with the Early Patriarchal migration.",
+                        hintMS: "Cari pilihan yang bermula dengan penghijrahan Patriarki Awal."
+                    },
+                    {
+                        style: "MCQ",
+                        en: "In the book *Judaism: History and Development*, Jews believe that through which patriarch did the twelve descendants who became the twelve tribes of Israel come?",
+                        ms: "Dalam buku *Judaism: History and Development*, orang Yahudi percaya bahawa melalui patriark manakah datangnya dua belas keturunan yang menjadi dua belas suku Israel?",
+                        choices: [
+                            { en: "Jacob", ms: "Yakub", correct: true },
+                            { en: "Abraham", ms: "Ibrahim", correct: false },
+                            { en: "Isaac", ms: "Ishak", correct: false },
+                            { en: "Joseph", ms: "Yusuf", correct: false }
+                        ],
+                        explainEN: "Jacob led the people and was first called Israel. Through him came the twelve descendants (the 12 tribes).",
+                        explainMS: "Yakub memimpin umat dan dia yang pertama kali dipanggil Israel. Melalui dia datangnya dua belas keturunan (12 suku).",
+                        hintEN: "It was during this patriarch's life that they were first called 'Israel'.",
+                        hintMS: "Semasa hayat patriark inilah mereka mula dipanggil sebagai 'Israel'."
+                    },
+                    {
+                        style: "MCQ",
+                        en: "According to the book *Judaism: History and Development*, Judaism teaches that which ideal king wrote the sacred Psalms and achieved massive country development during the Canaan period?",
+                        ms: "Menurut buku *Judaism: History and Development*, agama Yahudi mengajar bahawa raja teladan manakah yang menulis Kitab Mazmur dan mencapai pembangunan negara secara besar-besaran semasa zaman Kanaan?",
+                        choices: [
+                            { en: "King David", ms: "Raja Daud", correct: true },
+                            { en: "King Saul", ms: "Raja Saul", correct: false },
+                            { en: "King Solomon", ms: "Raja Sulaiman", correct: false },
+                            { en: "King Rehoboam", ms: "Raja Rehoboam", correct: false }
+                        ],
+                        explainEN: "The prophet David is known as the ideal king who composed the Psalms and oversaw widespread empire development.",
+                        explainMS: "Nabi Daud dikenali sebagai raja ideal yang menggubah Mazmur (Psalms) dan memantau perkembangan empayar yang meluas.",
+                        hintEN: "He succeeded King Saul and was Solomon's father.",
+                        hintMS: "Beliau menggantikan Raja Saul dan merupakan bapa kepada Raja Sulaiman."
+                    },
+                    {
+                        style: "DRAG_DROP",
+                        en: "In the book *Judaism: History and Development*, Jews believe that after King Solomon built the Great Temple, the nation split into two under Rehoboam's leadership. Drag the correct names to their regions:",
+                        ms: "Dalam buku *Judaism: History and Development*, orang Yahudi percaya bahawa selepas Raja Sulaiman membina Haikal Agung, negara itu berpecah kepada dua di bawah kepimpinan Rehoboam. Seret nama yang betul ke wilayah masing-masing:",
+                        targets: [
+                            { label: "Northern Kingdom / Kerajaan Utara", match: "Israel" },
+                            { label: "Southern Kingdom / Kerajaan Selatan", match: "Judah" }
+                        ],
+                        options: ["Israel", "Judah", "Syria", "Egypt"],
+                        explainEN: "Following Rehoboam's disputes, the nation split into Israel in the north and Judah in the south.",
+                        explainMS: "Berikutan pertikaian Rehoboam, negara itu berpecah menjadi Israel di utara dan Judah di selatan.",
+                        hintEN: "The northern half retained the main name 'Israel'.",
+                        hintMS: "Bahagian utara mengekalkan nama utama 'Israel'."
+                    },
+                    {
+                        style: "DRAG_DROP",
+                        en: "According to the book *Judaism: History and Development*, the history of Jewish people involves multiple ages. Drag the age to its correct starting date:",
+                        ms: "Menurut buku *Judaism: History and Development*, sejarah umat Yahudi melibatkan pelbagai zaman. Seret zaman tersebut ke tarikh permulaannya yang betul:",
+                        targets: [
+                            { label: "Hellenic Age / Zaman Hellenik", match: "330 BCE" },
+                            { label: "Diaspora Age / Zaman Diaspora", match: "70 CE" }
+                        ],
+                        options: ["330 BCE", "70 CE", "538 BCE", "1948 CE"],
+                        explainEN: "The Hellenic Age began with Greek conquest in 330 BCE, while the long Diaspora dispersion began after the Romans destroyed the Temple in 70 CE.",
+                        explainMS: "Zaman Hellenik bermula dengan penaklukan Yunani pada 330 SM, manakala penyerakan Diaspora yang panjang bermula selepas Rom memusnahkan Baitulmaqdis pada 70 M.",
+                        hintEN: "BCE represents Before Common Era, and CE represents Common Era.",
+                        hintMS: "SM mewakili Sebelum Masihi, manakala M mewakili tahun Masihi."
+                    },
+                    {
+                        style: "MATCHING",
+                        en: "According to the book *Judaism: History and Development*, match the historical leader or conqueror with their correct historical action:",
+                        ms: "Menurut buku *Judaism: History and Development*, padankan pemimpin sejarah atau penakluk dengan tindakan sejarah mereka yang betul:",
+                        pairs: [
+                            { left: "King Cyrus (Persian) / Raja Cyrus", right: "Allowed Jews to return in 538 BCE / Membenarkan orang Yahudi pulang pada tahun 538 SM" },
+                            { left: "Joshua (Yoshua) / Yosua", right: "Led the people to conquer Canaan / Mengetuai umat menakluk Kanaan" },
+                            { left: "Theodor Herzl / Theodor Herzl", right: "Led the birth of Zionism / Mengetuai kelahiran Zionisme" }
+                        ],
+                        explainEN: "Cyrus of Persia allow return in 538 BCE; Joshua succeeded Moses to conquer Canaan; Theodor Herzl pioneered Zionism at the Basle Conference in 1896.",
+                        explainMS: "Cyrus dari Parsi membenarkan kepulangan pada 538 SM; Yosua menggantikan Musa untuk menakluk Kanaan; Theodor Herzl mempelopori Zionisme di Persidangan Basle pada 1896.",
+                        hintEN: "Match Cyrus to the Persian decree, Joshua to Canaan, and Herzl to modern political conferences.",
+                        hintMS: "Padankan Cyrus kepada perintah Parsi, Yosua kepada Kanaan, dan Herzl kepada persidangan politik moden."
+                    },
+                    {
+                        style: "BLANKS",
+                        en: "According to the book *Judaism: History and Development*, Judaism teaches that in the year [blank1] the formal declaration of the State of [blank2] was established, giving the Jewish people a home again.",
+                        ms: "Menurut buku *Judaism: History and Development*, agama Yahudi mengajar bahawa pada tahun [blank1] pengisytiharan rasmi Negara [blank2] telah ditubuhkan, memberikan orang Yahudi sebuah tanah air semula.",
+                        blanks: [
+                            { key: "blank1", answer: "1948" },
+                            { key: "blank2", answer: "Israel" }
+                        ],
+                        options: ["1948", "Israel", "1918", "Egypt"],
+                        explainEN: "In 1948, the formal declaration establishing the modern State of Israel was announced, concluding the main Diaspora era.",
+                        explainMS: "Pada tahun 1948, pengisytiharan rasmi menubuhkan Negara Israel moden diumumkan, menamatkan era utama Diaspora.",
+                        hintEN: "It occurred shortly after World War II, in the late 1940s.",
+                        hintMS: "Ia berlaku sejurus selepas Perang Dunia Kedua, pada akhir tahun 1940-an."
+                    },
+                    {
+                        style: "BLANKS",
+                        en: "In the book *Judaism: History and Development*, Jews believe that during the Hellenic Age, they read the Torah in the [blank1] language, while [blank2] became their second language.",
+                        ms: "Dalam buku *Judaism: History and Development*, orang Yahudi percaya bahawa semasa Zaman Hellenik, mereka membaca Taurat dalam bahasa [blank1], manakala bahasa [blank2] menjadi bahasa kedua mereka.",
+                        blanks: [
+                            { key: "blank1", answer: "Greek" },
+                            { key: "blank2", answer: "Hebrew" }
+                        ],
+                        options: ["Greek", "Hebrew", "Latin", "Persian"],
+                        explainEN: "During the Hellenic (Greek) period, Greek culture spread widely, resulting in the Torah being translated into Greek, and Hebrew becoming secondary.",
+                        explainMS: "Semasa tempoh Hellenik (Yunani), budaya Yunani tersebar luas, menyebabkan Taurat diterjemahkan ke dalam bahasa Yunani, dan bahasa Ibrani menjadi sekunder.",
+                        hintEN: "Hellenic refers to the Greeks.",
+                        hintMS: "Hellenik merujuk kepada bangsa Yunani."
+                    },
+                    {
+                        style: "MCQ",
+                        en: "According to the book *Judaism: History and Development*, Jews believe that which empire attacked first, causing 200 years of struggles before the Babylonians completely destroyed the kingdoms and the Great Temple?",
+                        ms: "Menurut buku *Judaism: History and Development*, orang Yahudi percaya bahawa empayar manakah yang menyerang terlebih dahulu, menyebabkan 200 tahun perjuangan sebelum orang Babilon memusnahkan sepenuhnya kerajaan-kerajaan dan Haikal Agung?",
+                        choices: [
+                            { fill: "Assyrian Empire", ms: "Empayar Assyria", correct: true },
+                            { en: "Roman Empire", ms: "Empayar Rom", correct: false },
+                            { en: "Greek Empire", ms: "Empayar Yunani", correct: false },
+                            { en: "Persian Empire", ms: "Empayar Parsi", correct: false }
+                        ],
+                        explainEN: "The book states that the Assyrians attacked first, triggering 200 years of struggles, followed later by the Babylonian destruction.",
+                        explainMS: "Buku ini menyatakan bahawa orang Assyria menyerang terlebih dahulu, mencetuskan perjuangan selama 200 tahun, diikuti kemudian oleh kemusnahan Babilon.",
+                        hintEN: "This empire is associated with the northern exile.",
+                        hintMS: "Empayar ini dikaitkan dengan pembuangan utara."
+                    },
+                    {
+                        style: "MCQ",
+                        en: "According to the book *Judaism: History and Development*, Judaism teaches that the historic conference in 1896 where Jewish leaders gathered to discuss a Jewish state was held in which city?",
+                        ms: "Menurut buku *Judaism: History and Development*, agama Yahudi mengajar bahawa persidangan bersejarah pada tahun 1896 di mana para pemimpin Yahudi berkumpul untuk membincangkan negara Yahudi telah diadakan di bandar mana?",
+                        choices: [
+                            { en: "Basle (Basel)", ms: "Basle (Basel)", correct: true },
+                            { en: "Jerusalem", ms: "Baitulmaqdis", correct: false },
+                            { en: "Cairo", ms: "Kaherah", correct: false },
+                            { en: "Rome", ms: "Rom", correct: false }
+                        ],
+                        explainEN: "The first Zionist Congress was convened by Theodor Herzl in Basle (Basel), Switzerland, in 1896.",
+                        explainMS: "Kongres Zionis pertama telah diadakan oleh Theodor Herzl di Basle (Basel), Switzerland, pada tahun 1896.",
+                        hintEN: "It is a prominent Swiss city situated on the Rhine river.",
+                        hintMS: "Ia adalah sebuah bandar raya Switzerland yang terkenal terletak di sungai Rhine."
+                    }
+                ]
+            },
+            // BUKU 2: Judaism: A Journey Through the Sacred Books
+            {
+                title: "Judaism: A Journey Through the Sacred Books",
+                questions: [
+                    {
+                        style: "MCQ",
+                        en: "According to the book *Judaism: A Journey Through the Sacred Books*, Judaism teaches that the Hebrew Bible is called the Tanakh, which is an acronym for its three pillars:",
+                        ms: "Menurut buku *Judaism: A Journey Through the Sacred Books*, agama Yahudi mengajar bahawa Alkitab Ibrani dikenali sebagai Tanakh, yang merupakan akronim bagi tiga tonggaknya:",
+                        choices: [
+                            { en: "Torah, Nevi'im, and Ketuvim", ms: "Taurat, Nevi'im, dan Ketuvim", correct: true },
+                            { en: "Mishnah, Gemara, and Midrash", ms: "Mishnah, Gemara, dan Midrash", correct: false },
+                            { en: "Genesis, Exodus, and Leviticus", ms: "Kejadian, Keluaran, dan Imamat", correct: false },
+                            { en: "Zohar, Kabbalah, and Responsa", ms: "Zohar, Kabbalah, dan Responsa", correct: false }
+                        ],
+                        explainEN: "Tanakh stands for: T (Torah - Law), N (Nevi'im - Prophets), and K (Ketuvim - Writings).",
+                        explainMS: "Tanakh bermaksud: T (Torah - Undang-undang), N (Nevi'im - Para Nabi), dan K (Ketuvim - Penulisan).",
+                        hintEN: "It represents Law, Prophets, and Writings.",
+                        hintMS: "Ia mewakili Undang-undang, Para Nabi, dan Penulisan."
+                    },
+                    {
+                        style: "MCQ",
+                        en: "In the book *Judaism: A Journey Through the Sacred Books*, Jews believe that the sign of God's covenant and promise to protect and sustain all life on Earth after Noah's Flood is the:",
+                        ms: "Dalam buku *Judaism: A Journey Through the Sacred Books*, orang Yahudi percaya bahawa tanda perjanjian dan janji Tuhan untuk melindungi serta mengekalkan semua hidupan di Bumi selepas Banjir Besar Nuh ialah:",
+                        choices: [
+                            { en: "Rainbow", ms: "Pelangi", correct: true },
+                            { en: "Burning Bush", ms: "Belukar Terbakar", correct: false },
+                            { en: "Ten Commandments", ms: "Sepuluh Perintah", correct: false },
+                            { en: "Shofar", ms: "Shofar", correct: false }
+                        ],
+                        explainEN: "According to Genesis, the rainbow is the physical, visual sign of God's universal covenant with Noah and all creatures.",
+                        explainMS: "Menurut Kitab Kejadian, pelangi adalah tanda visual fizikal perjanjian universal Tuhan dengan Nuh and semua makhluk.",
+                        hintEN: "A multi-colored arch in the sky after rain.",
+                        hintMS: "Gerbang pelbagai warna di langit selepas hujan."
+                    },
+                    {
+                        style: "MCQ",
+                        en: "According to the book *Judaism: A Journey Through the Sacred Books*, Judaism teaches that God called Moses from a burning bush to lead the Israelites out of slavery in which book of the Torah?",
+                        ms: "Menurut buku *Judaism: A Journey Through the Sacred Books*, agama Yahudi mengajar bahawa Tuhan memanggil Musa dari semak yang terbakar untuk memimpin orang Israel keluar dari perhambaan dalam kitab Taurat yang mana?",
+                        choices: [
+                            { en: "Exodus", ms: "Keluaran", correct: true },
+                            { en: "Genesis", ms: "Kejadian", correct: false },
+                            { en: "Leviticus", ms: "Imamat", correct: false },
+                            { en: "Deuteronomy", ms: "Ulangan", correct: false }
+                        ],
+                        explainEN: "The book of Exodus (Shemot) focuses on the slavery, the call of Moses, and the dramatic escape from Egypt.",
+                        explainMS: "Kitab Keluaran (Exodus) memfokuskan kepada perhambaan, panggilan Musa, dan pelarian dramatik dari Mesir.",
+                        hintEN: "This word means a mass departure or exit.",
+                        hintMS: "Perkataan ini bermaksud penghijrahan beramai-ramai atau keluar."
+                    },
+                    {
+                        style: "DRAG_DROP",
+                        en: "In the book *Judaism: A Journey Through the Sacred Books*, Jews believe that the Torah consists of five books. Drag the descriptions to the correct book:",
+                        ms: "Dalam buku *Judaism: A Journey Through the Sacred Books*, orang Yahudi percaya bahawa Taurat terdiri daripada lima kitab. Seret huraian kepada kitab yang betul:",
+                        targets: [
+                            { label: "Details laws for holiness and priests / Perincian hukum kesucian & imam", match: "Leviticus" },
+                            { label: "Moses' final speech passing leadership / Ucapan terakhir Musa menyerah kepimpinan", match: "Deuteronomy" }
+                        ],
+                        options: ["Leviticus", "Deuteronomy", "Genesis", "Numbers"],
+                        explainEN: "Leviticus outlines ritual duties and sacrifices, whereas Deuteronomy serves as Moses' final, long review speech before entering Canaan.",
+                        explainMS: "Leviticus (Imamat) menggariskan tugas ritual dan korban, manakala Deuteronomy (Ulangan) berfungsi sebagai ucapan semakan panjang terakhir Musa sebelum memasuki Kanaan.",
+                        hintEN: "Leviticus concerns the Levite priests, Deuteronomy means 'second law'.",
+                        hintMS: "Leviticus berkaitan dengan para imam Lewi, Ulangan bermaksud 'undang-undang kedua'."
+                    },
+                    {
+                        style: "DRAG_DROP",
+                        en: "According to the book *Judaism: A Journey Through the Sacred Books*, the Talmud contains oral teachings. Drag the components to complete the definition of Talmud:",
+                        ms: "Menurut buku *Judaism: A Journey Through the Sacred Books*, Talmud mengandungi ajaran lisan. Seret komponen untuk melengkapkan definisi Talmud:",
+                        targets: [
+                            { label: "The core Oral Law code / Kod teras Undang-undang Lisan", match: "Mishnah" },
+                            { label: "The rabbinical commentary / Kitab ulasan rabbinik", match: "Gemara" }
+                        ],
+                        options: ["Mishnah", "Gemara", "Zohar", "Midrash"],
+                        explainEN: "The Talmud consists of the Mishnah (compiled oral laws) and the Gemara (extensive rabbinical debates and commentaries).",
+                        explainMS: "Talmud terdiri daripada Mishnah (himpunan undang-undang lisan) dan Gemara (perbahasan dan ulasan rabbinik yang luas).",
+                        hintEN: "Mishnah was compiled first, Gemara is the extensive commentary on it.",
+                        hintMS: "Mishnah disusun terlebih dahulu, Gemara adalah ulasan meluas mengenainya."
+                    },
+                    {
+                        style: "MATCHING",
+                        en: "According to the book *Judaism: A Journey Through the Sacred Books*, match these sacred Jewish books with their correct description:",
+                        ms: "Menurut buku *Judaism: A Journey Through the Sacred Books*, padankan kitab suci Yahudi ini dengan huraiannya yang betul:",
+                        pairs: [
+                            { left: "Midrash / Midrash", right: "Fills gaps in scriptural text with stories / Mengisi ruang kosong teks kitab dengan cerita" },
+                            { left: "Responsa / Responsa", right: "Legal rulings for modern life / Keputusan undang-undang bagi kehidupan moden" },
+                            { left: "Zohar / Zohar", right: "Foundational work of Kabbalah mystical thoughts / Karya asas bagi pemikiran mistik Kabbalah" }
+                        ],
+                        explainEN: "Midrash uses narratives to fill biblical gaps; Responsa answers specific contemporary legal inquiries; Zohar is the mystical guide of Kabbalah.",
+                        explainMS: "Midrash menggunakan naratif untuk mengisi kekosongan teks Alkitab; Responsa menjawab pertanyaan undang-undang kontemporari yang spesifik; Zohar adalah panduan mistik Kabbalah.",
+                        hintEN: "Zohar is connected to stars and spiritual glow, Responsa literally responds to legal queries.",
+                        hintMS: "Zohar dikaitkan dengan cahaya bintang dan kerohanian, Responsa bermaksud memberi jawapan/respons kepada pertanyaan hukum."
+                    },
+                    {
+                        style: "BLANKS",
+                        en: "According to the book *Judaism: A Journey Through the Sacred Books*, Jews believe that the book of [blank1] recounts how spies explored the Promised Land but their fear led to [blank2] years of wandering.",
+                        ms: "Menurut buku *Judaism: A Journey Through the Sacred Books*, orang Yahudi percaya bahawa kitab [blank1] menceritakan bagaimana pengintip menjelajah Tanah Perjanjian tetapi ketakutan mereka membawa kepada [blank2] tahun pengembaraan.",
+                        blanks: [
+                            { key: "blank1", answer: "Numbers" },
+                            { key: "blank2", answer: "40" }
+                        ],
+                        options: ["Numbers", "40", "Deuteronomy", "70"],
+                        explainEN: "In the book of Numbers (Bamidbar), spies cause panic, and God decrees the generation must wander for 40 years in the desert camp.",
+                        explainMS: "Dalam kitab Bilangan (Numbers/Bamidbar), pengintip mencetuskan panik, dan Tuhan menetapkan bahawa generasi itu mesti mengembara selama 40 tahun di perkhemahan padang pasir.",
+                        hintEN: "Numbers contains census figures. The wandering duration matches a generation's lifetime.",
+                        hintMS: "Bilangan (Numbers) mengandungi bancian. Tempoh pengembaraan sepadan dengan hayat satu generasi."
+                    },
+                    {
+                        style: "BLANKS",
+                        en: "In the book *Judaism: A Journey Through the Sacred Books*, Judaism teaches that King [blank1] and King [blank2] led the nation at the height of its kingdom, as recorded in the Former Prophets.",
+                        ms: "Dalam buku *Judaism: A Journey Through the Sacred Books*, agama Yahudi mengajar bahawa Raja [blank1] dan Raja [blank2] memimpin negara di puncak kerajaannya, seperti yang direkodkan dalam Kitab Para Nabi Terdahulu.",
+                        blanks: [
+                            { key: "blank1", answer: "David" },
+                            { key: "blank2", answer: "Solomon" }
+                        ],
+                        options: ["David", "Solomon", "Saul", "Cyrus"],
+                        explainEN: "The Former Prophets books (like Kings) document the prosperous Golden Age of Israel ruled by King David and subsequently King Solomon.",
+                        explainMS: "Kitab Para Nabi Terdahulu (seperti Kitab Raja-raja) mendokumentasikan Zaman Keemasan Israel yang makmur yang diperintah oleh Raja Daud dan kemudiannya Raja Sulaiman.",
+                        hintEN: "A father and son duo who ruled from Jerusalem.",
+                        hintMS: "Duo bapa dan anak yang memerintah dari Baitulmaqdis."
+                    },
+                    {
+                        style: "MCQ",
+                        en: "According to the book *Judaism: A Journey Through the Sacred Books*, Jews believe that the story of the Tower of Babel explains the origin of:",
+                        ms: "Menurut buku *Judaism: A Journey Through the Sacred Books*, orang Yahudi percaya bahawa kisah Menara Babel menerangkan asal usul bagi:",
+                        choices: [
+                            { en: "The division of humanity by languages and geography", ms: "Pembahagian umat manusia mengikut bahasa dan geografi", correct: true },
+                            { en: "The creation of the heavens and earth", ms: "Penciptaan langit dan bumi", correct: false },
+                            { en: "The first covenant with Abraham", ms: "Perjanjian pertama dengan Ibrahim", correct: false },
+                            { en: "The Ten Commandments at Mount Sinai", ms: "Sepuluh Perintah di Gunung Sinai", correct: false }
+                        ],
+                        explainEN: "The Tower of Babel on page 23 explains how humanity's language was confounded, dividing them into different cultures and nations.",
+                        explainMS: "Kisah Menara Babel di halaman 23 menjelaskan bagaimana bahasa manusia dikelirukan, membahagikan mereka kepada pelbagai budaya dan bangsa.",
+                        hintEN: "Think of multiple global languages and cultural migration.",
+                        hintMS: "Fikirkan tentang pelbagai bahasa global dan migrasi budaya."
+                    },
+                    {
+                        style: "MCQ",
+                        en: "According to the book *Judaism: A Journey Through the Sacred Books*, Judaism teaches that Ketuvim (the Writings) contains which poetic and wisdom-filled books?",
+                        ms: "Menurut buku *Judaism: A Journey Through the Sacred Books*, agama Yahudi mengajar bahawa Ketuvim (Kitab Penulisan) mengandungi kitab puisi dan kebijaksanaan yang mana?",
+                        choices: [
+                            { en: "Psalms and Proverbs", ms: "Mazmur dan Amsal", correct: true },
+                            { en: "Genesis and Exodus", ms: "Kejadian dan Keluaran", correct: false },
+                            { en: "Leviticus and Numbers", ms: "Imamat dan Bilangan", correct: false },
+                            { en: "Mishnah and Gemara", ms: "Mishnah and Gemara", correct: false }
+                        ],
+                        explainEN: "Ketuvim contains poetic books like Psalms (Tehillim) for prayer, and the wisdom sayings of Proverbs (Mishlei).",
+                        explainMS: "Ketuvim mengandungi kitab-kitab puisi seperti Mazmur (Tehillim) untuk doa, dan kata-kata hikmat Amsal (Mishlei).",
+                        hintEN: "These are associated with songs of praise and short ethical proverbs.",
+                        hintMS: "Ini dikaitkan dengan lagu pujian dan amsal etika yang ringkas."
+                    }
+                ]
+            },
+            // BUKU 3: Judaism: Covenant, Commandments, and Continuity
+            {
+                title: "Judaism: Covenant, Commandments, and Continuity",
+                questions: [
+                    {
+                        style: "MCQ",
+                        en: "According to the book *Judaism: Covenant, Commandments, and Continuity*, Judaism teaches that Maimonides established the Creedal comprising how many Principles of Faith?",
+                        ms: "Menurut buku *Judaism: Covenant, Commandments, and Continuity*, agama Yahudi mengajar bahawa Maimonides menetapkan Akidah yang mengandungi berapa banyak Prinsip Kepercayaan?",
+                        choices: [
+                            { en: "13", ms: "13", correct: true },
+                            { en: "10", ms: "10", correct: false },
+                            { en: "613", ms: "613", correct: false },
+                            { en: "7", ms: "7", correct: false }
+                        ],
+                        explainEN: "The Creed of Maimonides consists of exactly 13 foundational pillars of Jewish theological belief.",
+                        explainMS: "Akidah Maimonides terdiri daripada tepat 13 tonggak asas kepercayaan teologi Yahudi.",
+                        hintEN: "It's three more than the Ten Commandments.",
+                        hintMS: "Ia adalah tiga lebih daripada Sepuluh Perintah Tuhan."
+                    },
+                    {
+                        style: "MCQ",
+                        en: "In the book *Judaism: Covenant, Commandments, and Continuity*, Jews believe that Yom Kippur is the holiest fast day of the year, which represents the:",
+                        ms: "Dalam buku *Judaism: Covenant, Commandments, and Continuity*, orang Yahudi percaya bahawa Yom Kippur ialah hari puasa paling suci dalam setahun, yang mewakili:",
+                        choices: [
+                            { en: "Day of Atonement", ms: "Hari Penebusan Dosa", correct: true },
+                            { en: "Feast of Dedication", ms: "Pesta Pentahbisan", correct: false },
+                            { en: "Jewish New Year", ms: "Tahun Baru Yahudi", correct: false },
+                            { en: "Feast of Flatbread", ms: "Pesta Roti Tanpa Ragi", correct: false }
+                        ],
+                        explainEN: "Yom Kippur is the Day of Atonement, focused entirely on prayers, fasting, and seeking forgiveness.",
+                        explainMS: "Yom Kippur ialah Hari Penebusan Dosa (Atonement), tertumpu sepenuhnya pada doa, berpuasa, dan memohon keampunan.",
+                        hintEN: "A day meant to repair one's relationship with God.",
+                        hintMS: "Hari yang bertujuan untuk membaiki hubungan seseorang dengan Tuhan."
+                    },
+                    {
+                        style: "MCQ",
+                        en: "Keep in mind that according to the book *Judaism: Covenant, Commandments, and Continuity*, Judaism teaches that Tefillah (prayer) is traditionally recited how many times daily?",
+                        ms: "Sila ambil perhatian bahawa menurut buku *Judaism: Covenant, Commandments, and Continuity*, agama Yahudi mengajar bahawa Tefillah (sembahyang) secara tradisinya dibaca berapa kali sehari?",
+                        choices: [
+                            { en: "Three times", ms: "Tiga kali", correct: true },
+                            { en: "One time", ms: "Satu kali", correct: false },
+                            { en: "Two times", ms: "Dua kali", correct: false },
+                            { en: "Five times", ms: "Lima kali", correct: false }
+                        ],
+                        explainEN: "Traditionally, Jewish law ordains three daily prayers: Shaharit (morning), Minha (afternoon), and Arvit (evening).",
+                        explainMS: "Secara tradisinya, undang-undang Yahudi menetapkan tiga waktu solat harian: Shaharit (pagi), Minha (petang), dan Arvit (malam).",
+                        hintEN: "Corresponds to morning, afternoon, and night services.",
+                        hintMS: "Sepadan dengan waktu ibadah pagi, petang, dan malam."
+                    },
+                    {
+                        style: "DRAG_DROP",
+                        en: "According to the book *Judaism: Covenant, Commandments, and Continuity*, dietary and ritual laws shape daily life. Drag the terms to their correct definitions:",
+                        ms: "Menurut buku *Judaism: Covenant, Commandments, and Continuity*, undang-undang pemakanan dan ritual membentuk kehidupan seharian. Seret istilah ke definisi yang betul:",
+                        targets: [
+                            { label: "Dietary laws meaning 'fit' / Hukum makan bermaksud 'layak'", match: "Kosher" },
+                            { label: "Jewish law guiding daily life / Undang-undang panduan harian Yahudi", match: "Halakha" }
+                        ],
+                        options: ["Kosher", "Halakha", "Mishnah", "Tefillah"],
+                        explainEN: "Kosher means 'fit' or permissible food under kashrut; Halakha is the complete system of legal requirements guiding daily Jewish steps.",
+                        explainMS: "Kosher bermaksud makanan yang 'layak' atau dibenarkan di bawah kashrut; Halakha pula ialah keseluruhan sistem undang-undang yang membimbing langkah harian umat Yahudi.",
+                        hintEN: "Kosher relates directly to dietary products; Halakha means 'the way of walking'.",
+                        hintMS: "Kosher berkaitan terus dengan produk makanan; Halakha bermaksud 'jalan untuk berjalan'."
+                    },
+                    {
+                        style: "DRAG_DROP",
+                        en: "In the book *Judaism: Covenant, Commandments, and Continuity*, Jews believe that special rituals mark stages of life and the calendar. Drag the terms to their correct descriptions:",
+                        ms: "Dalam buku *Judaism: Covenant, Commandments, and Continuity*, orang Yahudi percaya bahawa ritual khas menandakan peringkat kehidupan dan kalendar. Seret istilah kepada penerangan yang betul:",
+                        targets: [
+                            { label: "Curved ram's horn sounded on New Year / Tanduk ditiup pada Tahun Baru", match: "Shofar" },
+                            { label: "The specialist who performs circumcision / Pakar menjalankan ibadah khatan", match: "Mohel" }
+                        ],
+                        options: ["Shofar", "Mohel", "Tallit", "Korban"],
+                        explainEN: "The Shofar horn acts as a spiritual wake-up call during Rosh Hashanah, while a Mohel is the certified legal expert conducting the Brit Milah covenant ceremony.",
+                        explainMS: "Tanduk Shofar bertindak sebagai panggilan bangun rohani semasa Rosh Hashanah, manakala Mohel ialah pakar bertauliah yang menjalankan upacara perjanjian Brit Milah.",
+                        hintEN: "Mohel is a person, Shofar is an instrument.",
+                        hintMS: "Mohel ialah seorang manusia, Shofar ialah alat tiupan."
+                    },
+                    {
+                        style: "MATCHING",
+                        en: "According to the book *Judaism: Covenant, Commandments, and Continuity*, match the Jewish celebrations with their correct descriptions:",
+                        ms: "Menurut buku *Judaism: Covenant, Commandments, and Continuity*, padankan perayaan Yahudi dengan huraiannya yang betul:",
+                        pairs: [
+                            { left: "Rosh Hashanah / Rosh Hashanah", right: "The Jewish New Year meaning 'Head of the Year' / Tahun Baru Yahudi bermaksud 'Kepala Tahun'" },
+                            { left: "Passover (Pesach) / Paskah (Pesach)", right: "Commemorates liberation from slavery in Egypt / Memperingati pembebasan dari perhambaan di Mesir" },
+                            { left: "Hanukkah / Hanukkah", right: "The Festival of Lights celebrating the miracle of light / Pesta Cahaya merayakan keajaiban cahaya" }
+                        ],
+                        explainEN: "Rosh Hashanah is New Year ('Head of the Year'); Passover celebrates the Exodus from Egyptian slavery; Hanukkah is the winter Festival of Lights.",
+                        explainMS: "Rosh Hashanah ialah Tahun Baru ('Kepala Tahun'); Paskah merayakan Keluaran (Exodus) daripada perhambaan Mesir; Hanukkah ialah Pesta Cahaya musim sejuk.",
+                        hintEN: "Look for keywords like 'New Year', 'Egypt slavery', and 'Festival of Lights'.",
+                        hintMS: "Cari kata kunci seperti 'Tahun Baru', 'perhambaan Mesir', dan 'Pesta Cahaya'."
+                    },
+                    {
+                        style: "BLANKS",
+                        en: "According to the book *Judaism: Covenant, Commandments, and Continuity*, Jews believe that the sacred ceremony marking a male infant's entry into the covenant is called [blank1] and is performed on the [blank2] day of life.",
+                        ms: "Menurut buku *Judaism: Covenant, Commandments, and Continuity*, orang Yahudi percaya bahawa upacara suci yang menandakan kemasukan bayi lelaki ke dalam perjanjian dipanggil [blank1] dan dilakukan pada hari ke-[blank2] kehidupan.",
+                        blanks: [
+                            { key: "blank1", answer: "Brit Milah" },
+                            { key: "blank2", answer: "eighth" }
+                        ],
+                        options: ["Brit Milah", "eighth", "Bar Mitzvah", "seventh"],
+                        explainEN: "The Brit Milah (Covenant of Circumcision) is traditionally observed on the eighth day after birth for a healthy male infant.",
+                        explainMS: "Brit Milah (Kovenan Berkhatan) secara tradisinya disambut pada hari kelapan selepas lahir untuk bayi lelaki yang sihat.",
+                        hintEN: "It is performed on the eighth day of life.",
+                        hintMS: "Ia dilakukan pada hari kelapan selepas kelahiran."
+                    },
+                    {
+                        style: "BLANKS",
+                        en: "In the book *Judaism: Covenant, Commandments, and Continuity*, Judaism teaches that under Kosher laws, Jews do not mix [blank1] and [blank2] in the kitchen.",
+                        ms: "Dalam buku *Judaism: Covenant, Commandments, and Continuity*, agama Yahudi mengajar bahawa di bawah undang-undang Kosher, orang Yahudi tidak mencampurkan [blank1] dan [blank2] di dapur.",
+                        blanks: [
+                            { key: "blank1", answer: "meat" },
+                            { key: "blank2", answer: "milk" }
+                        ],
+                        options: ["meat", "milk", "fish", "bread"],
+                        explainEN: "Kashrut strictly forbids cooking or eating dairy (milk) products and poultry/red meat products together.",
+                        explainMS: "Hukum kashrut melarang keras memasak atau memakan produk tenusu (susu/milk) dan daging (meat) bersama-sama.",
+                        hintEN: "These are typical products from cows: a solid food (flesh) and a liquid drink.",
+                        hintMS: "Ini adalah produk khas daripada lembu: makanan pepejal (flesh/daging) dan minuman cecair."
+                    },
+                    {
+                        style: "MCQ",
+                        en: "According to the book *Judaism: Covenant, Commandments, and Continuity*, Jews believe that the ancient Temple offerings were called Korbanot, a Hebrew word which means:",
+                        ms: "Menurut buku *Judaism: Covenant, Commandments, and Continuity*, orang Yahudi percaya bahawa persembahan Baitulmaqdis kuno dipanggil Korbanot, perkataan Ibrani yang bermaksud:",
+                        choices: [
+                            { en: "To draw close to God", ms: "Untuk mendekatkan diri kepada Tuhan", correct: true },
+                            { en: "To fast and repent", ms: "Untuk berpuasa dan bertaubat", correct: false },
+                            { en: "To celebrate with flatbread", ms: "Untuk meraikan dengan roti tanpa ragi", correct: false },
+                            { en: "To listen to the prophet", ms: "Untuk mendengar pesanan nabi", correct: false }
+                        ],
+                        explainEN: "Korbanot comes from the root meaning 'to draw close' or 'to approach' God, representing spiritual elevation.",
+                        explainMS: "Korbanot berasal daripada kata dasar yang bermaksud 'mendekatkan diri' atau 'menghampiri' Tuhan, mewakili peningkatan rohani.",
+                        hintEN: "It's about spiritual closeness, not physical offerings.",
+                        hintMS: "Ia adalah mengenai kedekatan rohani, bukan sekadar persembahan fizikal semata-mata."
+                    },
+                    {
+                        style: "MCQ",
+                        en: "According to the book *Judaism: Covenant, Commandments, and Continuity*, Judaism teaches that which beautiful candleholder is lit during the Hanukkah festival of lights?",
+                        ms: "Menurut buku *Judaism: Covenant, Commandments, and Continuity*, agama Yahudi mengajar bahawa pemegang lilin indah yang manakah dinyalakan semasa pesta cahaya Hanukkah?",
+                        choices: [
+                            { en: "Nine-branched Menorah", ms: "Menorah sembilan cabang", correct: true },
+                            { en: "Stone tablets", ms: "Loh batu", correct: false },
+                            { en: "Ark of the Covenant", ms: "Tabut Perjanjian", correct: false },
+                            { en: "Shofar holder", ms: "Pemegang Shofar", correct: false }
+                        ],
+                        explainEN: "A special nine-branched Menorah (called a Hanukkiah) is lit, commemorating the miracle where one day's oil lasted eight days.",
+                        explainMS: "Menorah sembilan cabang khas (dipanggil Hanukkiah) dinyalakan, memperingati keajaiban di mana minyak sehari bertahan selama lapan hari.",
+                        hintEN: "It holds nine candles in total to celebrate the eight days of light.",
+                        hintMS: "Ia memegang sembilan lilin secara keseluruhan untuk merayakan lapan hari cahaya."
+                    }
+                ]
+            }
+        ];
+
+        // PENGURUS KEADAAN PERMAINAN (STATE MANAGER)
+        let currentSetIndex = null;
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let highScores = [0, 0, 0];
+        let matchedPairs = [];
+        let selectedMatchingLeft = null;
+        let currentDraggedWord = null;
+        let blankAnswers = {};
+
+        // Memuatkan rekod skor terbaik daripada storan tempatan peranti (localStorage)
+        function loadHighScores() {
+            const saved = localStorage.getItem('judaism_quiz_highscores');
+            if (saved) {
+                highScores = JSON.parse(saved);
+            }
+            for (let i = 0; i < 3; i++) {
+                document.getElementById(`highScore${i}`).innerText = highScores[i];
+                document.getElementById(`boardScore${i}`).innerText = `${highScores[i]}/10`;
+            }
+        }
+
+        // Menyimpan rekod skor terbaik baharu
+        function saveHighScore(setIdx, newScore) {
+            if (newScore > highScores[setIdx]) {
+                highScores[setIdx] = newScore;
+                localStorage.setItem('judaism_quiz_highscores', JSON.stringify(highScores));
+                loadHighScores();
+                return true; 
+            }
+            return false;
+        }
+
+        // PENGENDALI NAVIGASI: Menu Utama -> Permainan Aktif
+        function goToMainMenu() {
+            playSound('click');
+            document.getElementById('quizBoard').classList.add('hidden');
+            document.getElementById('victoryScreen').classList.add('hidden');
+            document.getElementById('mainMenu').classList.remove('hidden');
+            document.getElementById('mainMenuBtn').classList.add('hidden');
+            currentSetIndex = null;
+        }
+
+        // Memulakan muzik latar pada ketikan/interaksi pertama pengguna (sekatan pelayar web)
+        function startBgAudioOnFirstInteraction() {
+            startBgMusic();
+            document.removeEventListener('click', startBgAudioOnFirstInteraction);
+        }
+        document.addEventListener('click', startBgAudioOnFirstInteraction);
+
+        function startQuizSet(setIdx) {
+            playSound('click');
+            currentSetIndex = setIdx;
+            currentQuestionIndex = 0;
+            score = 0;
+            
+            // Mengemas kini lencana maklumat modul buku
+            document.getElementById('moduleBadge').innerText = quizDatabase[setIdx].title;
+            
+            // Paparkan skrin yang betul
+            document.getElementById('mainMenu').classList.add('hidden');
+            document.getElementById('victoryScreen').classList.add('hidden');
+            document.getElementById('quizBoard').classList.remove('hidden');
+            document.getElementById('mainMenuBtn').classList.remove('hidden');
+
+            loadQuestion();
+        }
+
+        function restartCurrentSet() {
+            startQuizSet(currentSetIndex);
+        }
+
+        // MEMUATKAN STRUKTUR SOALAN AKTIF
+        function loadQuestion() {
+            const set = quizDatabase[currentSetIndex];
+            const q = set.questions[currentQuestionIndex];
+
+            // Petunjuk Kemajuan Harian
+            document.getElementById('currentQNum').innerText = currentQuestionIndex + 1;
+            document.getElementById('progressBar').style.width = `${(currentQuestionIndex + 1) * 10}%`;
+            document.getElementById('starCounter').innerText = `⭐ ${score}`;
+            document.getElementById('liveScore').innerText = score;
+
+            // Memaparkan soalan dwibahasa
+            document.getElementById('questionTextEN').innerText = q.en;
+            document.getElementById('questionTextMS').innerText = q.ms;
+
+            // Bersihkan ruang kerja soalan terdahulu
+            const workspace = document.getElementById('questionWorkspace');
+            workspace.innerHTML = "";
+
+            // Bina gaya soalan secara dinamik mengikut jenis takrifan
+            if (q.style === "MCQ") {
+                renderMCQ(q, workspace);
+            } else if (q.style === "DRAG_DROP") {
+                renderDragDrop(q, workspace);
+            } else if (q.style === "MATCHING") {
+                renderMatching(q, workspace);
+            } else if (q.style === "BLANKS") {
+                renderBlanks(q, workspace);
+            }
+        }
+
+        // STRUKTUR 1: PENJANA GAYA MCQ (Pilihan Pilihan Rawak)
+        function renderMCQ(q, workspace) {
+            // Rawakkan kedudukan pilihan jawapan agar sentiasa berubah kedudukan betul
+            const shuffledChoices = [...q.choices].sort(() => Math.random() - 0.5);
+
+            const grid = document.createElement('div');
+            grid.className = "grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4";
+
+            shuffledChoices.forEach((choice, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "text-left bg-indigo-900/40 hover:bg-indigo-800 border-2 border-indigo-500/20 hover:border-amber-400 p-4 rounded-2xl transition-all duration-200 shadow-lg transform active:scale-95 flex flex-col justify-between group";
+                
+                // Susun atur kandungan grafik pilihan jawapan
+                btn.innerHTML = `
+                    <div class="flex items-start gap-3">
+                        <span class="bg-indigo-700 group-hover:bg-amber-400 group-hover:text-indigo-950 font-bold px-2.5 py-1 rounded-lg text-xs transition-colors">${String.fromCharCode(65 + idx)}</span>
+                        <div class="space-y-1">
+                            <p class="text-sm font-bold text-white">${choice.en || choice.fill}</p>
+                            <p class="text-xs text-slate-300 italic">${choice.ms}</p>
+                        </div>
+                    </div>
+                `;
+
+                btn.onclick = () => checkMCQAnswer(choice.correct, q);
+                grid.appendChild(btn);
+            });
+
+            workspace.appendChild(grid);
+        }
+
+        function checkMCQAnswer(isCorrect, q) {
+            if (isCorrect) {
+                handleCorrect(q);
+            } else {
+                handleWrong(q);
+            }
+        }
+
+        // STRUKTUR 2: PENJANA SERET & LEPAS (DRAG & DROP) MESRA PERANTI BIMBIT
+        function renderDragDrop(q, workspace) {
+            const container = document.createElement('div');
+            container.className = "space-y-6 mt-4";
+
+            const targetsRow = document.createElement('div');
+            targetsRow.className = "grid grid-cols-1 sm:grid-cols-2 gap-4";
+
+            q.targets.forEach((t, idx) => {
+                const targetBox = document.createElement('div');
+                targetBox.className = "bg-indigo-950/50 border-2 border-dashed border-indigo-400/30 rounded-2xl p-4 flex flex-col items-center justify-between min-h-[7rem] transition-all duration-200 relative";
+                targetBox.id = `dd-target-${idx}`;
+                targetBox.dataset.match = t.match;
+
+                targetBox.innerHTML = `
+                    <span class="text-xs font-bold text-slate-400 text-center">${t.label}</span>
+                    <div class="dd-dropzone w-full bg-slate-900/60 border border-white/5 rounded-xl h-14 flex items-center justify-center mt-2 p-1 font-bold text-amber-300 text-sm" data-filled="false">
+                        Drop / Click Word Here
+                    </div>
+                `;
+
+                // Sokongan seretan komputer biasa
+                targetBox.addEventListener('dragover', (e) => e.preventDefault());
+                targetBox.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    if (currentDraggedWord) {
+                        placeWordInTarget(currentDraggedWord, targetBox.querySelector('.dd-dropzone'));
+                    }
+                });
+
+                // Sokongan sentuhan mudah alih (tap dua kali pada peranti pintar)
+                targetBox.addEventListener('click', () => {
+                    const selectedWordEl = document.querySelector('.dd-word-selected');
+                    if (selectedWordEl) {
+                        placeWordInTarget(selectedWordEl, targetBox.querySelector('.dd-dropzone'));
+                    }
+                });
+
+                targetsRow.appendChild(targetBox);
+            });
+
+            // Bank kata pilihan jawapan
+            const wordBank = document.createElement('div');
+            wordBank.className = "flex flex-wrap gap-3 justify-center bg-white/5 border border-white/10 p-4 rounded-2xl";
+            
+            // Rawakkan susunan perkataan pilihan agar mencabar
+            const shuffledOptions = [...q.options].sort(() => Math.random() - 0.5);
+
+            shuffledOptions.forEach((opt, idx) => {
+                const word = document.createElement('div');
+                word.className = "drag-item bg-indigo-600 border border-indigo-400/30 hover:border-amber-400 text-sm px-4 py-2 rounded-xl cursor-grab font-bold shadow-md transition-all active:scale-95 select-none";
+                word.innerText = opt;
+                word.draggable = true;
+                word.id = `dd-word-${idx}`;
+
+                // Acara heretan perkataan
+                word.addEventListener('dragstart', (e) => {
+                    currentDraggedWord = word;
+                    word.classList.add('opacity-50');
+                });
+                word.addEventListener('dragend', () => {
+                    word.classList.remove('opacity-50');
+                });
+
+                // Pemilihan secara tap/klik mudah alih
+                word.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    playSound('click');
+                    document.querySelectorAll('.drag-item').forEach(w => w.classList.remove('dd-word-selected', 'ring-4', 'ring-amber-400'));
+                    word.classList.add('dd-word-selected', 'ring-4', 'ring-amber-400');
+                });
+
+                wordBank.appendChild(word);
+            });
+
+            // Butang semakan jawapan seret dan lepas
+            const submitBtn = document.createElement('button');
+            submitBtn.className = "w-full bg-amber-400 hover:bg-amber-500 text-indigo-950 font-bold py-3 rounded-xl border-b-4 border-amber-600 transition-all text-sm mt-4 uppercase tracking-wide";
+            submitBtn.innerText = "Check Answer / Semak Jawapan ➔";
+            submitBtn.onclick = () => checkDragDropAnswer(q);
+
+            container.appendChild(targetsRow);
+            container.appendChild(wordBank);
+            container.appendChild(submitBtn);
+            workspace.appendChild(container);
+        }
+
+        function placeWordInTarget(wordEl, dropzone) {
+            playSound('click');
+            // Jika ruang jawapan telah diisi, pulangkan semula perkataan lama ke dalam bank
+            if (dropzone.dataset.filled === "true") {
+                const oldWordText = dropzone.innerText;
+                const items = document.querySelectorAll('.drag-item');
+                for (let item of items) {
+                    if (item.innerText === oldWordText && item.classList.contains('hidden')) {
+                        item.classList.remove('hidden');
+                        break;
+                    }
+                }
+            }
+
+            dropzone.innerText = wordEl.innerText;
+            dropzone.dataset.filled = "true";
+            dropzone.className = "dd-dropzone w-full bg-indigo-900 border border-amber-400/50 rounded-xl h-14 flex items-center justify-center mt-2 p-1 font-bold text-amber-300 text-base shadow-inner animate-pulse";
+            
+            // Sembunyikan kad pilihan perkataan asal daripada bank perkataan
+            wordEl.classList.add('hidden');
+            wordEl.classList.remove('dd-word-selected', 'ring-4', 'ring-amber-400');
+            currentDraggedWord = null;
+        }
+
+        function checkDragDropAnswer(q) {
+            let allCorrect = true;
+            let filledCount = 0;
+
+            q.targets.forEach((t, idx) => {
+                const dropzone = document.getElementById(`dd-target-${idx}`).querySelector('.dd-dropzone');
+                if (dropzone.dataset.filled === "true") {
+                    filledCount++;
+                    if (dropzone.innerText !== t.match) {
+                        allCorrect = false;
+                    }
+                } else {
+                    allCorrect = false;
+                }
+            });
+
+            if (filledCount < q.targets.length) {
+                playSound('wrong');
+                alert("Please fill all targets! / Sila isi semua sasaran!");
+                return;
+            }
+
+            if (allCorrect) {
+                handleCorrect(q);
+            } else {
+                handleWrong(q);
+            }
+        }
+
+        // STRUKTUR 3: GAYA PADANAN KOLUM (INTERAKTIF DENGAN PENUNJUK WARNA)
+        function renderMatching(q, workspace) {
+            matchedPairs = [];
+            selectedMatchingLeft = null;
+
+            const container = document.createElement('div');
+            container.className = "grid grid-cols-2 gap-6 mt-4 relative";
+
+            // Kolum kiri (Susunan asal untuk rujukan)
+            const leftCol = document.createElement('div');
+            leftCol.className = "space-y-3 flex flex-col justify-between";
+            
+            // Kolum kanan (Kedudukan dirawakkan agar lebih mencabar!)
+            const rightCol = document.createElement('div');
+            rightCol.className = "space-y-3 flex flex-col justify-between";
+
+            const shuffledRight = [...q.pairs].map((p, i) => ({ text: p.right, origIndex: i })).sort(() => Math.random() - 0.5);
+
+            // Kod skema warna interaktif untuk hiasan padanan kolum
+            const colors = ["border-amber-400 text-amber-300 bg-amber-500/10", "border-cyan-400 text-cyan-300 bg-cyan-500/10", "border-pink-400 text-pink-300 bg-pink-500/10"];
+
+            q.pairs.forEach((pair, idx) => {
+                const leftItem = document.createElement('button');
+                leftItem.className = "left-match-btn text-left w-full bg-indigo-900/30 border border-indigo-400/20 p-3 rounded-xl transition-all hover:border-indigo-400 text-xs font-bold leading-snug";
+                leftItem.id = `match-left-${idx}`;
+                leftItem.innerHTML = `
+                    <div class="flex items-center gap-2">
+                        <span class="bg-indigo-700 w-5 h-5 flex items-center justify-center rounded-full text-[10px] text-white">${idx + 1}</span>
+                        <div>${pair.left}</div>
+                    </div>
+                `;
+                
+                leftItem.onclick = () => {
+                    playSound('click');
+                    document.querySelectorAll('.left-match-btn').forEach(b => b.classList.remove('ring-4', 'ring-amber-400'));
+                    if (leftItem.classList.contains('matched')) return;
+                    selectedMatchingLeft = idx;
+                    leftItem.classList.add('ring-4', 'ring-amber-400');
+                };
+
+                leftCol.appendChild(leftItem);
+            });
+
+            shuffledRight.forEach((item) => {
+                const rightItem = document.createElement('button');
+                rightItem.className = "right-match-btn text-left w-full bg-indigo-900/30 border border-indigo-400/20 p-3 rounded-xl transition-all hover:border-indigo-400 text-[10px] md:text-xs font-medium leading-relaxed";
+                rightItem.id = `match-right-${item.origIndex}`;
+                rightItem.innerText = item.text;
+
+                rightItem.onclick = () => {
+                    if (selectedMatchingLeft === null) {
+                        playSound('wrong');
+                        alert("Select a left item first! / Sila pilih kolum kiri dahulu!");
+                        return;
+                    }
+                    playSound('click');
+
+                    // Daftar pasangan padanan jawapan baharu
+                    matchedPairs.push({ left: selectedMatchingLeft, right: item.origIndex });
+
+                    // Tetapkan kelas warna interaktif berdasarkan turutan langkah padanan
+                    const matchColorClass = colors[matchedPairs.length - 1];
+                    
+                    const leftEl = document.getElementById(`match-left-${selectedMatchingLeft}`);
+                    const rightEl = document.getElementById(`match-right-${item.origIndex}`);
+
+                    leftEl.className = `matched left-match-btn text-left w-full border-2 ${matchColorClass} p-3 rounded-xl transition-all text-xs font-bold pointer-events-none`;
+                    rightEl.className = `matched right-match-btn text-left w-full border-2 ${matchColorClass} p-3 rounded-xl transition-all text-xs font-bold pointer-events-none`;
+
+                    // Tambahkan penunjuk nombor bagi pengesahan padanan visual kolum kanan
+                    rightEl.innerHTML = `
+                        <div class="flex items-center gap-2 justify-between">
+                            <span>${rightEl.innerText}</span>
+                            <span class="bg-white/20 w-5 h-5 flex items-center justify-center rounded-full text-[10px] text-white font-bold">${selectedMatchingLeft + 1}</span>
+                        </div>
+                    `;
+
+                    // Tetapkan semula pemboleh ubah pemilihan
+                    selectedMatchingLeft = null;
+                    document.querySelectorAll('.left-match-btn').forEach(b => b.classList.remove('ring-4', 'ring-amber-400'));
+
+                    // Lakukan semakan automatik setelah kesemua 3 pasangan telah dipadankan
+                    if (matchedPairs.length === q.pairs.length) {
+                        setTimeout(() => checkMatchingAnswer(q), 600);
+                    }
+                };
+
+                rightCol.appendChild(rightItem);
+            });
+
+            container.appendChild(leftCol);
+            container.appendChild(rightCol);
+            workspace.appendChild(container);
+        }
+
+        function checkMatchingAnswer(q) {
+            let correctCount = 0;
+            matchedPairs.forEach(pair => {
+                if (pair.left === pair.right) {
+                    correctCount++;
+                }
+            });
+
+            if (correctCount === q.pairs.length) {
+                handleCorrect(q);
+            } else {
+                handleWrong(q);
+            }
+        }
+
+        // STRUKTUR 4: GAYA ISI TEMPAT KOSONG (FILL IN THE BLANKS) DENGAN BUTANG TERAPUNG
+        function renderBlanks(q, workspace) {
+            blankAnswers = {};
+
+            const container = document.createElement('div');
+            container.className = "space-y-6 mt-4";
+
+            // Proses kandungan soalan untuk memasukkan butang slot yang boleh diklik
+            const processedEN = q.en.replace(/\[blank(\d+)\]/g, (match, num) => {
+                return `<button id="blank-slot-${num}" class="blank-slot bg-indigo-950 border-2 border-dashed border-indigo-400/50 hover:border-amber-400 text-amber-300 font-bold px-4 py-1 rounded-xl mx-1 inline-block min-w-[5rem] text-center" data-num="blank${num}" onclick="selectBlankSlot(${num})">______</button>`;
+            });
+
+            const processedMS = q.ms.replace(/\[blank(\d+)\]/g, (match, num) => {
+                return `<span class="border-b border-dashed border-amber-300 text-amber-300 font-bold px-2 inline-block min-w-[3rem] text-center text-xs">...</span>`;
+            });
+
+            const textBox = document.createElement('div');
+            textBox.className = "bg-indigo-950/40 p-5 rounded-2xl border border-white/10 space-y-3 leading-loose text-sm sm:text-base";
+            textBox.innerHTML = `
+                <p class="text-white font-bold">${processedEN}</p>
+                <p class="text-xs text-amber-300/80 italic border-t border-white/5 pt-3">${processedMS}</p>
+            `;
+
+            // Bank perkataan terapung untuk jawapan mengisi tempat kosong
+            const wordBank = document.createElement('div');
+            wordBank.className = "flex flex-wrap gap-2 justify-center bg-white/5 border border-white/10 p-4 rounded-2xl";
+
+            const shuffledOptions = [...q.options].sort(() => Math.random() - 0.5);
+
+            shuffledOptions.forEach((opt, idx) => {
+                const wordBtn = document.createElement('button');
+                wordBtn.className = "blank-word-btn bg-indigo-600 border border-indigo-400/30 hover:border-amber-400 text-xs sm:text-sm px-4 py-2 rounded-xl font-bold shadow-md transition-all active:scale-95";
+                wordBtn.innerText = opt;
+                wordBtn.id = `blank-word-${idx}`;
+
+                wordBtn.onclick = () => {
+                    playSound('click');
+                    // Sahkan sama ada pengguna telah memilih slot tempat kosong terlebih dahulu
+                    const activeSlot = document.querySelector('.blank-slot-selected');
+                    if (!activeSlot) {
+                        playSound('wrong');
+                        alert("Please select an empty blank space above first! / Sila pilih ruangan kosong di atas dahulu!");
+                        return;
+                    }
+
+                    const slotNum = activeSlot.dataset.num;
+                    
+                    // Pulangkan semula perkataan lama jika ada sebelum meletakkan perkataan baru
+                    if (blankAnswers[slotNum]) {
+                        const oldWordText = blankAnswers[slotNum];
+                        document.querySelectorAll('.blank-word-btn').forEach(btn => {
+                            if (btn.innerText === oldWordText) btn.classList.remove('hidden');
+                        });
+                    }
+
+                    // Letakkan perkataan baharu yang telah diklik
+                    blankAnswers[slotNum] = wordBtn.innerText;
+                    activeSlot.innerText = wordBtn.innerText;
+                    activeSlot.classList.remove('border-dashed', 'border-indigo-400/50');
+                    activeSlot.classList.add('border-solid', 'border-amber-400', 'bg-indigo-900', 'animate-pulse');
+
+                    wordBtn.classList.add('hidden');
+                    activeSlot.classList.remove('blank-slot-selected', 'ring-4', 'ring-amber-400');
+                };
+
+                wordBank.appendChild(wordBtn);
+            });
+
+            // Butang menghantar jawapan untuk disemak
+            const submitBtn = document.createElement('button');
+            submitBtn.className = "w-full bg-amber-400 hover:bg-amber-500 text-indigo-950 font-bold py-3 rounded-xl border-b-4 border-amber-600 transition-all text-sm mt-4 uppercase tracking-wide";
+            submitBtn.innerText = "Check Answer / Semak Jawapan ➔";
+            submitBtn.onclick = () => checkBlanksAnswer(q);
+
+            container.appendChild(textBox);
+            container.appendChild(wordBank);
+            container.appendChild(submitBtn);
+            workspace.appendChild(container);
+        }
+
+        function selectBlankSlot(num) {
+            playSound('click');
+            document.querySelectorAll('.blank-slot').forEach(slot => slot.classList.remove('blank-slot-selected', 'ring-4', 'ring-amber-400'));
+            const target = document.getElementById(`blank-slot-${num}`);
+            target.classList.add('blank-slot-selected', 'ring-4', 'ring-amber-400');
+        }
+
+        function checkBlanksAnswer(q) {
+            let allCorrect = true;
+            let filledCount = 0;
+
+            q.blanks.forEach(b => {
+                const answerVal = blankAnswers[b.key];
+                if (answerVal) {
+                    filledCount++;
+                    if (answerVal !== b.answer) {
+                        allCorrect = false;
+                    }
+                } else {
+                    allCorrect = false;
+                }
+            });
+
+            if (filledCount < q.blanks.length) {
+                playSound('wrong');
+                alert("Please fill in all blanks! / Sila isi semua tempat kosong!");
+                return;
+            }
+
+            if (allCorrect) {
+                handleCorrect(q);
+            } else {
+                handleWrong(q);
+            }
+        }
+
+        // ================= POP-UP MAKLUM BALAS KEPUTUSAN JAWAPAN =================
+        function handleCorrect(q) {
+            score++;
+            playSound('correct');
+            createConfettiShower();
+
+            // Sediakan teks penerangan dwi-bahasa
+            document.getElementById('explainEN').innerText = q.explainEN;
+            document.getElementById('explainMS').innerText = q.explainMS;
+
+            // Memaparkan popup maklum balas betul
+            const modal = document.getElementById('correctModal');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.firstElementChild.classList.remove('scale-95');
+                modal.firstElementChild.classList.add('scale-100');
+            }, 50);
+        }
+
+        function handleWrong(q) {
+            playSound('wrong');
+            
+            // Sediakan teks pembayang/hint dwi-bahasa
+            document.getElementById('hintEN').innerText = q.hintEN;
+            document.getElementById('hintMS').innerText = q.hintMS;
+
+            // Memaparkan popup maklum balas salah
+            const modal = document.getElementById('wrongModal');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.firstElementChild.classList.remove('scale-95');
+                modal.firstElementChild.classList.add('scale-100');
+            }, 50);
+        }
+
+        function hideWrongModal() {
+            playSound('click');
+            const modal = document.getElementById('wrongModal');
+            modal.classList.add('hidden');
+            modal.firstElementChild.classList.remove('scale-100');
+            modal.firstElementChild.classList.add('scale-95');
+            
+            // Set semula ruang kerja soalan semasa supaya boleh menjawab semula
+            loadQuestion();
+        }
+
+        // MENERUSKAN LANGKAH KE SOALAN SETERUSNYA
+        function advanceNext() {
+            playSound('click');
+            
+            // Sembunyikan popup kejayaan
+            const modal = document.getElementById('correctModal');
+            modal.classList.add('hidden');
+            modal.firstElementChild.classList.remove('scale-100');
+            modal.firstElementChild.classList.add('scale-95');
+
+            currentQuestionIndex++;
+            if (currentQuestionIndex < 10) {
+                loadQuestion();
+            } else {
+                showVictory();
+            }
+        }
+
+        // ================= MEMAPARKAN SKRIN KEMENANGAN AKHIR =================
+        function showVictory() {
+            playSound('victory');
+            createConfettiShower();
+            
+            document.getElementById('quizBoard').classList.add('hidden');
+            document.getElementById('victoryScreen').classList.remove('hidden');
+
+            const activeSet = quizDatabase[currentSetIndex];
+            document.getElementById('victoryBookTitle').innerText = activeSet.title;
+
+            // Paparkan jumlah perolehan skor akhir
+            document.getElementById('finalScoreText').innerText = `${score}/10`;
+            const percentage = score * 10;
+            const scorePercentageEl = document.getElementById('scorePercentage');
+            scorePercentageEl.innerText = `${percentage}% - ` + (score === 10 ? "PERFECT SCHOLAR!" : score >= 7 ? "GREAT WORK!" : "NICE EFFORT!");
+
+            // Simpan pencapaian terbaik yang baharu jika ada
+            const isNewHigh = saveHighScore(currentSetIndex, score);
+            const alertEl = document.getElementById('highScoreAlert');
+            if (isNewHigh) {
+                alertEl.classList.remove('hidden');
+            } else {
+                alertEl.classList.add('hidden');
+            }
+        }
+
+        // FUNGSI UTAMA PERMULAAN SISTEM (ONLOAD)
+        window.onload = function() {
+            loadHighScores();
+            // Tetapkan ikon bunyi diselaraskan dengan tetapan permulaan sistem
+            document.getElementById('soundOnIcon').classList.remove('hidden');
+            document.getElementById('soundOffIcon').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
